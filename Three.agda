@@ -245,4 +245,10 @@ correctness (x ∷ .(y ∷ L)) (x₁ ∷ .[]) (two .x y L x₂ x₃) one | inj�
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .[]) (two .x y L x₂ x₃) one | inj₁ x₄ | inj₁ x₅ = two x y (merge L (x₁ ∷ [])) x₂ (lemma2 x₁ y L x₅ x₃ )
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .[]) (two .x y L x₂ x₃) one | inj₁ x₄ | inj₂ y₁ = two x x₁ (y ∷ L) x₄ (two x₁ y L y₁ x₃)
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .[]) (two .x y L x₂ x₃) one | inj₂ y₁ = two x₁ x (y ∷ L) y₁ (two x y L x₂ x₃)
-correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) = {!!}
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) with em x x₁ | em y x₁ | em x y₁ | em y y₁
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₁ x₆ | inj₁ x₇ | z | zz = two x y (merge L (x₁ ∷ y₁ ∷ L₁)) x₂ {!!}
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₁ x₆ | inj₂ y₂ | z | inj₁ x₇ = two x x₁ (y ∷ merge L (y₁ ∷ L₁)) x₆ (two x₁ y (merge L (y₁ ∷ L₁)) y₂ {!!} )
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₁ x₆ | inj₂ y₂ | z | inj₂ y₃ = two x x₁ (y₁ ∷ merge (y ∷ L) L₁) x₆ (two x₁ y₁ (merge (y ∷ L) L₁) x₄ {!!} )
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₁ x₇ = two x₁ x (y ∷ merge L (y₁ ∷ L₁)) y₂ (two x y (merge L (y₁ ∷ L₁)) x₂ {!!})
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₂ y₃ = two x₁ x (y₁ ∷ merge (y ∷ L) L₁) y₂ (two x y₁ (merge (y ∷ L) L₁) x₆ {!!})
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₂ y₃ | zz = two x₁ y₁ (merge (x ∷ y ∷ L) L₁) x₄ {!!} 
