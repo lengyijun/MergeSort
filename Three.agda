@@ -70,23 +70,24 @@ merge : List ℕ -> List ℕ -> List ℕ
 merge [] x₁ = x₁
 merge (x ∷ x₂) [] = x ∷ x₂ 
 merge (x ∷ xs) (y ∷ ys) with em x y | merge xs (y ∷ ys ) | merge  (x ∷ xs )  ys
-merge (x ∷ xs) (y ∷ ys) | inj₁ x₁ | b | c = b
-merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = c
+merge (x ∷ xs) (y ∷ ys) | inj₁ x₁ | b | c = x ∷ b
+merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = y ∷ c 
 
 merge[] : ( x : List ℕ ) -> x ≡ merge x []
 merge[] [] = refl
 merge[] (x ∷ x₁) = refl
 
-mergeswap : ( x y  : List ℕ ) ->  merge y x  ≡ merge x y 
-mergeswap [] y = sym (merge[] y)
-mergeswap (x ∷ x₁) [] = merge[] (x ∷ x₁)
-mergeswap (x ∷ x₁) (x₂ ∷ y) with em x x₂ | em x₂ x 
-mergeswap (x ∷ x₁) (x₂ ∷ y) | inj₁ x₃ | inj₁ x₄ with ≤reflrefl x₃ x₄
-mergeswap (x ∷ x₁) (.x ∷ y) | inj₁ x₃ | inj₁ x₄ | refl = {!!}
-mergeswap (x ∷ x₁) (x₂ ∷ y) | inj₁ x₃ | inj₂ y₁ = {!!}
-mergeswap (x ∷ x₁) (x₂ ∷ y) | inj₂ y₁ | inj₁ x₃ = {!!}
-mergeswap (x ∷ x₁) (x₂ ∷ y) | inj₂ y₁ | inj₂ y₂ with ≤reflrefl y₁ y₂
-mergeswap (x ∷ x₁) (.x ∷ y) | inj₂ y₁ | inj₂ y₂ | refl = {!!}
+
+
+mergeswap : ( xs ys  : List ℕ ) -> isorder xs -> isorder ys -> merge ys xs  ≡ merge xs ys 
+mergeswap .[] ys nil x₁ = sym (merge[] ys)
+mergeswap .(_ ∷ []) [] one x₁ = refl
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ with em x y | em y x
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₁ x₃ = {!!}
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₂ y₁ = {!!}
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₁ x₂ = {!!}
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₂ y₂ = {!!}
+mergeswap .(x ∷ y ∷ L) ys (two x y L x₂ x₃) x₁ = {!!}
 
 correctness : ( xs ys : List ℕ ) -> isorder xs -> isorder ys -> isorder ( merge xs ys )
 correctness = {!!}
