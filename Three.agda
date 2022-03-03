@@ -61,9 +61,9 @@ data isorder : List ℕ -> Set where
   one : {x : ℕ } -> isorder ( x ∷ [] )
   two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> isorder ( y ∷ L ) -> isorder ( x ∷ y ∷ L )
 
-orderlemma : (x : ℕ) -> (l : List ℕ ) -> isorder ( x ∷ l ) -> isorder l
-orderlemma x .[] one = nil
-orderlemma x .(y ∷ L) (two .x y L x₁ x₂) = x₂
+extractorder : (x : ℕ) -> (l : List ℕ ) -> isorder ( x ∷ l ) -> isorder l
+extractorder x .[] one = nil
+extractorder x .(y ∷ L) (two .x y L x₁ x₂) = x₂
 
 {- https://stackoverflow.com/questions/17910737/termination-check-on-list-merge/17912550#17912550 -}
 merge : List ℕ -> List ℕ -> List ℕ
@@ -108,7 +108,7 @@ mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₁ x₄ | inj₁ x�
 mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ with em y x | em x y
 mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₁ x₅ | inj₁ x₆ with ≤reflrefl x₆ x₅
 mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₁ x₅ | inj₁ x₆ | refl = cong (_∷_ x₁) (cong (_∷_ x) (mergelemma1 x L x₃))
-mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₁ x₅ | inj₂ y₂ = cong (_∷_ x₁) (cong (_∷_ y) (mergelemma3 x L (orderlemma y L x₃ )) )
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₁ x₅ | inj₂ y₂ = cong (_∷_ x₁) (cong (_∷_ y) (mergelemma3 x L (extractorder y L x₃ )) )
 mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₂ y₂ | inj₁ x₅ = cong (_∷_ x₁) refl
 mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₂ y₂ | inj₂ y₃ with ≤reflrefl y₂ y₃
 mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₂ y₂ | inj₂ y₃ | refl = cong (_∷_ x₁) (cong (_∷_ x) ( sym (mergelemma2 x L x₃)))
