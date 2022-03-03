@@ -118,6 +118,17 @@ mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y�
 mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ | refl | inj₂ y₃ with ≤reflrefl x₂ y₃
 mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ | refl | inj₂ y₃ | refl = cong (_∷_ x) (cong (_∷_ x)  (sym (mergelemma2 x L x₃)))
 
+mergelemma5 :  (x : ℕ) -> (xs ys : List ℕ) -> isorder (x ∷ xs ) -> isorder (x ∷ ys ) -> merge ys (x ∷ xs) ≡ x ∷ merge ys xs
+mergelemma5 x xs .[] x₁ one = refl
+mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) with em y x
+mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) | inj₁ x₄ with ≤reflrefl x₂ x₄
+mergelemma5 x .[] .(x ∷ L) one (two .x .x L x₂ x₃) | inj₁ x₄ | refl = cong (_∷_ x) (mergelemma1 x L x₃)
+mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x .x L x₂ x₃) | inj₁ x₄ | refl with em x y
+mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x x L x₂ x₃) | inj₁ x₄ | refl | inj₁ x₆ = cong (_∷_ x) (mergelemma5 x (y ∷ L₁) L (two x y L₁ x₁ x₅) x₃ )
+mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x x L x₂ x₃) | inj₁ x₄ | refl | inj₂ y₁ with ≤reflrefl x₁ y₁
+mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x x L x₂ x₃) | inj₁ x₄ | refl | inj₂ y₁ | refl = cong (_∷_ x) {!!}
+mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) | inj₂ y₁ = refl
+
 mergelemma4 : (x y : ℕ) -> ( ys L : List ℕ ) -> x ≤ y -> isorder ( y ∷ L ) -> isorder ys ->  merge ys (x ∷ y ∷ L) ≡ merge (x ∷ y ∷ L) ys
 mergelemma4 x y [] L x₁ x₂ x₃ = refl
 mergelemma4 x y (x₄ ∷ ys) L x₁ x₂ x₃ with em x₄ x | em x x₄
