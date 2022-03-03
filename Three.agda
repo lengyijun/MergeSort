@@ -50,6 +50,12 @@ em (suc m) (suc n) with em m n
 em (suc m) (suc n) | inj₁ x = inj₁ (sucsuc _ _ x)
 em (suc m) (suc n) | inj₂ y = inj₂ (sucsuc _ _ y)
 
+≤reflrefl : {m n : ℕ} -> m ≤ n -> n ≤ m -> m ≡ n
+≤reflrefl {m} {.m} ≤-reflex x₁ = refl
+≤reflrefl {.(suc _)} {.(suc _)} (s≤s x) ≤-reflex = refl
+≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) with transitive (s≤s ≤-reflex) x₁ |  transitive (s≤s ≤-reflex) x
+≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) | a | b = cong suc (≤reflrefl b a)
+  
 data isorder : List ℕ -> Set where
   nil : isorder []
   one : {x : ℕ } -> isorder ( x ∷ [] )
@@ -59,6 +65,7 @@ orderlemma : (x : ℕ) -> (l : List ℕ ) -> isorder ( x ∷ l ) -> isorder l
 orderlemma x .[] one = nil
 orderlemma x .(y ∷ L) (two .x y L x₁ x₂) = x₂
 
+{- https://stackoverflow.com/questions/17910737/termination-check-on-list-merge/17912550#17912550 -}
 merge : List ℕ -> List ℕ -> List ℕ
 merge [] x₁ = x₁
 merge (x ∷ x₂) [] = x ∷ x₂ 
@@ -66,6 +73,20 @@ merge (x ∷ xs) (y ∷ ys) with em x y | merge xs (y ∷ ys ) | merge  (x ∷ x
 merge (x ∷ xs) (y ∷ ys) | inj₁ x₁ | b | c = b
 merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = c
 
+merge[] : ( x : List ℕ ) -> x ≡ merge x []
+merge[] [] = refl
+merge[] (x ∷ x₁) = refl
+
+mergeswap : ( x y xy yx : List ℕ ) -> xy ≡ merge x y -> yx ≡ merge y x -> xy ≡ yx
+mergeswap [] y .(merge [] y) .(merge y []) refl refl = merge[] y
+mergeswap (x ∷ x₁) [] .(merge (x ∷ x₁) []) .(merge [] (x ∷ x₁)) refl refl = refl
+mergeswap (x ∷ x₁) (x₂ ∷ y) .(merge (x ∷ x₁) (x₂ ∷ y)) .(merge (x₂ ∷ y) (x ∷ x₁)) refl refl with em x x₂
+mergeswap (x ∷ x₁) (x₂ ∷ y) .(merge (x ∷ x₁) (x₂ ∷ y)) .(merge (x₂ ∷ y) (x ∷ x₁)) refl refl | inj₁ x₃ with em x₂ x
+mergeswap (x ∷ xs) (y ∷ ys) .(merge (x ∷ xs) (y ∷ ys)) .(merge (y ∷ ys) (x ∷ xs)) refl refl | inj₁ x₃ | inj₁ x₄ = {!!}
+mergeswap (x ∷ x₁) (x₂ ∷ y) .(merge (x ∷ x₁) (x₂ ∷ y)) .(merge (x₂ ∷ y) (x ∷ x₁)) refl refl | inj₁ x₃ | inj₂ y₁ = mergeswap x₁ (x₂ ∷ y) _ _ refl refl 
+mergeswap (x ∷ x₁) (x₂ ∷ y) .(merge (x ∷ x₁) (x₂ ∷ y)) .(merge (x₂ ∷ y) (x ∷ x₁)) refl refl | inj₂ y₁ with em x₂ x
+mergeswap (x ∷ x₁) (x₂ ∷ y) .(merge (x ∷ x₁) (x₂ ∷ y)) .(merge (x₂ ∷ y) (x ∷ x₁)) refl refl | inj₂ y₁ | inj₁ x₃ = {!!}
+mergeswap (x ∷ x₁) (x₂ ∷ y) .(merge (x ∷ x₁) (x₂ ∷ y)) .(merge (x₂ ∷ y) (x ∷ x₁)) refl refl | inj₂ y₁ | inj₂ y₂ = {!!}
 
 correctness : ( xs ys output : List ℕ ) -> isorder xs -> isorder ys -> output ≡ merge xs ys -> isorder output
 correctness .[] ys .(merge [] ys) nil x₁ refl = x₁
@@ -79,13 +100,17 @@ correctness .(x ∷ []) .(x₁ ∷ y ∷ L) .(merge (x ∷ []) (x₁ ∷ y ∷ L
 correctness .(x ∷ y ∷ L) .[] .(merge (x ∷ y ∷ L) []) (two x y L x₂ x₃) nil refl = two x y L x₂ x₃
 correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl with em x x₁
 correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₁ x₄ with em y x₁
-correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₁ x₄ | inj₁ x₅ with orderlemma y L x₃
-correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₁ x₄ | inj₁ x₅ | z = correctness L (x₁ ∷ []) _ z one refl 
+correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₁ x₄ | inj₁ x₅ = correctness L (x₁ ∷ []) _ ( orderlemma y L x₃ ) one refl 
 correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₁ x₄ | inj₂ y₁ = x₃
 correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₂ y₁ = two x y L x₂ x₃
 correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl with em x x₁
 correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₁ x₆ with em y x₁
-correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₁ x₆ | inj₁ x₇ with orderlemma y L x₃
-correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₁ x₆ | inj₁ x₇ | z = {!!}
-correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₁ x₆ | inj₂ y₂ = {!!}
-correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₂ y₂ = {!!}
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₁ x₆ | inj₁ x₇ = {!!}
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₁ x₆ | inj₂ y₂ with em y y₁ | correctness L (y₁ ∷ L₁ ) _ ( orderlemma y L x₃ ) x₅ refl
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₁ x₆ | inj₂ y₂ | inj₁ x₇ | gg = gg
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₁ x₆ | inj₂ y₂ | inj₂ y₃ | gg = {!!}
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₂ y₂ with em x y₁
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₂ y₂ | inj₁ x₆ with em y y₁
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₂ y₂ | inj₁ x₆ | inj₁ x₇ = {!!}
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₂ y₂ | inj₁ x₆ | inj₂ y₃ = {!!}
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl | inj₂ y₂ | inj₂ y₃ = {!!}
