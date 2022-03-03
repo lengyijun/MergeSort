@@ -120,14 +120,7 @@ mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y�
 
 mergeswap : ( xs ys  : List ℕ ) -> isorder xs -> isorder ys -> merge ys xs  ≡ merge xs ys 
 mergeswap .[] ys nil x₁ = sym (merge[] ys)
-mergeswap .(_ ∷ []) [] one x₁ = refl
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ with em x y | em y x
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₁ x₃ with ≤reflrefl x₂ x₃
-mergeswap .(y ∷ []) (y ∷ ys) (one {.y}) x₁ | inj₁ x₂ | inj₁ x₃ | refl = cong ( _∷_ y ) (mergelemma1 y ys x₁ )
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₂ y₁ = refl
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₁ x₂ = cong (_∷_ y) (mergelemma3 x ys (orderlemma y ys x₁) )
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₂ y₂ with ≤reflrefl y₂ y₁
-mergeswap .(y ∷ []) (y ∷ ys) (one {.y}) x₁ | inj₂ y₁ | inj₂ y₂ | refl = cong (_∷_ y) ( sym (mergelemma2 y ys x₁) )
+mergeswap .(x ∷ []) ys (one {x}) x₁ = mergelemma3 x ys x₁
 mergeswap .(x ∷ y ∷ L) ys (two x y L x₂ x₃) x₁ = {!!}
 
 correctness : ( xs ys : List ℕ ) -> isorder xs -> isorder ys -> isorder ( merge xs ys )
