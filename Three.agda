@@ -77,16 +77,30 @@ merge[] : ( x : List ℕ ) -> x ≡ merge x []
 merge[] [] = refl
 merge[] (x ∷ x₁) = refl
 
+mergelemma1 : ( x : ℕ ) -> (xs : List ℕ ) -> isorder (x ∷ xs ) -> merge xs (x ∷ []) ≡ x ∷ xs
+mergelemma1 x .[] one = refl
+mergelemma1 x .(y ∷ L) (two .x y L x₁ x₂) with em y x
+mergelemma1 x .(y ∷ L) (two .x y L x₁ x₂) | inj₁ x₃ with ≤reflrefl x₁ x₃
+mergelemma1 x .(x ∷ L) (two .x .x L x₁ x₂) | inj₁ x₃ | refl = cong (_∷_ x) (mergelemma1 x L x₂)
+mergelemma1 x .(y ∷ L) (two .x y L x₁ x₂) | inj₂ y₁ = refl
 
+mergelemma2 : ( x : ℕ ) -> (xs : List ℕ ) -> isorder (x ∷ xs ) -> merge (x ∷ []) xs ≡ x ∷ xs
+mergelemma2 x .[] one = refl
+mergelemma2 x .(y ∷ L) (two .x y L x₁ x₂) with em x y
+mergelemma2 x .(y ∷ L) (two .x y L x₁ x₂) | inj₁ x₃ = refl
+mergelemma2 x .(y ∷ L) (two .x y L x₁ x₂) | inj₂ y₁ with ≤reflrefl x₁ y₁
+mergelemma2 x .(x ∷ L) (two .x .x L x₁ x₂) | inj₂ y₁ | refl = cong (_∷_ x) (mergelemma2 x L x₂)
 
 mergeswap : ( xs ys  : List ℕ ) -> isorder xs -> isorder ys -> merge ys xs  ≡ merge xs ys 
 mergeswap .[] ys nil x₁ = sym (merge[] ys)
 mergeswap .(_ ∷ []) [] one x₁ = refl
 mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ with em x y | em y x
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₁ x₃ = {!!}
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₂ y₁ = {!!}
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₁ x₂ = {!!}
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₂ y₂ = {!!}
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₁ x₃ with ≤reflrefl x₂ x₃
+mergeswap .(y ∷ []) (y ∷ ys) (one {.y}) x₁ | inj₁ x₂ | inj₁ x₃ | refl = cong ( _∷_ y ) (mergelemma1 y ys x₁ )
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₂ y₁ = refl
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₁ x₂ = cong (_∷_ y) {!!}
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₂ y₂ with ≤reflrefl y₂ y₁
+mergeswap .(y ∷ []) (y ∷ ys) (one {.y}) x₁ | inj₂ y₁ | inj₂ y₂ | refl = cong (_∷_ y) ( sym (mergelemma2 y ys x₁) )
 mergeswap .(x ∷ y ∷ L) ys (two x y L x₂ x₃) x₁ = {!!}
 
 correctness : ( xs ys : List ℕ ) -> isorder xs -> isorder ys -> isorder ( merge xs ys )
