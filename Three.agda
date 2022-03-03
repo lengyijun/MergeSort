@@ -226,6 +226,19 @@ lemma2 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) with em y₁ x
 lemma2 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₁ x₄ = two y y₁ (merge L (x ∷ [])) x₂ (lemma2 x y₁ L x₄ x₃ )
 lemma2 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₂ y₂ = two y x (y₁ ∷ L) x₁ (two x y₁ L y₂ x₃)
 
+mutual
+  lemma3 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  isorder (y₁ ∷ L₁) ->  isorder (y ∷ L) ->  isorder (y ∷ merge L (y₁ ∷ L₁))
+  lemma3 y y₁ .[] L₁ x x₁ one = two y y₁ L₁ x x₁
+  lemma3 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) with em y₂ y₁
+  lemma3 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₁ x₄ = two y y₂ (merge L (y₁ ∷ L₁)) x₂  (lemma3 y₂ y₁ L L₁ x₄  x₁ x₃)
+  lemma3 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₂ y₃ = two y y₁ (merge (y₂ ∷ L) L₁) x (lemma4 y₁ y₂ L₁ L y₃ x₃ x₁ )
+
+  lemma4 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  isorder (y₁ ∷ L₁) ->  isorder (y ∷ L) ->  isorder (y ∷ merge (y₁ ∷ L₁) L)
+  lemma4 y y₁ .[] L₁ x x₁ one = two y y₁ L₁ x x₁
+  lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) with em y₁ y₂
+  lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₁ x₄ = two y y₁ (merge L₁ (y₂ ∷ L)) x (lemma3 y₁ y₂ L₁ L x₄ x₃ x₁)
+  lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₂ y₃ = two y y₂ (merge (y₁ ∷ L₁) L) x₂ (lemma4 y₂ y₁ L L₁ y₃ x₁ x₃ )
+
 correctness : ( xs ys : List ℕ ) -> isorder xs -> isorder ys -> isorder ( merge xs ys )
 correctness [] [] nil nil = nil
 correctness [] (x ∷ .[]) nil one = one
@@ -247,8 +260,8 @@ correctness (x ∷ .(y ∷ L)) (x₁ ∷ .[]) (two .x y L x₂ x₃) one | inj�
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .[]) (two .x y L x₂ x₃) one | inj₂ y₁ = two x₁ x (y ∷ L) y₁ (two x y L x₂ x₃)
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) with em x x₁ | em y x₁ | em x y₁ | em y y₁
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₁ x₆ | inj₁ x₇ | z | zz = two x y (merge L (x₁ ∷ y₁ ∷ L₁)) x₂ {!!}
-correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₁ x₆ | inj₂ y₂ | z | inj₁ x₇ = two x x₁ (y ∷ merge L (y₁ ∷ L₁)) x₆ (two x₁ y (merge L (y₁ ∷ L₁)) y₂ {!!} )
-correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₁ x₆ | inj₂ y₂ | z | inj₂ y₃ = two x x₁ (y₁ ∷ merge (y ∷ L) L₁) x₆ (two x₁ y₁ (merge (y ∷ L) L₁) x₄ {!!} )
-correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₁ x₇ = two x₁ x (y ∷ merge L (y₁ ∷ L₁)) y₂ (two x y (merge L (y₁ ∷ L₁)) x₂ {!!})
-correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₂ y₃ = two x₁ x (y₁ ∷ merge (y ∷ L) L₁) y₂ (two x y₁ (merge (y ∷ L) L₁) x₆ {!!})
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₁ x₆ | inj₂ y₂ | z | inj₁ x₇ = two x x₁ (y ∷ merge L (y₁ ∷ L₁)) x₆ (two x₁ y (merge L (y₁ ∷ L₁)) y₂ (lemma3 y y₁ L L₁ x₇ x₅ x₃ ) )
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₁ x₆ | inj₂ y₂ | z | inj₂ y₃ = two x x₁ (y₁ ∷ merge (y ∷ L) L₁) x₆ (two x₁ y₁ (merge (y ∷ L) L₁) x₄ (lemma4 y₁ y L₁ L y₃ x₃ x₅) )
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₁ x₇ = two x₁ x (y ∷ merge L (y₁ ∷ L₁)) y₂ (two x y (merge L (y₁ ∷ L₁)) x₂ (lemma3 y y₁ L L₁ x₇ x₅ x₃ ))
+correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₂ y₃ = two x₁ x (y₁ ∷ merge (y ∷ L) L₁) y₂ (two x y₁ (merge (y ∷ L) L₁) x₆ (lemma4 y₁ y L₁ L y₃ x₃ x₅ ))
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₂ y₃ | zz = two x₁ y₁ (merge (x ∷ y ∷ L) L₁) x₄ {!!} 
