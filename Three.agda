@@ -91,6 +91,33 @@ mergelemma2 x .(y ∷ L) (two .x y L x₁ x₂) | inj₁ x₃ = refl
 mergelemma2 x .(y ∷ L) (two .x y L x₁ x₂) | inj₂ y₁ with ≤reflrefl x₁ y₁
 mergelemma2 x .(x ∷ L) (two .x .x L x₁ x₂) | inj₂ y₁ | refl = cong (_∷_ x) (mergelemma2 x L x₂)
 
+mergelemma3 : ( x : ℕ ) ->  ( ys : List ℕ ) -> isorder ys ->  merge ys (x ∷ []) ≡ merge (x ∷ []) ys
+mergelemma3 x .[] nil = refl
+mergelemma3 x .(y ∷ []) (one {y}) with em x y | em y x
+mergelemma3 x .(y ∷ []) (one {y}) | inj₁ x₁ | inj₁ x₂ with ≤reflrefl x₁ x₂
+mergelemma3 x .(y ∷ []) (one {y}) | inj₁ x₁ | inj₁ x₂ | refl = refl
+mergelemma3 x .(y ∷ []) (one {y}) | inj₁ x₁ | inj₂ y₁ = refl
+mergelemma3 x .(y ∷ []) (one {y}) | inj₂ y₁ | inj₁ x₁ = refl
+mergelemma3 x .(y ∷ []) (one {y}) | inj₂ y₁ | inj₂ y₂ with ≤reflrefl y₁ y₂
+mergelemma3 x .(y ∷ []) (one {y}) | inj₂ y₁ | inj₂ y₂ | refl = refl
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) with em x₁ x | em x x₁
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₁ x₅ with ≤reflrefl x₄ x₅ | em y x
+mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₁ x₄ | inj₁ x₅ | refl | inj₁ x₁ with ≤reflrefl x₁ x₂
+mergelemma3 x .(x ∷ x ∷ L) (two x .x L x₂ x₃) | inj₁ x₄ | inj₁ x₅ | refl | inj₁ x₁ | refl = cong (_∷_ x) ( cong (_∷_ x) (mergelemma1 x L x₃) )
+mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₁ x₄ | inj₁ x₅ | refl | inj₂ y₁ = refl
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ with em y x | em x y
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₁ x₅ | inj₁ x₆ with ≤reflrefl x₆ x₅
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₁ x₅ | inj₁ x₆ | refl = cong (_∷_ x₁) (cong (_∷_ x) (mergelemma1 x L x₃))
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₁ x₅ | inj₂ y₂ = cong (_∷_ x₁) (cong (_∷_ y) (mergelemma3 x L (orderlemma y L x₃ )) )
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₂ y₂ | inj₁ x₅ = cong (_∷_ x₁) refl
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₂ y₂ | inj₂ y₃ with ≤reflrefl y₂ y₃
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₁ x₄ | inj₂ y₁ | inj₂ y₂ | inj₂ y₃ | refl = cong (_∷_ x₁) (cong (_∷_ x) ( sym (mergelemma2 x L x₃)))
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₂ y₁ | inj₁ x₄ = refl
+mergelemma3 x .(x₁ ∷ y ∷ L) (two x₁ y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ with ≤reflrefl y₁ y₂ | em x y
+mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ | refl | inj₁ x₁ = cong (_∷_ x) refl
+mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ | refl | inj₂ y₃ with ≤reflrefl x₂ y₃
+mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ | refl | inj₂ y₃ | refl = cong (_∷_ x) (cong (_∷_ x)  (sym (mergelemma2 x L x₃)))
+
 mergeswap : ( xs ys  : List ℕ ) -> isorder xs -> isorder ys -> merge ys xs  ≡ merge xs ys 
 mergeswap .[] ys nil x₁ = sym (merge[] ys)
 mergeswap .(_ ∷ []) [] one x₁ = refl
@@ -98,7 +125,7 @@ mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ with em x y | em y x
 mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₁ x₃ with ≤reflrefl x₂ x₃
 mergeswap .(y ∷ []) (y ∷ ys) (one {.y}) x₁ | inj₁ x₂ | inj₁ x₃ | refl = cong ( _∷_ y ) (mergelemma1 y ys x₁ )
 mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₁ x₂ | inj₂ y₁ = refl
-mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₁ x₂ = cong (_∷_ y) {!!}
+mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₁ x₂ = cong (_∷_ y) (mergelemma3 x ys (orderlemma y ys x₁) )
 mergeswap .(x ∷ []) (y ∷ ys) (one {x}) x₁ | inj₂ y₁ | inj₂ y₂ with ≤reflrefl y₂ y₁
 mergeswap .(y ∷ []) (y ∷ ys) (one {.y}) x₁ | inj₂ y₁ | inj₂ y₂ | refl = cong (_∷_ y) ( sym (mergelemma2 y ys x₁) )
 mergeswap .(x ∷ y ∷ L) ys (two x y L x₂ x₃) x₁ = {!!}
