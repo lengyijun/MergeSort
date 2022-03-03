@@ -53,7 +53,7 @@ em (suc m) (suc n) | inj₂ y = inj₂ (sucsuc _ _ y)
 data isorder : List ℕ -> Set where
   nil : isorder []
   one : {x : ℕ } -> isorder ( x ∷ [] )
-  two : {x y : ℕ } -> {L : List ℕ } -> x ≤ y -> isorder ( y ∷ L ) -> isorder ( x ∷ y ∷ L )  
+  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> isorder ( y ∷ L ) -> isorder ( x ∷ y ∷ L )  
 
 merge : List ℕ -> List ℕ -> List ℕ
 merge [] x₁ = x₁
@@ -65,10 +65,17 @@ merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = c
 
 correctness : ( xs ys output : List ℕ ) -> isorder xs -> isorder ys -> output ≡ merge xs ys -> isorder output
 correctness .[] ys .(merge [] ys) nil x₁ refl = x₁
-correctness .(_ ∷ []) [] .(merge (_ ∷ []) []) one nil refl = one
-correctness .(x ∷ []) (y ∷ ys) .(merge (x ∷ []) (y ∷ ys)) (one {x}) x₁ refl with em x y
-correctness .(x ∷ []) (y ∷ ys) .(merge (x ∷ []) (y ∷ ys)) (one {x}) x₁ refl | inj₁ x₂ = x₁
-correctness .(x ∷ []) (y ∷ .[]) .(merge (x ∷ []) (y ∷ [])) (one {x}) one refl | inj₂ y₁ = one
-correctness .(x ∷ []) (y ∷ .(y₂ ∷ L)) .(merge (x ∷ []) (y ∷ y₂ ∷ L)) (one {x}) (two {y = y₂} {L} x₁ x₂) refl | inj₂ y₁ = correctness (x ∷ [] ) ( y₂ ∷ L) _ one  x₂ refl 
-correctness .(_ ∷ y ∷ L) ys output (two {y = y} {L} x x₃) x₁ x₂ = {!!}
-
+correctness .(x ∷ []) .[] .(merge (x ∷ []) []) (one {x}) nil refl = one
+correctness .(x ∷ []) .(x₁ ∷ []) .(merge (x ∷ []) (x₁ ∷ [])) (one {x}) (one {x₁}) refl with em x x₁
+correctness .(x ∷ []) .(x₁ ∷ []) .(merge (x ∷ []) (x₁ ∷ [])) (one {x}) (one {x₁}) refl | inj₁ x₂ = one
+correctness .(x ∷ []) .(x₁ ∷ []) .(merge (x ∷ []) (x₁ ∷ [])) (one {x}) (one {x₁}) refl | inj₂ y = one
+correctness .(x ∷ []) .(x₁ ∷ y ∷ L) .(merge (x ∷ []) (x₁ ∷ y ∷ L)) (one {x}) (two x₁ y L x₂ x₃) refl with em x x₁
+correctness .(x ∷ []) .(x₁ ∷ y ∷ L) .(merge (x ∷ []) (x₁ ∷ y ∷ L)) (one {x}) (two x₁ y L x₂ x₃) refl | inj₁ x₄ = two x₁ y L x₂ x₃
+correctness .(x ∷ []) .(x₁ ∷ y ∷ L) .(merge (x ∷ []) (x₁ ∷ y ∷ L)) (one {x}) (two x₁ y L x₂ x₃) refl | inj₂ y₁ = correctness ( x ∷ [] ) (y ∷ L) _ one x₃ refl
+correctness .(x ∷ y ∷ L) .[] .(merge (x ∷ y ∷ L) []) (two x y L x₂ x₃) nil refl = two x y L x₂ x₃
+correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl with em x x₁
+correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₁ x₄ with em y x₁
+correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₁ x₄ | inj₁ x₅ = {!!}
+correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₁ x₄ | inj₂ y₁ = x₃
+correctness .(x ∷ y ∷ L) .(x₁ ∷ []) .(merge (x ∷ y ∷ L) (x₁ ∷ [])) (two x y L x₂ x₃) (one {x₁}) refl | inj₂ y₁ = {!!}
+correctness .(x ∷ y ∷ L) .(x₁ ∷ y₁ ∷ L₁) .(merge (x ∷ y ∷ L) (x₁ ∷ y₁ ∷ L₁)) (two x y L x₂ x₃) (two x₁ y₁ L₁ x₄ x₅) refl = {!!}
