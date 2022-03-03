@@ -118,16 +118,59 @@ mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y�
 mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ | refl | inj₂ y₃ with ≤reflrefl x₂ y₃
 mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ | refl | inj₂ y₃ | refl = cong (_∷_ x) (cong (_∷_ x)  (sym (mergelemma2 x L x₃)))
 
-mergelemma5 :  (x : ℕ) -> (xs ys : List ℕ) -> isorder (x ∷ xs ) -> isorder (x ∷ ys ) -> merge ys (x ∷ xs) ≡ x ∷ merge ys xs
-mergelemma5 x xs .[] x₁ one = refl
-mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) with em y x
-mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) | inj₁ x₄ with ≤reflrefl x₂ x₄
-mergelemma5 x .[] .(x ∷ L) one (two .x .x L x₂ x₃) | inj₁ x₄ | refl = cong (_∷_ x) (mergelemma1 x L x₃)
-mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x .x L x₂ x₃) | inj₁ x₄ | refl with em x y
-mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x x L x₂ x₃) | inj₁ x₄ | refl | inj₁ x₆ = cong (_∷_ x) (mergelemma5 x (y ∷ L₁) L (two x y L₁ x₁ x₅) x₃ )
-mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x x L x₂ x₃) | inj₁ x₄ | refl | inj₂ y₁ with ≤reflrefl x₁ y₁
-mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x x L x₂ x₃) | inj₁ x₄ | refl | inj₂ y₁ | refl = cong (_∷_ x) {!!}
-mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) | inj₂ y₁ = refl
+
+mutual
+  mergelemma5 :  (x : ℕ) -> (xs ys : List ℕ) -> isorder (x ∷ xs ) -> isorder (x ∷ ys ) -> merge ys (x ∷ xs) ≡ x ∷ merge ys xs
+  mergelemma5 x xs .[] x₁ one = refl
+  mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) with em y x
+  mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) | inj₁ x₄ with ≤reflrefl x₂ x₄
+  mergelemma5 x .[] .(x ∷ L) one (two .x .x L x₂ x₃) | inj₁ x₄ | refl = cong (_∷_ x) (mergelemma1 x L x₃)
+  mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x .x L x₂ x₃) | inj₁ x₄ | refl with em x y
+  mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x x L x₂ x₃) | inj₁ x₄ | refl | inj₁ x₆ = cong (_∷_ x) (mergelemma5 x (y ∷ L₁) L (two x y L₁ x₁ x₅) x₃ )
+  mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x x L x₂ x₃) | inj₁ x₄ | refl | inj₂ y₁ with ≤reflrefl x₁ y₁
+  mergelemma5 x .(y ∷ L₁) .(x ∷ L) (two .x y L₁ x₁ x₅) (two .x x L x₂ x₃) | inj₁ x₄ | refl | inj₂ y₁ | refl = cong (_∷_ x) (begin
+    merge L (x ∷ x ∷ L₁)
+    ≡⟨ mergelemma5 x (x ∷ L₁) L (two x x L₁ x₂ x₅) x₃  ⟩
+    x ∷ merge L (x ∷ L₁)
+    ≡⟨ cong (_∷_ x) (mergelemma5 x L₁ L x₅ x₃) ⟩
+    x ∷ x ∷ merge L L₁
+    ≡⟨ cong (_∷_ x) (sym (mergelemma6 x L L₁ x₃ x₅)) ⟩
+    x ∷ merge (x ∷ L) L₁
+    ∎)
+  mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) | inj₂ y₁ = refl
+
+  mergelemma6 :  (x : ℕ) -> (xs ys : List ℕ) -> isorder (x ∷ xs ) -> isorder (x ∷ ys ) -> merge (x ∷ xs) ys ≡ x ∷ merge xs ys
+  mergelemma6 x .[] ys one x₂ = mergelemma2 x ys x₂
+  mergelemma6 x .(y ∷ L) .[] (two .x y L x₁ x₃) one = refl
+  mergelemma6 x .(y ∷ L) .(y₁ ∷ L₁) (two .x y L x₁ x₃) (two .x y₁ L₁ x₂ x₄) with em x y₁
+  mergelemma6 x .(y ∷ L) .(y₁ ∷ L₁) (two .x y L x₁ x₃) (two .x y₁ L₁ x₂ x₄) | inj₁ x₅ with em y y₁
+  mergelemma6 x .(y ∷ L) .(y₁ ∷ L₁) (two .x y L x₁ x₃) (two .x y₁ L₁ x₂ x₄) | inj₁ x₅ | inj₁ x₆ = refl
+  mergelemma6 x .(y ∷ L) .(y₁ ∷ L₁) (two .x y L x₁ x₃) (two .x y₁ L₁ x₂ x₄) | inj₁ x₅ | inj₂ y₂ = refl
+  mergelemma6 x .(y ∷ L) .(y₁ ∷ L₁) (two .x y L x₁ x₃) (two .x y₁ L₁ x₂ x₄) | inj₂ y₂ with ≤reflrefl x₂ y₂ | em y x
+  mergelemma6 x .(y ∷ L) .(x ∷ L₁) (two .x y L x₁ x₃) (two .x x L₁ x₂ x₄) | inj₂ y₂ | refl | inj₁ x₅ with em y x | ≤reflrefl x₁ x₅
+  mergelemma6 x .(y ∷ L) .(x ∷ L₁) (two .x y L x₁ x₃) (two .x x L₁ x₂ x₄) | inj₂ y₂ | refl | inj₁ x₅ | inj₁ x₆ | refl = cong (_∷_ x) (begin
+    merge (x ∷ x ∷ L) L₁
+    ≡⟨ mergelemma6 x (x ∷ L) L₁ (two x x L x₂ x₃) x₄ ⟩
+    x ∷ merge (x ∷ L) L₁
+    ≡⟨ cong (_∷_ x) (mergelemma6 x L L₁  x₃ x₄)  ⟩
+    x ∷ x ∷ merge L L₁
+    ≡⟨ cong (_∷_ x) (sym (mergelemma5 x L₁  L x₄ x₃)) ⟩
+    x ∷ merge L (x ∷ L₁)
+    ∎)
+  mergelemma6 x .(y ∷ L) .(x ∷ L₁) (two .x y L x₁ x₃) (two .x x L₁ x₂ x₄) | inj₂ y₂ | refl | inj₁ x₅ | inj₂ y₁ | refl = cong (_∷_ x) (mergelemma6 x (x ∷ L) L₁ (two x x L x₂ x₃) x₄ )
+  mergelemma6 x .(y ∷ L) .(x ∷ L₁) (two .x y L x₁ x₃) (two .x x L₁ x₂ x₄) | inj₂ y₂ | refl | inj₂ y₁ with em y x
+  mergelemma6 x .(y ∷ L) .(x ∷ L₁) (two .x y L x₁ x₃) (two .x x L₁ x₂ x₄) | inj₂ y₂ | refl | inj₂ y₁ | inj₁ x₅ with ≤reflrefl x₅ y₁
+  mergelemma6 x .(y ∷ L) .(x ∷ L₁) (two .x y L x₁ x₃) (two .x x L₁ x₂ x₄) | inj₂ y₂ | refl | inj₂ y₁ | inj₁ x₅ | refl = cong (_∷_ x) (begin
+    merge (x ∷ x ∷ L) L₁
+    ≡⟨ mergelemma6 x (x ∷ L) L₁ (two x x L x₁ x₃) x₄  ⟩
+     x ∷ merge (x ∷ L) L₁
+    ≡⟨ cong (_∷_ x) (mergelemma6 x L L₁ x₃ x₄ ) ⟩
+      x ∷ x ∷ merge L L₁
+    ≡⟨ cong (_∷_ x) (sym (mergelemma5 x L₁ L x₄ x₃)) ⟩
+    x ∷ merge L (x ∷ L₁)
+    ∎)
+  mergelemma6 x .(y ∷ L) .(x ∷ L₁) (two .x y L x₁ x₃) (two .x x L₁ x₂ x₄) | inj₂ y₂ | refl | inj₂ y₁ | inj₂ y₃ = cong (_∷_ x) (mergelemma6 x (y ∷ L) L₁ (two x y L x₁ x₃) x₄)
+
 
 mergelemma4 : (x y : ℕ) -> ( ys L : List ℕ ) -> x ≤ y -> isorder ( y ∷ L ) -> isorder ys ->  merge ys (x ∷ y ∷ L) ≡ merge (x ∷ y ∷ L) ys
 mergelemma4 x y [] L x₁ x₂ x₃ = refl
@@ -139,12 +182,14 @@ mergelemma4 x y (x ∷ ys) L x₁ x₂ x₃ | inj₁ x₅ | inj₁ x₆ | refl |
 mergelemma4 x y (x ∷ ys) L x₁ x₂ x₃ | inj₁ x₅ | inj₁ x₆ | refl | inj₂ y₁ = cong (_∷_ x) {!!}
 mergelemma4 x y (x₄ ∷ ys) L x₁ x₂ x₃ | inj₁ x₅ | inj₂ y₁ = {!!}
 mergelemma4 x y (x₄ ∷ ys) L x₁ x₂ x₃ | inj₂ y₁ | inj₁ x₅ = {!!}
-mergelemma4 x y (x₄ ∷ ys) L x₁ x₂ x₃ | inj₂ y₁ | inj₂ y₂ = {!!}
+mergelemma4 x y (x₄ ∷ ys) L x₁ x₂ x₃ | inj₂ y₁ | inj₂ y₂ with em x₄ y | ≤reflrefl y₂ y₁
+mergelemma4 x y (x ∷ ys) L x₁ x₂ x₃ | inj₂ y₁ | inj₂ y₂ | inj₁ x₄ | refl = {!!}
+mergelemma4 x y (x ∷ ys) L x₁ x₂ x₃ | inj₂ y₁ | inj₂ y₂ | inj₂ y₃ | refl = {!!}
 
 mergeswap : ( xs ys  : List ℕ ) -> isorder xs -> isorder ys -> merge ys xs  ≡ merge xs ys 
 mergeswap .[] ys nil x₁ = sym (merge[] ys)
 mergeswap .(x ∷ []) ys (one {x}) x₁ = mergelemma3 x ys x₁
-mergeswap .(x ∷ y ∷ L) ys (two x y L x₂ x₃) x₁ = {!!}
+mergeswap .(x ∷ y ∷ L) ys (two x y L x₂ x₃) x₁ = mergelemma4 x y ys L x₂ x₃ x₁
 
 correctness : ( xs ys : List ℕ ) -> isorder xs -> isorder ys -> isorder ( merge xs ys )
 correctness = {!!}
