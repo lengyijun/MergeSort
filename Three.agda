@@ -283,3 +283,13 @@ correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₁ x₇ = two x₁ x (y ∷ merge L (y₁ ∷ L₁)) y₂ (two x y (merge L (y₁ ∷ L₁)) x₂ (lemma3 y y₁ L L₁ x₇ x₅ x₃ ))
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₂ y₃ = two x₁ x (y₁ ∷ merge (y ∷ L) L₁) y₂ (two x y₁ (merge (y ∷ L) L₁) x₆ (lemma4 y₁ y L₁ L y₃ x₃ x₅ ))
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₂ y₃ | zz = two x₁ y₁ (merge (x ∷ y ∷ L) L₁) x₄ (lemma6 x y y₁ L L₁ x₂ y₃ x₅ x₃) 
+
+split : List ℕ -> List ℕ × List ℕ
+split [] = [] , []
+split (x ∷ []) = x ∷ [] , []
+split (x ∷ x₁ ∷ xs) with split xs
+split (x ∷ x₁ ∷ xs) | fst , snd = x ∷ fst , x₁ ∷ snd
+
+mergesort : List ℕ -> List ℕ
+mergesort x with split x
+mergesort x | fst , snd = merge fst snd
