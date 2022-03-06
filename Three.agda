@@ -325,9 +325,9 @@ partition-size (x ∷ xs) | fst , snd | fst₁ , snd₁ = sucsuc _ _ fst₁ , s�
 -}
 
 
-mergesort' : ( xs : List ℕ ) -> Acc  _<′_ (length xs)-> List ℕ
+mergesort' : ( xs : List ℕ ) -> Acc  _<′_ (length xs) -> List ℕ
 mergesort' [] _ = []
-mergesort' (x ∷ []) (acc rs) = x ∷ []
+mergesort' (x ∷ []) _ = x ∷ []
 mergesort' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
 mergesort' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = merge (mergesort' ( x ∷ fst ) (rs _ (s≤′s (s≤′s fst₁))) ) (mergesort' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁))))
 
@@ -335,9 +335,13 @@ mergesort' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = merge (m
 mergesort : List ℕ -> List ℕ
 mergesort xs = mergesort' xs (<′-wellFounded (length xs))
 
+mergesortcorrectness' : ( xs : List ℕ ) -> ∀ ( a :  Acc  _<′_ (length xs)) -> isorder (mergesort' xs a)
+mergesortcorrectness' [] a = nil
+mergesortcorrectness' (x ∷ []) a = one
+mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
+mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = correctness (mergesort' (x ∷ fst)
+                                                                                       (rs (suc (L.foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)
+                                                                                                                                                        (rs (suc (L.foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs (suc (L.foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs (suc (L.foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) 
 
 mergesortcorrectness : ( xs : List ℕ ) -> isorder (mergesort xs)
-mergesortcorrectness [] = nil
-mergesortcorrectness (x ∷ []) = one
-mergesortcorrectness (x ∷ x₁ ∷ xs) with partition xs | partition-size xs 
-mergesortcorrectness (x ∷ x₁ ∷ xs) | fst , snd | fst₁ , snd₁ = {!!}
+mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (L.foldr (λ _ → suc) zero xs)))
