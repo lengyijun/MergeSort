@@ -354,6 +354,12 @@ permutation-refl : (xs : List ℕ ) -> Permutation xs xs
 permutation-refl [] = [][]
 permutation-refl (x ∷ xs) = skip x (permutation-refl xs)
 
+permutation-swap : {xs ys : List ℕ} -> Permutation xs ys -> Permutation ys xs
+permutation-swap {.[]} {.[]} [][] = [][]
+permutation-swap {.(x ∷ _)} {.(x ∷ _)} (skip x x₁) = skip x (permutation-swap x₁)
+permutation-swap {.(x ∷ y ∷ _)} {.(y ∷ x ∷ _)} (swap x y) = swap y x
+permutation-swap {xs} {ys} (permtrans x x₁) = permtrans (permutation-swap x₁) (permutation-swap x)
+
 ++swap : (xs ys : List ℕ ) -> Permutation ( xs ++ ys ) (ys ++ xs)
 ++swap [] ys  rewrite Data.List.Properties.++-identityʳ ys  = permutation-refl ys
 ++swap (x ∷ xs) [] rewrite Data.List.Properties.++-identityʳ (x ∷ xs ) = permutation-refl (x ∷ xs) 
@@ -389,7 +395,8 @@ mergesortpermutation' : (xs : List ℕ ) ->  ∀ ( a :  Acc  _<′_ (length xs))
 mergesortpermutation' [] a = [][]
 mergesortpermutation' (x ∷ []) a = skip x [][]
 mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs | mergepermutation (x ∷ x₁ ∷ xs )
-mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ | z = permtrans (permtrans z (permtrans {!!} (mergel (x₁ ∷ snd) (mergesort' (x₁ ∷ snd)
+mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ | z = permtrans (permtrans z (permtrans (permtrans (permutation-swap (++merge (x ∷ fst) (x₁ ∷ snd)) ) (merger (x ∷ fst ) (mergesort' (x ∷ fst)
+                                                                                                                                               (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (x₁ ∷ snd) (mergesortpermutation' (x ∷ fst) (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁))) ) )) (mergel (x₁ ∷ snd) (mergesort' (x₁ ∷ snd)
                                                                                                                                     (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) (mergesort' (x ∷ fst)
                                                                                                                                                                                                    (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesortpermutation' (x₁ ∷ snd ) (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁))))))) (++merge (mergesort' (x ∷ fst)
                                                                                                         (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)
@@ -398,28 +405,3 @@ mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁
 mergesortpermutation : ( xs : List ℕ ) -> Permutation xs ( mergesort xs )
 mergesortpermutation xs = mergesortpermutation' xs (acc (<′-wellFounded′ (foldr (λ _ → suc) zero xs)))
 
-{-
-equallength : {xs ys : List ℕ} -> Permutation xs ys -> length xs ≡ length ys
-equallength {xs} {ys} x = {!!}
-
-permutation[] : {xs : List ℕ } -> Permutation xs [] -> xs ≡ []
-permutation[] [][] = refl
-permutation[] {xs} (permtrans {l' = l'} x x₁) = {!!}
-
-lemma : { y : ℕ } -> {xs l r : List ℕ} -> Permutation xs ( merge l r ) -> Permutation (y ∷ xs) (merge l (y ∷ r ))
-lemma {y} {xs} {[]} {[]} x = {!!}
-lemma {y} {xs} {[]} {x₁ ∷ r} x = {!!}
-lemma {y} {xs} {x₁ ∷ l} {[]} x = {!!}
-lemma {y} {xs} {x₁ ∷ l} {x₂ ∷ r} x = {!!}
--}
-
-{-
-mergepermutation1 : {y : ℕ} -> (xs : List ℕ ) -> Permutation (y ∷ xs) (merge (proj₁ (partition xs)) ( y ∷ (proj₂ (partition xs))) )
-mergepermutation1 {y} [] = skip y [][]
-mergepermutation1 {y} (x ∷ []) with em x y
-mergepermutation1 {y} (x ∷ []) | inj₁ x₁ = swap y x
-mergepermutation1 {y} (x ∷ []) | inj₂ y₁ = skip y (skip x [][])
-mergepermutation1 {y} (x ∷ x₁ ∷ xs) with partition xs | em x y
-mergepermutation1 {y} (x ∷ x₁ ∷ xs) | fst , snd | inj₁ x₂ = permtrans (swap _ _) (skip x {!!})
-mergepermutation1 {y} (x ∷ x₁ ∷ xs) | fst , snd | inj₂ y₁ = {!!}
--}
