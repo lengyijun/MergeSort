@@ -10,10 +10,8 @@ open import Data.String as String using (String; fromList)
 open import Data.Nat              using (ℕ; zero; suc; _+_; _*_;  _<′_; _≤′_)
 open import Data.Nat.Properties   -- you can use it all!
 open import Data.Bool             using (Bool; true; false; if_then_else_)
-open import Data.List   as L      using (List; []; _∷_; map; length)
+open import Data.List   hiding (merge; partition)
 open import Data.List.Properties  using (map-id; map-compose)
-open import Data.Vec   as V
-  using (Vec; []; _∷_; _++_; replicate; map; splitAt)
 open import Data.Product          using (Σ; Σ-syntax; _,_; proj₁; proj₂; _×_; map)
 open import Data.Sum   as Sum     using (_⊎_; inj₁; inj₂; map)
 open import Data.Unit             using (⊤; tt)
@@ -340,8 +338,88 @@ mergesortcorrectness' [] a = nil
 mergesortcorrectness' (x ∷ []) a = one
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = correctness (mergesort' (x ∷ fst)
-                                                                                       (rs (suc (L.foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)
-                                                                                                                                                        (rs (suc (L.foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs (suc (L.foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs (suc (L.foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) 
+                                                                                       (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)
+                                                                                                                                                        (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) 
 
 mergesortcorrectness : ( xs : List ℕ ) -> isorder (mergesort xs)
-mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (L.foldr (λ _ → suc) zero xs)))
+mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (foldr (λ _ → suc) zero xs)))
+
+data Permutation : List ℕ -> List ℕ -> Set where
+  [][] : Permutation [] []
+  skip : {l l' : List ℕ} -> ( x : ℕ ) -> Permutation l l' -> Permutation (x ∷ l) (x ∷ l')
+  swap : {l : List ℕ} -> (x y : ℕ) -> Permutation (x ∷ y ∷ l) (y ∷ x ∷ l)
+  permtrans : {l l' l'' : List ℕ} -> Permutation l l' -> Permutation l' l'' -> Permutation l l''
+
+permutation-refl : (xs : List ℕ ) -> Permutation xs xs
+permutation-refl [] = [][]
+permutation-refl (x ∷ xs) = skip x (permutation-refl xs)
+
+++swap : (xs ys : List ℕ ) -> Permutation ( xs ++ ys ) (ys ++ xs)
+++swap [] ys  rewrite Data.List.Properties.++-identityʳ ys  = permutation-refl ys
+++swap (x ∷ xs) [] rewrite Data.List.Properties.++-identityʳ (x ∷ xs ) = permutation-refl (x ∷ xs) 
+++swap (x ∷ xs) (y ∷ ys) with ++swap xs (y ∷ ys) | ++swap (x ∷ xs) ys | ++swap ys xs  {- surprise -}
+++swap (x ∷ xs) (y ∷ ys) | z | g | c = permtrans (skip x z) (permtrans (permtrans (swap x y ) (skip y (skip x c))) (skip y g))
+
+++merge : (xs ys : List ℕ ) -> Permutation ( xs ++ ys ) (merge xs ys )
+++merge [] ys = permutation-refl ys
+++merge (x ∷ xs) [] rewrite Data.List.Properties.++-identityʳ (x ∷ xs ) = permutation-refl (x ∷ xs)
+++merge (x ∷ xs) (y ∷ ys) with em x y | ++merge xs (y ∷ ys) | ++merge (x ∷ xs) ys
+++merge (x ∷ xs) (y ∷ ys) | inj₁ x₁ | a | b = skip x a
+++merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | a | b = permtrans (++swap (x ∷ xs) (y ∷ ys)) (skip y (permtrans (++swap ys (x ∷ xs)) b ))
+
+++partition : (xs : List ℕ ) -> Permutation xs  (( proj₁ (partition xs)) ++  (proj₂ (partition xs)) )
+++partition [] = [][]
+++partition (x ∷ []) = skip x [][]
+++partition (x ∷ x₁ ∷ xs) with partition xs | ++partition xs
+++partition (x ∷ x₁ ∷ xs) | fst , snd | z = skip x (permtrans (skip x₁ (permtrans z (++swap fst snd) )) (++swap (x₁ ∷ snd ) fst ))
+
+mergepermutation : (xs : List ℕ ) -> Permutation xs (merge (proj₁ (partition xs)) (proj₂ (partition xs)) )
+mergepermutation xs with partition xs | ++partition xs 
+mergepermutation xs | fst , snd | z = permtrans z (++merge fst snd)
+
+
+mergel : (xs1 xs2 ys : List ℕ) -> Permutation xs1 xs2 -> Permutation (ys ++ xs1) (ys ++ xs2  )
+mergel xs1 xs2 [] p = p
+mergel xs1 xs2 (y ∷ ys) p = skip y (mergel xs1 xs2 ys p)
+
+merger :  (xs1 xs2 ys : List ℕ) -> Permutation xs1 xs2 -> Permutation (xs1 ++ ys) ( xs2 ++ ys )
+merger xs1 xs2 ys x = permtrans (++swap xs1 ys ) (permtrans (mergel xs1 xs2 ys x) (++swap ys xs2 ) )
+
+mergesortpermutation' : (xs : List ℕ ) ->  ∀ ( a :  Acc  _<′_ (length xs)) -> Permutation xs (mergesort' xs a)
+mergesortpermutation' [] a = [][]
+mergesortpermutation' (x ∷ []) a = skip x [][]
+mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs | mergepermutation (x ∷ x₁ ∷ xs )
+mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ | z = permtrans (permtrans z (permtrans {!!} (mergel (x₁ ∷ snd) (mergesort' (x₁ ∷ snd)
+                                                                                                                                    (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) (mergesort' (x ∷ fst)
+                                                                                                                                                                                                   (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesortpermutation' (x₁ ∷ snd ) (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁))))))) (++merge (mergesort' (x ∷ fst)
+                                                                                                        (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)
+                                                                                                                                                                       (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) )
+
+mergesortpermutation : ( xs : List ℕ ) -> Permutation xs ( mergesort xs )
+mergesortpermutation xs = mergesortpermutation' xs (acc (<′-wellFounded′ (foldr (λ _ → suc) zero xs)))
+
+{-
+equallength : {xs ys : List ℕ} -> Permutation xs ys -> length xs ≡ length ys
+equallength {xs} {ys} x = {!!}
+
+permutation[] : {xs : List ℕ } -> Permutation xs [] -> xs ≡ []
+permutation[] [][] = refl
+permutation[] {xs} (permtrans {l' = l'} x x₁) = {!!}
+
+lemma : { y : ℕ } -> {xs l r : List ℕ} -> Permutation xs ( merge l r ) -> Permutation (y ∷ xs) (merge l (y ∷ r ))
+lemma {y} {xs} {[]} {[]} x = {!!}
+lemma {y} {xs} {[]} {x₁ ∷ r} x = {!!}
+lemma {y} {xs} {x₁ ∷ l} {[]} x = {!!}
+lemma {y} {xs} {x₁ ∷ l} {x₂ ∷ r} x = {!!}
+-}
+
+{-
+mergepermutation1 : {y : ℕ} -> (xs : List ℕ ) -> Permutation (y ∷ xs) (merge (proj₁ (partition xs)) ( y ∷ (proj₂ (partition xs))) )
+mergepermutation1 {y} [] = skip y [][]
+mergepermutation1 {y} (x ∷ []) with em x y
+mergepermutation1 {y} (x ∷ []) | inj₁ x₁ = swap y x
+mergepermutation1 {y} (x ∷ []) | inj₂ y₁ = skip y (skip x [][])
+mergepermutation1 {y} (x ∷ x₁ ∷ xs) with partition xs | em x y
+mergepermutation1 {y} (x ∷ x₁ ∷ xs) | fst , snd | inj₁ x₂ = permtrans (swap _ _) (skip x {!!})
+mergepermutation1 {y} (x ∷ x₁ ∷ xs) | fst , snd | inj₂ y₁ = {!!}
+-}
