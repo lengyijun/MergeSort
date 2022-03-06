@@ -10,7 +10,7 @@ open import Data.String as String using (String; fromList)
 open import Data.Nat              using (ℕ; zero; suc; _+_; _*_)
 open import Data.Nat.Properties   -- you can use it all!
 open import Data.Bool             using (Bool; true; false; if_then_else_)
-open import Data.List   as L      using (List; []; _∷_; map)
+open import Data.List   as L      using (List; []; _∷_; map; length)
 open import Data.List.Properties  using (map-id; map-compose)
 open import Data.Vec   as V
   using (Vec; []; _∷_; _++_; replicate; map; splitAt)
@@ -24,7 +24,9 @@ open import Relation.Binary.PropositionalEquality
   using (_≡_; refl; cong; cong₂; cong-app; sym; trans; subst; module ≡-Reasoning)
 open ≡-Reasoning
 open import Relation.Nullary      using (¬_; Dec; yes; no)
-
+open import Induction.WellFounded
+open import Relation.Unary
+open import Relation.Binary
 
 data _≤_ : ℕ  -> ℕ -> Set where
   ≤-reflex : {n : ℕ } -> n ≤ n
@@ -286,10 +288,19 @@ correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃
 
 split : List ℕ -> List ℕ × List ℕ
 split [] = [] , []
-split (x ∷ []) = x ∷ [] , []
-split (x ∷ x₁ ∷ xs) with split xs
-split (x ∷ x₁ ∷ xs) | fst , snd = x ∷ fst , x₁ ∷ snd
+split (x ∷ xs) with split xs
+split (x ∷ xs) | fst , snd = x ∷ fst , snd
 
+_≼_ : ∀ {a} {A : Set a} → Rel (List A) _
+x ≼ x₁ = ( length x )  ≤ length x₁
+
+{-
 mergesort : List ℕ -> List ℕ
 mergesort x with split x
-mergesort x | fst , snd = merge fst snd
+mergesort x | fst , snd = mergesort fst
+-}
+
+{-
+mergesortcorrectness : ( L : List ℕ ) -> isorder (mergesort L)
+mergesortcorrectness L = {!!}
+-}
