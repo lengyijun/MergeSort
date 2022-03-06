@@ -1,9 +1,3 @@
-
-{-# OPTIONS --type-in-type --guardedness #-}
-
-
-module Three where
-
 open import Category.Applicative  using (RawApplicative)
 open import Data.Char             using (Char)
 open import Data.String as String using (String; fromList)
