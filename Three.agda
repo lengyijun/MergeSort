@@ -7,7 +7,7 @@ module Three where
 open import Category.Applicative  using (RawApplicative)
 open import Data.Char             using (Char)
 open import Data.String as String using (String; fromList)
-open import Data.Nat              using (ℕ; zero; suc; _+_; _*_)
+open import Data.Nat              using (ℕ; zero; suc; _+_; _*_;  _<′_; _≤′_)
 open import Data.Nat.Properties   -- you can use it all!
 open import Data.Bool             using (Bool; true; false; if_then_else_)
 open import Data.List   as L      using (List; []; _∷_; map; length)
@@ -27,6 +27,7 @@ open import Relation.Nullary      using (¬_; Dec; yes; no)
 open import Induction.WellFounded
 open import Relation.Unary
 open import Relation.Binary
+open import Data.Nat.Induction
 
 data _≤_ : ℕ  -> ℕ -> Set where
   ≤-reflex : {n : ℕ } -> n ≤ n
@@ -286,10 +287,8 @@ correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₂ y₃ = two x₁ x (y₁ ∷ merge (y ∷ L) L₁) y₂ (two x y₁ (merge (y ∷ L) L₁) x₆ (lemma4 y₁ y L₁ L y₃ x₃ x₅ ))
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₂ y₃ | zz = two x₁ y₁ (merge (x ∷ y ∷ L) L₁) x₄ (lemma6 x y y₁ L L₁ x₂ y₃ x₅ x₃) 
 
-
 _≼_ : ∀ {a} {A : Set a} → Rel (List A) _
-x ≼ x₁ = ( length x )  ≤ length x₁
-
+x ≼ x₁ = ( length x )   ≤′ length x₁
 
 partition : List ℕ -> List ℕ × List ℕ
 partition [] = [] , []
@@ -298,17 +297,23 @@ partition (x ∷ x₁ ∷ xs) with partition xs
 partition (x ∷ x₁ ∷ xs) | fst , snd = x ∷ fst , x₁ ∷ snd
 
 partition-size : (xs : List ℕ) → proj₁ (partition xs) ≼ xs × proj₂ (partition xs) ≼ xs
+partition-size [] = _≤′_.≤′-refl , _≤′_.≤′-refl
+partition-size (x ∷ []) = _≤′_.≤′-refl , _≤′_.≤′-step _≤′_.≤′-refl
+partition-size (x ∷ x₁ ∷ xs) with partition xs | partition-size xs
+partition-size (x ∷ x₁ ∷ xs) | fst , snd | fst₁ , snd₁ = s≤′s (_≤′_.≤′-step fst₁) , s≤′s (_≤′_.≤′-step snd₁)
+
+{-
+_≼_ : ∀ {a} {A : Set a} → Rel (List A) _
+x ≼ x₁ = ( length x )  ≤ length x₁
+
+partition-size : (xs : List ℕ) → proj₁ (partition xs) ≼ xs × proj₂ (partition xs) ≼ xs
 partition-size [] = ≤-reflex , ≤-reflex
 partition-size (x ∷ []) = ≤-reflex , s≤s ≤-reflex
 partition-size (x ∷ x₁ ∷ xs) with partition xs | partition-size xs
 partition-size (x ∷ x₁ ∷ xs) | fst , snd | fst₁ , snd₁ = sucsuc _ _ (s≤s fst₁) , sucsuc _ _ (s≤s snd₁)
+-}
 
 {-
-partition : List ℕ -> List ℕ × List ℕ
-partition [] = [] , []
-partition (x ∷ xs) with partition xs
-partition (x ∷ xs) | fst , snd = x ∷ fst , snd
-
 example : ( partition ( 1 ∷ 2 ∷ [] ) ) ≡ ( 1 ∷ 2 ∷ [] , [] )
 example with ( partition ( 2 ∷ [] ) ) ≡ ( 2 ∷ [] , []) 
 example | z = refl
@@ -319,13 +324,20 @@ partition-size (x ∷ xs) with partition xs | partition-size xs
 partition-size (x ∷ xs) | fst , snd | fst₁ , snd₁ = sucsuc _ _ fst₁ , s≤s snd₁
 -}
 
-{-
-mergesort : List ℕ -> List ℕ
-mergesort x with split x
-mergesort x | fst , snd = mergesort fst
--}
 
-{-
-mergesortcorrectness : ( L : List ℕ ) -> isorder (mergesort L)
-mergesortcorrectness L = {!!}
--}
+mergesort' : ( xs : List ℕ ) -> Acc  _<′_ (length xs)-> List ℕ
+mergesort' [] _ = []
+mergesort' (x ∷ []) (acc rs) = x ∷ []
+mergesort' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
+mergesort' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = merge (mergesort' ( x ∷ fst ) (rs _ (s≤′s (s≤′s fst₁))) ) (mergesort' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁))))
+
+
+mergesort : List ℕ -> List ℕ
+mergesort xs = mergesort' xs (<′-wellFounded (length xs))
+
+
+mergesortcorrectness : ( xs : List ℕ ) -> isorder (mergesort xs)
+mergesortcorrectness [] = nil
+mergesortcorrectness (x ∷ []) = one
+mergesortcorrectness (x ∷ x₁ ∷ xs) with partition xs | partition-size xs 
+mergesortcorrectness (x ∷ x₁ ∷ xs) | fst , snd | fst₁ , snd₁ = {!!}
