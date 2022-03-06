@@ -286,13 +286,38 @@ correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₁ x₆ | inj₂ y₃ = two x₁ x (y₁ ∷ merge (y ∷ L) L₁) y₂ (two x y₁ (merge (y ∷ L) L₁) x₆ (lemma4 y₁ y L₁ L y₃ x₃ x₅ ))
 correctness (x ∷ .(y ∷ L)) (x₁ ∷ .(y₁ ∷ L₁)) (two .x y L x₂ x₃) (two .x₁ y₁ L₁ x₄ x₅) | inj₂ y₂ | z | inj₂ y₃ | zz = two x₁ y₁ (merge (x ∷ y ∷ L) L₁) x₄ (lemma6 x y y₁ L L₁ x₂ y₃ x₅ x₃) 
 
-split : List ℕ -> List ℕ × List ℕ
-split [] = [] , []
-split (x ∷ xs) with split xs
-split (x ∷ xs) | fst , snd = x ∷ fst , snd
 
 _≼_ : ∀ {a} {A : Set a} → Rel (List A) _
 x ≼ x₁ = ( length x )  ≤ length x₁
+
+
+partition : List ℕ -> List ℕ × List ℕ
+partition [] = [] , []
+partition (x ∷ []) = x ∷ [] , []
+partition (x ∷ x₁ ∷ xs) with partition xs
+partition (x ∷ x₁ ∷ xs) | fst , snd = x ∷ fst , x₁ ∷ snd
+
+partition-size : (xs : List ℕ) → proj₁ (partition xs) ≼ xs × proj₂ (partition xs) ≼ xs
+partition-size [] = ≤-reflex , ≤-reflex
+partition-size (x ∷ []) = ≤-reflex , s≤s ≤-reflex
+partition-size (x ∷ x₁ ∷ xs) with partition xs | partition-size xs
+partition-size (x ∷ x₁ ∷ xs) | fst , snd | fst₁ , snd₁ = sucsuc _ _ (s≤s fst₁) , sucsuc _ _ (s≤s snd₁)
+
+{-
+partition : List ℕ -> List ℕ × List ℕ
+partition [] = [] , []
+partition (x ∷ xs) with partition xs
+partition (x ∷ xs) | fst , snd = x ∷ fst , snd
+
+example : ( partition ( 1 ∷ 2 ∷ [] ) ) ≡ ( 1 ∷ 2 ∷ [] , [] )
+example with ( partition ( 2 ∷ [] ) ) ≡ ( 2 ∷ [] , []) 
+example | z = refl
+
+partition-size : (xs : List ℕ) → proj₁ (partition xs) ≼ xs × proj₂ (partition xs) ≼ xs
+partition-size [] = ≤-reflex , ≤-reflex
+partition-size (x ∷ xs) with partition xs | partition-size xs
+partition-size (x ∷ xs) | fst , snd | fst₁ , snd₁ = sucsuc _ _ fst₁ , s≤s snd₁
+-}
 
 {-
 mergesort : List ℕ -> List ℕ
