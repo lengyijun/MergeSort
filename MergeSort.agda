@@ -51,12 +51,12 @@ em (suc m) (suc n) | inj₂ y = inj₂ (sucsuc _ _ y)
 ≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) with transitive (s≤s ≤-reflex) x₁ |  transitive (s≤s ≤-reflex) x
 ≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) | a | b = cong suc (≤reflrefl b a)
   
-data isorder : List ℕ -> Set where
-  nil : isorder []
-  one : {x : ℕ } -> isorder ( x ∷ [] )
-  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> isorder ( y ∷ L ) -> isorder ( x ∷ y ∷ L )
+data issorted : List ℕ -> Set where
+  nil : issorted []
+  one : {x : ℕ } -> issorted ( x ∷ [] )
+  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> issorted ( y ∷ L ) -> issorted ( x ∷ y ∷ L )
 
-extractorder : (x : ℕ) -> (l : List ℕ ) -> isorder ( x ∷ l ) -> isorder l
+extractorder : (x : ℕ) -> (l : List ℕ ) -> issorted ( x ∷ l ) -> issorted l
 extractorder x .[] one = nil
 extractorder x .(y ∷ L) (two .x y L x₁ x₂) = x₂
 
@@ -72,21 +72,21 @@ merge[] : ( x : List ℕ ) -> x ≡ merge x []
 merge[] [] = refl
 merge[] (x ∷ x₁) = refl
 
-mergelemma1 : ( x : ℕ ) -> (xs : List ℕ ) -> isorder (x ∷ xs ) -> merge xs (x ∷ []) ≡ x ∷ xs
+mergelemma1 : ( x : ℕ ) -> (xs : List ℕ ) -> issorted (x ∷ xs ) -> merge xs (x ∷ []) ≡ x ∷ xs
 mergelemma1 x .[] one = refl
 mergelemma1 x .(y ∷ L) (two .x y L x₁ x₂) with em y x
 mergelemma1 x .(y ∷ L) (two .x y L x₁ x₂) | inj₁ x₃ with ≤reflrefl x₁ x₃
 mergelemma1 x .(x ∷ L) (two .x .x L x₁ x₂) | inj₁ x₃ | refl = cong (_∷_ x) (mergelemma1 x L x₂)
 mergelemma1 x .(y ∷ L) (two .x y L x₁ x₂) | inj₂ y₁ = refl
 
-mergelemma2 : ( x : ℕ ) -> (xs : List ℕ ) -> isorder (x ∷ xs ) -> merge (x ∷ []) xs ≡ x ∷ xs
+mergelemma2 : ( x : ℕ ) -> (xs : List ℕ ) -> issorted (x ∷ xs ) -> merge (x ∷ []) xs ≡ x ∷ xs
 mergelemma2 x .[] one = refl
 mergelemma2 x .(y ∷ L) (two .x y L x₁ x₂) with em x y
 mergelemma2 x .(y ∷ L) (two .x y L x₁ x₂) | inj₁ x₃ = refl
 mergelemma2 x .(y ∷ L) (two .x y L x₁ x₂) | inj₂ y₁ with ≤reflrefl x₁ y₁
 mergelemma2 x .(x ∷ L) (two .x .x L x₁ x₂) | inj₂ y₁ | refl = cong (_∷_ x) (mergelemma2 x L x₂)
 
-mergelemma3 : ( x : ℕ ) ->  ( ys : List ℕ ) -> isorder ys ->  merge ys (x ∷ []) ≡ merge (x ∷ []) ys
+mergelemma3 : ( x : ℕ ) ->  ( ys : List ℕ ) -> issorted ys ->  merge ys (x ∷ []) ≡ merge (x ∷ []) ys
 mergelemma3 x .[] nil = refl
 mergelemma3 x .(y ∷ []) (one {y}) with em x y | em y x
 mergelemma3 x .(y ∷ []) (one {y}) | inj₁ x₁ | inj₁ x₂ with ≤reflrefl x₁ x₂
@@ -115,7 +115,7 @@ mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y�
 
 {-
 mutual
-  mergelemma5 :  (x : ℕ) -> (xs ys : List ℕ) -> isorder (x ∷ xs ) -> isorder (x ∷ ys ) -> merge ys (x ∷ xs) ≡ x ∷ merge ys xs
+  mergelemma5 :  (x : ℕ) -> (xs ys : List ℕ) -> issorted (x ∷ xs ) -> issorted (x ∷ ys ) -> merge ys (x ∷ xs) ≡ x ∷ merge ys xs
   mergelemma5 x xs .[] x₁ one = refl
   mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) with em y x
   mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) | inj₁ x₄ with ≤reflrefl x₂ x₄
@@ -134,7 +134,7 @@ mutual
     ∎)
   mergelemma5 x xs .(y ∷ L) x₁ (two .x y L x₂ x₃) | inj₂ y₁ = refl
 
-  mergelemma6 :  (x : ℕ) -> (xs ys : List ℕ) -> isorder (x ∷ xs ) -> isorder (x ∷ ys ) -> merge (x ∷ xs) ys ≡ x ∷ merge xs ys
+  mergelemma6 :  (x : ℕ) -> (xs ys : List ℕ) -> issorted (x ∷ xs ) -> issorted (x ∷ ys ) -> merge (x ∷ xs) ys ≡ x ∷ merge xs ys
   mergelemma6 x .[] ys one x₂ = mergelemma2 x ys x₂
   mergelemma6 x .(y ∷ L) .[] (two .x y L x₁ x₃) one = refl
   mergelemma6 x .(y ∷ L) .(y₁ ∷ L₁) (two .x y L x₁ x₃) (two .x y₁ L₁ x₂ x₄) with em x y₁
@@ -166,7 +166,7 @@ mutual
     ∎)
   mergelemma6 x .(y ∷ L) .(x ∷ L₁) (two .x y L x₁ x₃) (two .x x L₁ x₂ x₄) | inj₂ y₂ | refl | inj₂ y₁ | inj₂ y₃ = cong (_∷_ x) (mergelemma6 x (y ∷ L) L₁ (two x y L x₁ x₃) x₄)
 
-mergelemma7 : ( x : ℕ ) -> ( xs ys : List ℕ ) -> isorder (x ∷ xs) -> isorder ys -> merge ys (x ∷ xs ) ≡ merge ( x ∷ xs ) ys
+mergelemma7 : ( x : ℕ ) -> ( xs ys : List ℕ ) -> issorted (x ∷ xs) -> issorted ys -> merge ys (x ∷ xs ) ≡ merge ( x ∷ xs ) ys
 mergelemma7 x xs .[] x₁ nil = refl
 mergelemma7 x xs .(x₂ ∷ []) x₁ (one {x₂}) with em x x₂ | em x₂ x
 mergelemma7 x xs .(x₂ ∷ []) x₁ (one {x₂}) | inj₁ x₃ | inj₁ x₄ with ≤reflrefl x₄ x₃
@@ -184,7 +184,7 @@ mergelemma7 x xs .(x₂ ∷ y ∷ L) x₁ (two x₂ y L x₃ x₄) | inj₁ x₅
 mergelemma7 x xs .(x₂ ∷ y ∷ L) x₁ (two x₂ y L x₃ x₄) | inj₂ y₁ | inj₁ x₅ = {!!}
 mergelemma7 x xs .(x₂ ∷ y ∷ L) x₁ (two x₂ y L x₃ x₄) | inj₂ y₁ | inj₂ y₂ = {!!}
 
-mergelemma4 : (x y : ℕ) -> ( ys L : List ℕ ) -> x ≤ y -> isorder ( y ∷ L ) -> isorder ys ->  merge ys (x ∷ y ∷ L) ≡ merge (x ∷ y ∷ L) ys
+mergelemma4 : (x y : ℕ) -> ( ys L : List ℕ ) -> x ≤ y -> issorted ( y ∷ L ) -> issorted ys ->  merge ys (x ∷ y ∷ L) ≡ merge (x ∷ y ∷ L) ys
 mergelemma4 x y [] L x₁ x₂ x₃ = refl
 mergelemma4 x y (x₄ ∷ ys) L x₁ x₂ x₃ with em x₄ x | em x x₄
 mergelemma4 x y (x₄ ∷ ys) L x₁ x₂ x₃ | inj₁ x₅ | inj₁ x₆ with ≤reflrefl x₅ x₆
@@ -203,38 +203,38 @@ mergelemma4 x y (x₄ ∷ ys) L x₁ x₂ x₃ | inj₂ y₁ | inj₂ y₂ with 
 mergelemma4 x y (x ∷ ys) L x₁ x₂ x₃ | inj₂ y₁ | inj₂ y₂ | inj₁ x₄ | refl = {!!} {- trival -}
 mergelemma4 x y (x ∷ ys) L x₁ x₂ x₃ | inj₂ y₁ | inj₂ y₂ | inj₂ y₃ | refl = {!!} {- trival -}
 
-mergeswap : ( xs ys  : List ℕ ) -> isorder xs -> isorder ys -> merge ys xs  ≡ merge xs ys 
+mergeswap : ( xs ys  : List ℕ ) -> issorted xs -> issorted ys -> merge ys xs  ≡ merge xs ys 
 mergeswap .[] ys nil x₁ = sym (merge[] ys)
 mergeswap .(x ∷ []) ys (one {x}) x₁ = mergelemma3 x ys x₁
 mergeswap .(x ∷ y ∷ L) ys (two x y L x₂ x₃) x₁ = mergelemma4 x y ys L x₂ x₃ x₁
 -}
 
-lemma1 : ( x y : ℕ ) -> (L : List ℕ ) -> y ≤ x -> isorder (y ∷ L) -> isorder (y ∷ merge (x ∷ [] ) L )
+lemma1 : ( x y : ℕ ) -> (L : List ℕ ) -> y ≤ x -> issorted (y ∷ L) -> issorted (y ∷ merge (x ∷ [] ) L )
 lemma1 x y .[] x₁ one = two y x [] x₁ one
 lemma1 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) with em x y₁
 lemma1 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₁ x₄ = two y x (y₁ ∷ L) x₁ (two x y₁ L x₄ x₃)
 lemma1 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₂ y₂ = two y y₁ (merge (x ∷ []) L) x₂ (lemma1 x y₁ L y₂ x₃ )
 
-lemma2 : ( x y : ℕ ) -> (L : List ℕ ) -> y ≤ x -> isorder (y ∷ L) -> isorder (y ∷ merge L (x ∷ [] ) )
+lemma2 : ( x y : ℕ ) -> (L : List ℕ ) -> y ≤ x -> issorted (y ∷ L) -> issorted (y ∷ merge L (x ∷ [] ) )
 lemma2 x y .[] x₁ one = two y x [] x₁ one
 lemma2 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) with em y₁ x
 lemma2 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₁ x₄ = two y y₁ (merge L (x ∷ [])) x₂ (lemma2 x y₁ L x₄ x₃ )
 lemma2 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₂ y₂ = two y x (y₁ ∷ L) x₁ (two x y₁ L y₂ x₃)
 
 mutual
-  lemma3 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  isorder (y₁ ∷ L₁) ->  isorder (y ∷ L) ->  isorder (y ∷ merge L (y₁ ∷ L₁))
+  lemma3 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  issorted (y₁ ∷ L₁) ->  issorted (y ∷ L) ->  issorted (y ∷ merge L (y₁ ∷ L₁))
   lemma3 y y₁ .[] L₁ x x₁ one = two y y₁ L₁ x x₁
   lemma3 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) with em y₂ y₁
   lemma3 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₁ x₄ = two y y₂ (merge L (y₁ ∷ L₁)) x₂  (lemma3 y₂ y₁ L L₁ x₄  x₁ x₃)
   lemma3 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₂ y₃ = two y y₁ (merge (y₂ ∷ L) L₁) x (lemma4 y₁ y₂ L₁ L y₃ x₃ x₁ )
 
-  lemma4 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  isorder (y₁ ∷ L₁) ->  isorder (y ∷ L) ->  isorder (y ∷ merge (y₁ ∷ L₁) L)
+  lemma4 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  issorted (y₁ ∷ L₁) ->  issorted (y ∷ L) ->  issorted (y ∷ merge (y₁ ∷ L₁) L)
   lemma4 y y₁ .[] L₁ x x₁ one = two y y₁ L₁ x x₁
   lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) with em y₁ y₂
   lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₁ x₄ = two y y₁ (merge L₁ (y₂ ∷ L)) x (lemma3 y₁ y₂ L₁ L x₄ x₃ x₁)
   lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₂ y₃ = two y y₂ (merge (y₁ ∷ L₁) L) x₂ (lemma4 y₂ y₁ L L₁ y₃ x₁ x₃ )
 
-lemma5 : ( x₁ y₁ y : ℕ ) -> ( L L₁ : List ℕ ) ->  y ≤ x₁ -> x₁ ≤ y₁ ->  isorder (y₁ ∷ L₁) ->  isorder ( y ∷ L) -> isorder (y ∷ merge L (x₁ ∷ y₁ ∷ L₁))
+lemma5 : ( x₁ y₁ y : ℕ ) -> ( L L₁ : List ℕ ) ->  y ≤ x₁ -> x₁ ≤ y₁ ->  issorted (y₁ ∷ L₁) ->  issorted ( y ∷ L) -> issorted (y ∷ merge L (x₁ ∷ y₁ ∷ L₁))
 lemma5 x₁ y₁ y .[] L₁ x₂ x₃ x₄ one = two y x₁ (y₁ ∷ L₁) x₂ (two x₁ y₁ L₁ x₃ x₄)
 lemma5 x₁ y₁ y .(y₂ ∷ L) L₁ x₂ x₃ x₄ (two .y y₂ L x₅ x₆) with em y₂ x₁
 lemma5 x₁ y₁ y .(y₂ ∷ L) L₁ x₂ x₃ x₄ (two .y y₂ L x₅ x₆) | inj₁ x₇ = two y y₂ (merge L (x₁ ∷ y₁ ∷ L₁)) x₅ (lemma5 x₁ y₁ y₂ L L₁  x₇ x₃ x₄ x₆)
@@ -243,7 +243,7 @@ lemma5 x₁ y₁ y .(y₂ ∷ L) L₁ x₂ x₃ x₄ (two .y y₂ L x₅ x₆) |
 lemma5 x₁ y₁ y .(y₂ ∷ L) L₁ x₂ x₃ x₄ (two .y y₂ L x₅ x₆) | inj₂ y₃ | inj₂ y₄ = two y x₁ (y₁ ∷ merge (y₂ ∷ L) L₁) x₂ (two x₁ y₁ (merge (y₂ ∷ L) L₁) x₃ (lemma4 y₁ y₂ L₁ L y₄ x₆ x₄))
 
 
-lemma6 : ( x y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> x ≤ y -> y₁ ≤ x ->  isorder (y₁ ∷ L₁) -> isorder (y ∷ L) -> isorder (y₁ ∷ merge (x ∷ y ∷ L) L₁)
+lemma6 : ( x y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> x ≤ y -> y₁ ≤ x ->  issorted (y₁ ∷ L₁) -> issorted (y ∷ L) -> issorted (y₁ ∷ merge (x ∷ y ∷ L) L₁)
 lemma6 x y y₁ L .[] x₁ x₂ one x₄ = two y₁ x (y ∷ L) x₂ (two x y L x₁ x₄)
 lemma6 x y y₁ L .(y₂ ∷ L₁) x₁ x₂ (two .y₁ y₂ L₁ x₃ x₅) x₄ with em x y₂
 lemma6 x y y₁ L .(y₂ ∷ L₁) x₁ x₂ (two .y₁ y₂ L₁ x₃ x₅) x₄ | inj₁ x₆ with em y y₂
@@ -252,7 +252,7 @@ lemma6 x y y₁ L .(y₂ ∷ L₁) x₁ x₂ (two .y₁ y₂ L₁ x₃ x₅) x�
 lemma6 x y y₁ L .(y₂ ∷ L₁) x₁ x₂ (two .y₁ y₂ L₁ x₃ x₅) x₄ | inj₂ y₃ = two y₁ y₂ (merge (x ∷ y ∷ L) L₁) x₃ (lemma6 x y y₂ L  L₁ x₁ y₃ x₅ x₄)
 
 
-correctness : ( xs ys : List ℕ ) -> isorder xs -> isorder ys -> isorder ( merge xs ys )
+correctness : ( xs ys : List ℕ ) -> issorted xs -> issorted ys -> issorted ( merge xs ys )
 correctness [] [] nil nil = nil
 correctness [] (x ∷ .[]) nil one = one
 correctness [] (x ∷ .(y ∷ L)) nil (two .x y L x₁ x₂) = two x y L x₁ x₂
@@ -327,7 +327,7 @@ mergesort' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = merge (m
 mergesort : List ℕ -> List ℕ
 mergesort xs = mergesort' xs (<′-wellFounded (length xs))
 
-mergesortcorrectness' : ( xs : List ℕ ) -> ∀ ( a :  Acc  _<′_ (length xs)) -> isorder (mergesort' xs a)
+mergesortcorrectness' : ( xs : List ℕ ) -> ∀ ( a :  Acc  _<′_ (length xs)) -> issorted (mergesort' xs a)
 mergesortcorrectness' [] a = nil
 mergesortcorrectness' (x ∷ []) a = one
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
@@ -335,7 +335,7 @@ mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁
                                                                                        (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)
                                                                                                                                                         (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) 
 
-mergesortcorrectness : ( xs : List ℕ ) -> isorder (mergesort xs)
+mergesortcorrectness : ( xs : List ℕ ) -> issorted (mergesort xs)
 mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (foldr (λ _ → suc) zero xs)))
 
 data Permutation : List ℕ -> List ℕ -> Set where
