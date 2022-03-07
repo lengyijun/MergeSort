@@ -1,4 +1,3 @@
-open import Category.Applicative  using (RawApplicative)
 open import Data.Char             using (Char)
 open import Data.String as String using (String; fromList)
 open import Data.Nat              using (ℕ; zero; suc; _+_; _*_;  _<′_; _≤′_)
