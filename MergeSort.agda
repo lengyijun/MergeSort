@@ -1,7 +1,6 @@
-open import Data.Char             using (Char)
 open import Data.String as String using (String; fromList)
 open import Data.Nat              using (ℕ; zero; suc; _+_; _*_;  _<′_; _≤′_)
-open import Data.Nat.Properties   -- you can use it all!
+open import Data.Nat.Properties  
 open import Data.Bool             using (Bool; true; false; if_then_else_)
 open import Data.List   hiding (merge; partition)
 open import Data.List.Properties  using (map-id; map-compose)
@@ -9,8 +8,6 @@ open import Data.Product          using (Σ; Σ-syntax; _,_; proj₁; proj₂; _
 open import Data.Sum   as Sum     using (_⊎_; inj₁; inj₂; map)
 open import Data.Unit             using (⊤; tt)
 open import Data.Empty            using (⊥; ⊥-elim)
-open import Function   as F       using (_∘′_; id)
-open import IO.Primitive          using (IO)
 open import Relation.Binary.PropositionalEquality
   using (_≡_; refl; cong; cong₂; cong-app; sym; trans; subst; module ≡-Reasoning)
 open ≡-Reasoning
