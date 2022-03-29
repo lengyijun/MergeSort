@@ -82,7 +82,7 @@ mutual
   merge' x (x₁ ∷ xs) (y ∷ ys) | inj₂ y₁ = x ∷ y ∷ merge' x₁ xs ys
 -}
 
-
+{- Don't try to prove `merge x y ≡ merge y x` -}
 {-
 merge[] : ( x : List ℕ ) -> x ≡ merge x []
 merge[] [] = refl
