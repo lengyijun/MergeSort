@@ -67,6 +67,7 @@ merge (x ∷ xs) (y ∷ ys) with em x y | merge xs (y ∷ ys ) | merge  (x ∷ x
 merge (x ∷ xs) (y ∷ ys) | inj₁ x₁ | b | c = x ∷ b
 merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = y ∷ c 
 
+{-
 merge[] : ( x : List ℕ ) -> x ≡ merge x []
 merge[] [] = refl
 merge[] (x ∷ x₁) = refl
@@ -112,7 +113,6 @@ mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y�
 mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ | refl | inj₂ y₃ with ≤reflrefl x₂ y₃
 mergelemma3 x .(x ∷ y ∷ L) (two .x y L x₂ x₃) | inj₂ y₁ | inj₂ y₂ | refl | inj₂ y₃ | refl = cong (_∷_ x) (cong (_∷_ x)  (sym (mergelemma2 x L x₃)))
 
-{-
 mutual
   mergelemma5 :  (x : ℕ) -> (xs ys : List ℕ) -> issorted (x ∷ xs ) -> issorted (x ∷ ys ) -> merge ys (x ∷ xs) ≡ x ∷ merge ys xs
   mergelemma5 x xs .[] x₁ one = refl
