@@ -13,7 +13,6 @@ open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 open import Relation.Nullary      using (¬_; Dec; yes; no)
 open import Induction.WellFounded
-open import Relation.Unary
 open import Relation.Binary
 open import Data.Nat.Induction
 
