@@ -350,7 +350,7 @@ mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁
                                                                                                                                                         (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) 
 
 mergesortcorrectness : ( xs : List ℕ ) -> issorted (mergesort xs)
-mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (foldr (λ _ → suc) zero xs)))
+mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (length xs) ))
 
 data Permutation : List ℕ -> List ℕ -> Set where
   [][] : Permutation [] []
@@ -411,5 +411,5 @@ mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁
                                                                                                                                                                        (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) )
 
 mergesortpermutation : ( xs : List ℕ ) -> Permutation xs ( mergesort xs )
-mergesortpermutation xs = mergesortpermutation' xs (acc (<′-wellFounded′ (foldr (λ _ → suc) zero xs)))
+mergesortpermutation xs = mergesortpermutation' xs (acc (<′-wellFounded′ (length xs) ))
 
