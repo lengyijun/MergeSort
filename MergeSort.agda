@@ -401,12 +401,7 @@ mergesortpermutation' : (xs : List ℕ ) ->  ∀ ( a :  Acc  _<′_ (length xs))
 mergesortpermutation' [] a = [][]
 mergesortpermutation' (x ∷ []) a = skip x [][]
 mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs | mergepermutation (x ∷ x₁ ∷ xs )
-mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ | z = permtrans (permtrans z (permtrans (permtrans (permutation-swap (++merge (x ∷ fst) (x₁ ∷ snd)) ) (merger (x ∷ fst ) (mergesort' (x ∷ fst)
-                                                                                                                                               (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (x₁ ∷ snd) (mergesortpermutation' (x ∷ fst) (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁))) ) )) (mergel (x₁ ∷ snd) (mergesort' (x₁ ∷ snd)
-                                                                                                                                    (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) (mergesort' (x ∷ fst)
-                                                                                                                                                                                                   (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesortpermutation' (x₁ ∷ snd ) (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁))))))) (++merge (mergesort' (x ∷ fst)
-                                                                                                        (rs (suc (foldr (λ _ → suc) zero fst)) (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)
-                                                                                                                                                                       (rs (suc (foldr (λ _ → suc) zero snd)) (s≤′s (s≤′s snd₁)))) )
+mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ | z = permtrans (permtrans z (permtrans (permtrans (permutation-swap (++merge (x ∷ fst) (x₁ ∷ snd)) ) (merger (x ∷ fst ) (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (x₁ ∷ snd) (mergesortpermutation' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁))) ) )) (mergel (x₁ ∷ snd) (mergesort' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortpermutation' (x₁ ∷ snd ) (rs _ (s≤′s (s≤′s snd₁))))))) (++merge (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) )
 
 mergesortpermutation : ( xs : List ℕ ) -> Permutation xs ( mergesort xs )
 mergesortpermutation xs = mergesortpermutation' xs (acc (<′-wellFounded′ (length xs) ))
