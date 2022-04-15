@@ -341,7 +341,7 @@ mergesort' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = merge (m
 mergesort : List ℕ -> List ℕ
 mergesort xs = mergesort' xs (<′-wellFounded (length xs))
 
-mergesortcorrectness' : ( xs : List ℕ ) -> ∀ ( a :  Acc  _<′_ (length xs)) -> issorted (mergesort' xs a)
+mergesortcorrectness' : ( xs : List ℕ ) -> ( a :  Acc  _<′_ (length xs)) -> issorted (mergesort' xs a)
 mergesortcorrectness' [] a = nil
 mergesortcorrectness' (x ∷ []) a = one
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
