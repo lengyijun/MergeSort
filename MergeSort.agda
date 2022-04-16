@@ -223,6 +223,13 @@ mergeswap .(x ∷ []) ys (one {x}) x₁ = mergelemma3 x ys x₁
 mergeswap .(x ∷ y ∷ L) ys (two x y L x₂ x₃) x₁ = mergelemma4 x y ys L x₂ x₃ x₁
 -}
 
+coqlemma : {x : ℕ}{L1 L2 : List ℕ} -> issorted (x ∷ L1) -> issorted (x ∷ L2) -> issorted (merge L1 L2) -> issorted (x ∷ merge L1 L2)
+coqlemma {x} {[]} {L2} x₁ x₂ x₃ = x₂
+coqlemma {x} {x₄ ∷ L1} {[]} x₁ x₂ x₃ = x₁
+coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} x₁ x₂ x₃ with em x₄ x₅
+coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} (two .x .x₄ .L1 x₁ x₇) x₂ x₃ | inj₁ x₆ = two x x₄ (merge L1 (x₅ ∷ L2)) x₁ x₃
+coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} x₁ (two .x .x₅ .L2 x₂ x₆) x₃ | inj₂ y = two x x₅ (merge (x₄ ∷ L1) L2) x₂ x₃
+
 lemma1 : ( x y : ℕ ) -> (L : List ℕ ) -> y ≤ x -> issorted (y ∷ L) -> issorted (y ∷ merge (x ∷ [] ) L )
 lemma1 x y .[] x₁ one = two y x [] x₁ one
 lemma1 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) with em x y₁
