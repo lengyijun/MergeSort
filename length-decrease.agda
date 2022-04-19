@@ -51,9 +51,9 @@ data issorted : List ℕ -> Set where
   one : {x : ℕ } -> issorted ( x ∷ [] )
   two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> issorted ( y ∷ L ) -> issorted ( x ∷ y ∷ L )
 
-extractorder : (x : ℕ) -> (l : List ℕ ) -> issorted ( x ∷ l ) -> issorted l
-extractorder x .[] one = nil
-extractorder x .(y ∷ L) (two .x y L x₁ x₂) = x₂
+extractorder : {x : ℕ}{l : List ℕ } -> issorted ( x ∷ l ) -> issorted l
+extractorder {x} {.[]} one = nil
+extractorder {x} {.(y ∷ L)} (two .x y L x₁ x₂) = x₂
 
 {- https://stackoverflow.com/questions/17910737/termination-check-on-list-merge/17912550#17912550 -}
 merge : List ℕ -> List ℕ -> List ℕ
@@ -98,8 +98,8 @@ correctness' : { xs ys : List ℕ } -> issorted xs -> issorted ys -> Acc  _<′_
 correctness' {[]} {ys} x x₁ x₂ = x₁
 correctness' {x₃ ∷ xs} {[]} x x₁ x₂ = x
 correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) with em x₃ x₄
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₁ x₂ = coqlemma x (two x₃ x₄ ys x₂ x₁) ((correctness' (extractorder _ _ x) x₁ (rs _ (  _≤′_.≤′-refl))))
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₂ y = coqlemma (two x₄ x₃ xs y x ) x₁ (correctness' x (extractorder _ _ x₁) (rs _ lemma)) where
+correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₁ x₂ = coqlemma x (two x₃ x₄ ys x₂ x₁) ((correctness' (extractorder x) x₁ (rs _ (  _≤′_.≤′-refl))))
+correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₂ y = coqlemma (two x₄ x₃ xs y x ) x₁ (correctness' x (extractorder x₁) (rs _ lemma)) where
   lemma :  suc (suc (foldr (λ _ → suc) 0 xs + length ys)) ≤′ suc (foldr (λ _ → suc) 0 xs + suc (foldr (λ _ → suc) 0 ys))
   lemma rewrite +-comm (foldr (λ _ → suc) 0 xs)  (suc (foldr (λ _ → suc) 0 ys)) | +-comm (foldr (λ _ → suc) 0 ys) (foldr (λ _ → suc) 0 xs) = _≤′_.≤′-refl
 
