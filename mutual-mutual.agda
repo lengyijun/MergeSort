@@ -98,10 +98,6 @@ merge-refl {x} {xs} {x₁ ∷ ys} | inj₁ x₂ = refl
 merge-refl {x} {xs} {x₁ ∷ ys} | inj₂ y = refl
 
 
-narrow : {x y : ℕ}{l : List ℕ} -> x ≤ y -> issorted (y ∷ l) -> issorted (x ∷ l)
-narrow {x} {y} {[]} x₁ x₂ = one
-narrow {x} {y} {x₃ ∷ l} x₁ (two .y .x₃ .l x₂ x₄) = two x x₃ l (transitive x₁ x₂) x₄
-
 mutual
   correctness : { xs ys : List ℕ } -> issorted xs -> issorted ys -> issorted ( merge xs ys )
   correctness {[]} {ys} x x₁ = x₁
