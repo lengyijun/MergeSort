@@ -83,10 +83,6 @@ mutual
 
 
 
-merge[] : ( x : List ℕ ) -> x ≡ merge x []
-merge[] [] = refl
-merge[] (x ∷ x₁) = refl
-
 coqlemma : {x : ℕ}{L1 L2 : List ℕ} -> issorted (x ∷ L1) -> issorted (x ∷ L2) -> issorted (merge L1 L2) -> issorted (x ∷ merge L1 L2)
 coqlemma {x} {[]} {L2} x₁ x₂ x₃ = x₂
 coqlemma {x} {x₄ ∷ L1} {[]} x₁ x₂ x₃ = x₁

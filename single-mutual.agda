@@ -82,10 +82,6 @@ mutual
 -}
 
 
-merge[] : ( x : List ℕ ) -> x ≡ merge x []
-merge[] [] = refl
-merge[] (x ∷ x₁) = refl
-
 coqlemma : {x : ℕ}{L1 L2 : List ℕ} -> issorted (x ∷ L1) -> issorted (x ∷ L2) -> issorted (merge L1 L2) -> issorted (x ∷ merge L1 L2)
 coqlemma {x} {[]} {L2} x₁ x₂ x₃ = x₂
 coqlemma {x} {x₄ ∷ L1} {[]} x₁ x₂ x₃ = x₁
@@ -98,8 +94,8 @@ mutual
   correctness [] ys x x₁ = x₁
   correctness (x₂ ∷ xs) [] x x₁ = x
   correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃
-  correctness m@(x₂ ∷ xs) n@(x₃ ∷ ys) x x₁ | inj₁ x₄  = coqlemma x (two x₂ x₃ ys x₄ x₁) (correctness xs n (extractorder _ _ x) x₁)
-  correctness m@(x₂ ∷ xs) n@(x₃ ∷ ys) x x₁ | inj₂ y = coqlemma (two x₃ _ _ y x) x₁ (correctness-aux x₂ xs ys x (extractorder _ _ x₁))
+  correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₁ x₄  = coqlemma x (two x₂ x₃ ys x₄ x₁) (correctness xs (x₃ ∷ ys) (extractorder _ _ x) x₁)
+  correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₂ y = coqlemma (two x₃ _ _ y x) x₁ (correctness-aux x₂ xs ys x (extractorder _ _ x₁))
   
   correctness-aux : (x : ℕ) -> ( xs ys : List ℕ ) -> issorted (x ∷ xs) -> issorted ys -> issorted ( merge (x ∷ xs) ys )
   correctness-aux x xs [] x₁ x₂ = x₁
