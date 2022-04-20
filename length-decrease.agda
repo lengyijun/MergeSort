@@ -63,23 +63,6 @@ merge (x ∷ xs) (y ∷ ys) with em x y | merge xs (y ∷ ys ) | merge  (x ∷ x
 merge (x ∷ xs) (y ∷ ys) | inj₁ x₁ | b | c = x ∷ b
 merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = y ∷ c 
 
-{-
-{- Another way to define merge -}
-mutual
-  merge : List ℕ -> List ℕ -> List ℕ
-  merge [] x₁ = x₁
-  merge (x ∷ x₂) [] = x ∷ x₂ 
-  merge (x ∷ xs) (y ∷ ys) with em x y
-  merge (x ∷ xs) (y ∷ ys) | inj₁ x₁ = x ∷ merge xs ( y ∷ ys ) 
-  merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ = y ∷ merge' x xs ys 
-
-  merge' : ℕ -> List ℕ -> List ℕ -> List ℕ
-  merge' x [] ys = x ∷ ys
-  merge' x (x₁ ∷ xs) [] = x ∷ x₁ ∷ xs
-  merge' x (x₁ ∷ xs) (y ∷ ys) with em x₁ y
-  merge' x (x₁ ∷ xs) (y ∷ ys) | inj₁ x₂ = x ∷ x₁ ∷ merge xs (y ∷ ys)
-  merge' x (x₁ ∷ xs) (y ∷ ys) | inj₂ y₁ = x ∷ y ∷ merge' x₁ xs ys
--}
 
 
 coqlemma : {x : ℕ}{L1 L2 : List ℕ} -> issorted (x ∷ L1) -> issorted (x ∷ L2) -> issorted (merge L1 L2) -> issorted (x ∷ merge L1 L2)
