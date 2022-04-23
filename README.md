@@ -51,5 +51,12 @@ mutual-mutual.agda : mutual definition, mutual correctness
     <td>ok</td>
     <td>todo</td>
   </tr>
+  <tr>
+    <td>other tactic</td>
+    <td>with</td>
+    <td>-</td>
+    <td>-</td>
+    <td>functional induction</td>
+  </tr>
 </tbody>
 </table>
