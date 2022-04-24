@@ -1,8 +1,61 @@
 (** * Merge:  Merge Sort, With Specification and Proof of Correctness*)
 
-From VFA Require Import Perm.
-From VFA Require Import Sort.
+Require Import Le Lt Gt Decidable PeanoNat Recdef.
 From Coq Require Import Recdef.  (* needed for [Function] feature *)
+From Coq Require Import Strings.String.  (* for manual grading *)
+From Coq Require Export Bool.Bool.
+From Coq Require Export Arith.Arith.
+From Coq Require Export Arith.EqNat.
+From Coq Require Export Lia.
+From Coq Require Export Lists.List.
+Export ListNotations.
+From Coq Require Export Permutation.
+
+
+Notation  "a >=? b" := (Nat.leb b a)
+                          (at level 70) : nat_scope.
+Notation  "a >? b"  := (Nat.ltb b a)
+                         (at level 70) : nat_scope.
+
+
+Lemma eqb_reflect : forall x y, reflect (x = y) (x =? y).
+Proof.
+  intros x y. apply iff_reflect. symmetry.
+  apply Nat.eqb_eq.
+Qed.
+
+Lemma ltb_reflect : forall x y, reflect (x < y) (x <? y).
+Proof.
+  intros x y. apply iff_reflect. symmetry.
+  apply Nat.ltb_lt.
+Qed.
+
+Lemma leb_reflect : forall x y, reflect (x <= y) (x <=? y).
+Proof.
+  intros x y. apply iff_reflect. symmetry.
+  apply Nat.leb_le.
+Qed.
+
+Ltac bdestruct X :=
+  let H := fresh in let e := fresh "e" in
+   evar (e: Prop);
+   assert (H: reflect e X); subst e;
+    [eauto with bdestruct
+    | destruct H as [H|H];
+      [ | try first [apply not_lt in H | apply not_le in H]]].
+
+
+Hint Resolve ltb_reflect leb_reflect eqb_reflect : bdestruct.
+
+Ltac inv H := inversion H; clear H; subst.
+
+Inductive sorted: list nat -> Set :=
+| sorted_nil:
+    sorted nil
+| sorted_1: forall x,
+    sorted (x::nil)
+| sorted_cons: forall x y l,
+   x <= y -> sorted (y::l) -> sorted (x::y::l).
 
 (** Mergesort is a well-known sorting algorithm, normally presented
     as an imperative algorithm on arrays, that has worst-case
@@ -485,18 +538,8 @@ Lemma sorted_merge1 : forall x x1 l1 x2 l2,
     sorted (x :: merge (x1::l1) (x2::l2)).
 Proof.
   firstorder.
-  remember (merge (x1 :: l1) (x2 :: l2)).
-  induction H1. auto.
-  inv Heql.  
-  destruct (x2 >=? x1).
-  inv H2. auto.
-  inv H2. auto.
-  inv Heql.
-  destruct (x2 >=? x1).
-  inv H4.
-  auto.
-  inv H4.
-  auto.
+  simpl in *.
+  bdestruct (x2 >=? x1 ); constructor; try lia; auto.
 Qed.
 
 Lemma sorted_merge2 : forall x l1 l2 ,
@@ -521,7 +564,7 @@ Lemma merge_inv : forall x l , sorted (x :: l) -> sorted l.
 Proof.
   intros.
   induction l.
-  auto.
+  constructor.
   inv H.
   auto.
 Qed.
@@ -589,9 +632,9 @@ Qed.
 (** **** Exercise: 2 stars, standard (mergesort_sorts) *)
 Lemma mergesort_sort : forall l, sorted (mergesort l).
 Proof.
-  apply mergesort_ind; intros. (* Note that we use the special induction principle. *)
-  auto.
-  auto.
+  intro.
+  functional induction (mergesort l).
+  constructor. constructor.
   apply sorted_merge.
   auto.
   auto.
@@ -666,7 +709,8 @@ Proof.
     apply H.
     apply merge_perm.
 Qed.
-    
+
+(*
 (** Putting it all together: *)
 
 Theorem mergesort_correct:
@@ -676,7 +720,7 @@ Proof.
   apply mergesort_perm.
   apply mergesort_sorts.
 Qed.
-
+*)
 (** $Date$ *)
 
 (* 2021-08-11 15:15 *)
