@@ -14,37 +14,49 @@ single-mutual.agda : single definition, mutual correctness
 
 mutual-mutual.agda : mutual definition, mutual correctness
 
-<table class="tg">
+<table>
 <thead>
   <tr>
-    <th class="tg-0pky"></th>
-    <th class="tg-c3ow" colspan="2">Agda</th>
-    <th class="tg-0pky" rowspan="2">Coq</th>
-  </tr>
-  <tr>
-    <th class="tg-0pky"></th>
-    <th class="tg-0pky">merge <br>single definition</th>
-    <th class="tg-0pky">merge <br>mutual defintion</th>
+    <th></th>
+    <th colspan="2">Agda</th>
+    <th colspan="2">Coq</th>
   </tr>
 </thead>
 <tbody>
   <tr>
-    <td class="tg-0pky">nested<br>recursion</td>
-    <td class="tg-c3ow">?</td>
-    <td class="tg-c3ow">?</td>
-    <td class="tg-c3ow">ok</td>
+    <td></td>
+    <td>use `with` to <br>define merge</td>
+    <td>define merge <br>mutually</td>
+    <td>Fixpoint</td>
+    <td>function</td>
   </tr>
   <tr>
-    <td class="tg-0pky">mutual<br>recursion</td>
-    <td class="tg-c3ow">single-mutual</td>
-    <td class="tg-c3ow">mutual-mutual</td>
-    <td class="tg-c3ow">todo</td>
+    <td>nested<br>recursion</td>
+    <td>?</td>
+    <td>?</td>
+    <td>ok</td>
+    <td>todo</td>
   </tr>
   <tr>
-    <td class="tg-0pky">length + length</td>
-    <td class="tg-c3ow">length-decrease</td>
-    <td class="tg-c3ow">mutual-length-decrease</td>
-    <td class="tg-c3ow">ok</td>
+    <td>mutual<br>recursion</td>
+    <td>single-mutual</td>
+    <td>mutual-mutual</td>
+    <td>todo</td>
+    <td>todo</td>
+  </tr>
+  <tr>
+    <td>length + length</td>
+    <td>length-decrease</td>
+    <td>mutual-length-decrease</td>
+    <td>ok</td>
+    <td>todo</td>
+  </tr>
+  <tr>
+    <td>other tactic</td>
+    <td>with</td>
+    <td>-</td>
+    <td>-</td>
+    <td>functional induction</td>
   </tr>
 </tbody>
 </table>
