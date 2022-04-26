@@ -46,14 +46,14 @@ em (suc m) (suc n) | inj₂ y = inj₂ (sucsuc _ _ y)
 ≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) with transitive (s≤s ≤-reflex) x₁ |  transitive (s≤s ≤-reflex) x
 ≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) | a | b = cong suc (≤reflrefl b a)
   
-data issorted : List ℕ -> Set where
-  nil : issorted []
-  one : {x : ℕ } -> issorted ( x ∷ [] )
-  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> issorted ( y ∷ L ) -> issorted ( x ∷ y ∷ L )
+data sorted : List ℕ -> Set where
+  nil : sorted []
+  one : {x : ℕ } -> sorted ( x ∷ [] )
+  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> sorted ( y ∷ L ) -> sorted ( x ∷ y ∷ L )
 
-extractorder : {x : ℕ}{l : List ℕ } -> issorted ( x ∷ l ) -> issorted l
-extractorder {x} {.[]} one = nil
-extractorder {x} {.(y ∷ L)} (two .x y L x₁ x₂) = x₂
+sorted-inv : {x : ℕ}{l : List ℕ } -> sorted ( x ∷ l ) -> sorted l
+sorted-inv {x} {.[]} one = nil
+sorted-inv {x} {.(y ∷ L)} (two .x y L x₁ x₂) = x₂
 
 {- https://stackoverflow.com/questions/17910737/termination-check-on-list-merge/17912550#17912550 -}
 merge : List ℕ -> List ℕ -> List ℕ
@@ -65,7 +65,7 @@ merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = y ∷ c
 
 
 
-coqlemma : {x : ℕ}{L1 L2 : List ℕ} -> issorted (x ∷ L1) -> issorted (x ∷ L2) -> issorted (merge L1 L2) -> issorted (x ∷ merge L1 L2)
+coqlemma : {x : ℕ}{L1 L2 : List ℕ} -> sorted (x ∷ L1) -> sorted (x ∷ L2) -> sorted (merge L1 L2) -> sorted (x ∷ merge L1 L2)
 coqlemma {x} {[]} {L2} x₁ x₂ x₃ = x₂
 coqlemma {x} {x₄ ∷ L1} {[]} x₁ x₂ x₃ = x₁
 coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} x₁ x₂ x₃ with em x₄ x₅
@@ -73,14 +73,14 @@ coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} (two .x .x₄ .L1 x₁ x₇) x₂ x₃ 
 coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} x₁ (two .x .x₅ .L2 x₂ x₆) x₃ | inj₂ y = two x x₅ (merge (x₄ ∷ L1) L2) x₂ x₃
 
 
-correctness' : { xs ys : List ℕ } -> issorted xs -> issorted ys -> Acc  _<′_ (length xs + length ys) -> issorted ( merge xs ys )
+correctness' : { xs ys : List ℕ } -> sorted xs -> sorted ys -> Acc  _<′_ (length xs + length ys) -> sorted ( merge xs ys )
 correctness' {[]} {ys} x x₁ x₂ = x₁
 correctness' {x₃ ∷ xs} {[]} x x₁ x₂ = x
 correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) with em x₃ x₄
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₁ x₂ = coqlemma x (two x₃ x₄ ys x₂ x₁) ((correctness' (extractorder x) x₁ (rs _ (  _≤′_.≤′-refl))))
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₂ y = coqlemma (two x₄ x₃ xs y x ) x₁ (correctness' x (extractorder x₁) (rs _ lemma)) where
+correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₁ x₂ = coqlemma x (two x₃ x₄ ys x₂ x₁) ((correctness' (sorted-inv x) x₁ (rs _ (  _≤′_.≤′-refl))))
+correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₂ y = coqlemma (two x₄ x₃ xs y x ) x₁ (correctness' x (sorted-inv x₁) (rs _ lemma)) where
   lemma :  suc (suc (foldr (λ _ → suc) 0 xs + length ys)) ≤′ suc (foldr (λ _ → suc) 0 xs + suc (foldr (λ _ → suc) 0 ys))
   lemma rewrite +-comm (foldr (λ _ → suc) 0 xs)  (suc (foldr (λ _ → suc) 0 ys)) | +-comm (foldr (λ _ → suc) 0 ys) (foldr (λ _ → suc) 0 xs) = _≤′_.≤′-refl
 
-correctness : { xs ys : List ℕ } -> issorted xs -> issorted ys -> issorted ( merge xs ys )
+correctness : { xs ys : List ℕ } -> sorted xs -> sorted ys -> sorted ( merge xs ys )
 correctness {xs} {ys} x x₁ =  correctness' x x₁ (<′-wellFounded (length xs + length ys)) 

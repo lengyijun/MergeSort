@@ -46,10 +46,10 @@ em (suc m) (suc n) | inj₂ y = inj₂ (sucsuc _ _ y)
 ≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) with transitive (s≤s ≤-reflex) x₁ |  transitive (s≤s ≤-reflex) x
 ≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) | a | b = cong suc (≤reflrefl b a)
   
-data issorted : List ℕ -> Set where
-  nil : issorted []
-  one : {x : ℕ } -> issorted ( x ∷ [] )
-  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> issorted ( y ∷ L ) -> issorted ( x ∷ y ∷ L )
+data sorted : List ℕ -> Set where
+  nil : sorted []
+  one : {x : ℕ } -> sorted ( x ∷ [] )
+  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> sorted ( y ∷ L ) -> sorted ( x ∷ y ∷ L )
 
 {-
 {- https://stackoverflow.com/questions/17910737/termination-check-on-list-merge/17912550#17912550 -}

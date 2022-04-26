@@ -46,14 +46,14 @@ em (suc m) (suc n) | inj₂ y = inj₂ (sucsuc _ _ y)
 ≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) with transitive (s≤s ≤-reflex) x₁ |  transitive (s≤s ≤-reflex) x
 ≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) | a | b = cong suc (≤reflrefl b a)
   
-data issorted : List ℕ -> Set where
-  nil : issorted []
-  one : {x : ℕ } -> issorted ( x ∷ [] )
-  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> issorted ( y ∷ L ) -> issorted ( x ∷ y ∷ L )
+data sorted : List ℕ -> Set where
+  nil : sorted []
+  one : {x : ℕ } -> sorted ( x ∷ [] )
+  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> sorted ( y ∷ L ) -> sorted ( x ∷ y ∷ L )
 
-extractorder : {x : ℕ} {l : List ℕ } -> issorted ( x ∷ l ) -> issorted l
-extractorder {x} {.[]} one = nil
-extractorder {x} {.(y ∷ L)} (two .x y L x₁ x₂) = x₂
+sorted-inv : {x : ℕ} {l : List ℕ } -> sorted ( x ∷ l ) -> sorted l
+sorted-inv {x} {.[]} one = nil
+sorted-inv {x} {.(y ∷ L)} (two .x y L x₁ x₂) = x₂
 
 {- https://stackoverflow.com/questions/17910737/termination-check-on-list-merge/17912550#17912550 -}
 merge : List ℕ -> List ℕ -> List ℕ
@@ -65,13 +65,13 @@ merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = y ∷ c
 
 {-
 {- uesless now -}
-lemma1 : ( x y : ℕ ) -> (L : List ℕ ) -> y ≤ x -> issorted (y ∷ L) -> issorted (y ∷ merge (x ∷ [] ) L )
+lemma1 : ( x y : ℕ ) -> (L : List ℕ ) -> y ≤ x -> sorted (y ∷ L) -> sorted (y ∷ merge (x ∷ [] ) L )
 lemma1 x y .[] x₁ one = two y x [] x₁ one
 lemma1 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) with em x y₁
 lemma1 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₁ x₄ = two y x (y₁ ∷ L) x₁ (two x y₁ L x₄ x₃)
 lemma1 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₂ y₂ = two y y₁ (merge (x ∷ []) L) x₂ (lemma1 x y₁ L y₂ x₃ )
 
-lemma2 : ( x y : ℕ ) -> (L : List ℕ ) -> y ≤ x -> issorted (y ∷ L) -> issorted (y ∷ merge L (x ∷ [] ) )
+lemma2 : ( x y : ℕ ) -> (L : List ℕ ) -> y ≤ x -> sorted (y ∷ L) -> sorted (y ∷ merge L (x ∷ [] ) )
 lemma2 x y .[] x₁ one = two y x [] x₁ one
 lemma2 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) with em y₁ x
 lemma2 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₁ x₄ = two y y₁ (merge L (x ∷ [])) x₂ (lemma2 x y₁ L x₄ x₃ )
@@ -79,20 +79,20 @@ lemma2 x y .(y₁ ∷ L) x₁ (two .y y₁ L x₂ x₃) | inj₂ y₂ = two y x 
 -}
 
 mutual
-  lemma3 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  issorted (y₁ ∷ L₁) ->  issorted (y ∷ L) ->  issorted (y ∷ merge L (y₁ ∷ L₁))
+  lemma3 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  sorted (y₁ ∷ L₁) ->  sorted (y ∷ L) ->  sorted (y ∷ merge L (y₁ ∷ L₁))
   lemma3 y y₁ .[] L₁ x x₁ one = two y y₁ L₁ x x₁
   lemma3 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) with em y₂ y₁
   lemma3 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₁ x₄ = two y y₂ (merge L (y₁ ∷ L₁)) x₂  (lemma3 y₂ y₁ L L₁ x₄  x₁ x₃)
   lemma3 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₂ y₃ = two y y₁ (merge (y₂ ∷ L) L₁) x (lemma4 y₁ y₂ L₁ L y₃ x₃ x₁ )
 
-  lemma4 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  issorted (y₁ ∷ L₁) ->  issorted (y ∷ L) ->  issorted (y ∷ merge (y₁ ∷ L₁) L)
+  lemma4 : ( y y₁ : ℕ ) -> ( L L₁ : List ℕ ) -> y ≤ y₁ ->  sorted (y₁ ∷ L₁) ->  sorted (y ∷ L) ->  sorted (y ∷ merge (y₁ ∷ L₁) L)
   lemma4 y y₁ .[] L₁ x x₁ one = two y y₁ L₁ x x₁
   lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) with em y₁ y₂
   lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₁ x₄ = two y y₁ (merge L₁ (y₂ ∷ L)) x (lemma3 y₁ y₂ L₁ L x₄ x₃ x₁)
   lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₂ y₃ = two y y₂ (merge (y₁ ∷ L₁) L) x₂ (lemma4 y₂ y₁ L L₁ y₃ x₁ x₃ )
 
 
-correctness : ( xs ys : List ℕ ) -> issorted xs -> issorted ys -> issorted ( merge xs ys )
+correctness : ( xs ys : List ℕ ) -> sorted xs -> sorted ys -> sorted ( merge xs ys )
 correctness [] ys x x₁ = x₁
 correctness (x₂ ∷ xs) [] x x₁ = x
 correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃
@@ -148,13 +148,13 @@ mergesort' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = merge (m
 mergesort : List ℕ -> List ℕ
 mergesort xs = mergesort' xs (<′-wellFounded (length xs))
 
-mergesortcorrectness' : ( xs : List ℕ ) -> ( a :  Acc  _<′_ (length xs)) -> issorted (mergesort' xs a)
+mergesortcorrectness' : ( xs : List ℕ ) -> ( a :  Acc  _<′_ (length xs)) -> sorted (mergesort' xs a)
 mergesortcorrectness' [] a = nil
 mergesortcorrectness' (x ∷ []) a = one
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = correctness (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
 
-mergesortcorrectness : ( xs : List ℕ ) -> issorted (mergesort xs)
+mergesortcorrectness : ( xs : List ℕ ) -> sorted (mergesort xs)
 mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (length xs) ))
 
 data Permutation : List ℕ -> List ℕ -> Set where
