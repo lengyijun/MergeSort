@@ -24,3 +24,6 @@ mutual-mutual.agda : mutual definition, mutual correctness
 ## Proof of permutation
 Only one way avaiable.
 
+## Proof of time complexity
+TODO
+
