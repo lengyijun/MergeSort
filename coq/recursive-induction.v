@@ -444,28 +444,8 @@ Function mergesort (l: list nat) {measure length l} :  list nat :=
     proofs that each recursive call is indeed on a shorter list. 
     Happily, we proved that fact already. 
 *)
-(*
+
 Proof.
-  intros.   simpl in *.
-  remember (split l1).
-  destruct p.
-  inv teq1.
-  simpl.
-  assert (split l1 = (l4 ,l5) ). auto.
-  destruct ( split_len l1 l4 l5 H).
-  lia.
-
-  intros. simpl in *.
-  remember (split l1).
-  destruct p.
-  inv teq1.
-  simpl.
-  assert (split l1 = (l4 , l5)). auto.
-  destruct (split_len l1 l4 l5 H ) .
-  lia.
-Qed.
- *)
-
   - (* recursive call on l1 *)
     intros.
     simpl in *. destruct (split l1) as [l1' l2'] eqn:E. inv teq1. simpl. 
@@ -550,7 +530,7 @@ Check mergesort_ind.
     It is perhaps easiest to break out a sub-lemma first:
 *)
 
-Lemma merge_inv : forall x l , sorted (x :: l) -> sorted l.
+Lemma sorted_inv : forall x l , sorted (x :: l) -> sorted l.
 Proof.
   intros.
   induction l.
@@ -613,7 +593,7 @@ Proof.
   lia.
   auto.
   apply IHl1. 
-  eapply merge_inv.
+  eapply sorted_inv.
   apply H.
   
   auto.
@@ -625,7 +605,7 @@ Proof.
 
 
   eapply IHl2.
-  eapply merge_inv.
+  eapply sorted_inv.
   apply H0.
   exact H2.
 

@@ -560,7 +560,7 @@ inv H0. auto.
 auto.
 Qed.
 
-Lemma merge_inv : forall x l , sorted (x :: l) -> sorted l.
+Lemma sorted_inv : forall x l , sorted (x :: l) -> sorted l.
 Proof.
   intros.
   induction l.
@@ -608,7 +608,7 @@ Proof.
   apply IHn.
   simpl in *.
   lia.
-  eapply merge_inv.
+  eapply sorted_inv.
   apply H0.
   easy.
 
@@ -621,7 +621,7 @@ Proof.
   simpl in *.
   lia.
   easy.
-  eapply merge_inv.
+  eapply sorted_inv.
   apply H1.
   assumption.
   
@@ -630,14 +630,12 @@ Qed.
 
 
 (** **** Exercise: 2 stars, standard (mergesort_sorts) *)
-Lemma mergesort_sort : forall l, sorted (mergesort l).
+Lemma mergesort_sorts : forall l, sorted (mergesort l).
 Proof.
   intro.
   functional induction (mergesort l).
   constructor. constructor.
-  apply sorted_merge.
-  auto.
-  auto.
+  apply sorted_merge; auto.
 Qed.  
 
 
