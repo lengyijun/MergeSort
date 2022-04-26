@@ -84,12 +84,12 @@ merge-refl {x} {xs} {x₁ ∷ ys} | inj₁ x₂ = refl
 merge-refl {x} {xs} {x₁ ∷ ys} | inj₂ y = refl
 
 
-correctness' : { xs ys : List ℕ } -> sorted xs -> sorted ys -> Acc  _<′_ (length xs + length ys) -> sorted ( merge xs ys )
-correctness' {[]} {ys} x x₁ x₂ = x₁
-correctness' {x₃ ∷ xs} {[]} x x₁ x₂ = x
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) with em x₃ x₄
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₁ x₂ = coqlemma x (two x₃ x₄ ys x₂ x₁) (correctness' (sorted-inv x) x₁ (rs _ _≤′_.≤′-refl))
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₂ y rewrite merge-refl {x₃} {xs} {ys} | +-comm (foldr (λ _ → suc) 0 xs) (suc (foldr (λ _ → suc) 0 ys)) | +-comm (foldr (λ _ → suc) 0 ys)  (foldr (λ _ → suc) 0 xs)  = coqlemma (two x₄ x₃ xs y x) x₁ (correctness' x (sorted-inv x₁) (rs _ _≤′_.≤′-refl))
+sorted-merge' : { xs ys : List ℕ } -> sorted xs -> sorted ys -> Acc  _<′_ (length xs + length ys) -> sorted ( merge xs ys )
+sorted-merge' {[]} {ys} x x₁ x₂ = x₁
+sorted-merge' {x₃ ∷ xs} {[]} x x₁ x₂ = x
+sorted-merge' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) with em x₃ x₄
+sorted-merge' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₁ x₂ = coqlemma x (two x₃ x₄ ys x₂ x₁) (sorted-merge' (sorted-inv x) x₁ (rs _ _≤′_.≤′-refl))
+sorted-merge' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₂ y rewrite merge-refl {x₃} {xs} {ys} | +-comm (foldr (λ _ → suc) 0 xs) (suc (foldr (λ _ → suc) 0 ys)) | +-comm (foldr (λ _ → suc) 0 ys)  (foldr (λ _ → suc) 0 xs)  = coqlemma (two x₄ x₃ xs y x) x₁ (sorted-merge' x (sorted-inv x₁) (rs _ _≤′_.≤′-refl))
 
-correctness : { xs ys : List ℕ } -> sorted xs -> sorted ys -> sorted ( merge xs ys )
-correctness {xs} {ys} x x₁ =  correctness' x x₁ (<′-wellFounded (length xs + length ys)) 
+sorted-merge : { xs ys : List ℕ } -> sorted xs -> sorted ys -> sorted ( merge xs ys )
+sorted-merge {xs} {ys} x x₁ =  sorted-merge' x x₁ (<′-wellFounded (length xs + length ys)) 

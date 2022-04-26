@@ -214,12 +214,12 @@ coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} x₁ x₂ x₃ with em x₄ x₅
 coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} (two .x .x₄ .L1 x₁ x₇) x₂ x₃ | inj₁ x₆ = two x x₄ (merge L1 (x₅ ∷ L2)) x₁ x₃
 coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} x₁ (two .x .x₅ .L2 x₂ x₆) x₃ | inj₂ y = two x x₅ (merge (x₄ ∷ L1) L2) x₂ x₃
 
-correctness : ( xs ys : List ℕ ) -> sorted xs -> sorted ys -> sorted ( merge xs ys )
-correctness [] ys x x₁ = x₁
-correctness (x₂ ∷ xs) [] x x₁ = x
-correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃ |  (correctness xs (x₃ ∷ ys) (sorted-inv _ _ x) x₁) |  (correctness (x₂ ∷ xs) ys x (sorted-inv _ _ x₁))
-correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₁ x₄ | m | n = coqlemma x (two x₂ x₃ ys x₄ x₁) m
-correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₂ y | m | n = coqlemma (two x₃ _ _ y x) x₁ n
+sorted-merge : ( xs ys : List ℕ ) -> sorted xs -> sorted ys -> sorted ( merge xs ys )
+sorted-merge [] ys x x₁ = x₁
+sorted-merge (x₂ ∷ xs) [] x x₁ = x
+sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃ |  (sorted-merge xs (x₃ ∷ ys) (sorted-inv _ _ x) x₁) |  (sorted-merge (x₂ ∷ xs) ys x (sorted-inv _ _ x₁))
+sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₁ x₄ | m | n = coqlemma x (two x₂ x₃ ys x₄ x₁) m
+sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₂ y | m | n = coqlemma (two x₃ _ _ y x) x₁ n
 
 
 _≼_ : ∀ {a} {A : Set a} → Rel (List A) _
@@ -274,7 +274,7 @@ mergesortcorrectness' : ( xs : List ℕ ) -> ( a :  Acc  _<′_ (length xs)) -> 
 mergesortcorrectness' [] a = nil
 mergesortcorrectness' (x ∷ []) a = one
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
-mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = correctness (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
+mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = sorted-merge (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
 
 mergesortcorrectness : ( xs : List ℕ ) -> sorted (mergesort xs)
 mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (length xs) ))

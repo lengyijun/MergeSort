@@ -73,14 +73,14 @@ coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} (two .x .x₄ .L1 x₁ x₇) x₂ x₃ 
 coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} x₁ (two .x .x₅ .L2 x₂ x₆) x₃ | inj₂ y = two x x₅ (merge (x₄ ∷ L1) L2) x₂ x₃
 
 
-correctness' : { xs ys : List ℕ } -> sorted xs -> sorted ys -> Acc  _<′_ (length xs + length ys) -> sorted ( merge xs ys )
-correctness' {[]} {ys} x x₁ x₂ = x₁
-correctness' {x₃ ∷ xs} {[]} x x₁ x₂ = x
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) with em x₃ x₄
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₁ x₂ = coqlemma x (two x₃ x₄ ys x₂ x₁) ((correctness' (sorted-inv x) x₁ (rs _ (  _≤′_.≤′-refl))))
-correctness' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₂ y = coqlemma (two x₄ x₃ xs y x ) x₁ (correctness' x (sorted-inv x₁) (rs _ lemma)) where
+sorted-merge' : { xs ys : List ℕ } -> sorted xs -> sorted ys -> Acc  _<′_ (length xs + length ys) -> sorted ( merge xs ys )
+sorted-merge' {[]} {ys} x x₁ x₂ = x₁
+sorted-merge' {x₃ ∷ xs} {[]} x x₁ x₂ = x
+sorted-merge' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) with em x₃ x₄
+sorted-merge' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₁ x₂ = coqlemma x (two x₃ x₄ ys x₂ x₁) ((sorted-merge' (sorted-inv x) x₁ (rs _ (  _≤′_.≤′-refl))))
+sorted-merge' {x₃ ∷ xs} {x₄ ∷ ys} x x₁ (acc rs) | inj₂ y = coqlemma (two x₄ x₃ xs y x ) x₁ (sorted-merge' x (sorted-inv x₁) (rs _ lemma)) where
   lemma :  suc (suc (foldr (λ _ → suc) 0 xs + length ys)) ≤′ suc (foldr (λ _ → suc) 0 xs + suc (foldr (λ _ → suc) 0 ys))
   lemma rewrite +-comm (foldr (λ _ → suc) 0 xs)  (suc (foldr (λ _ → suc) 0 ys)) | +-comm (foldr (λ _ → suc) 0 ys) (foldr (λ _ → suc) 0 xs) = _≤′_.≤′-refl
 
-correctness : { xs ys : List ℕ } -> sorted xs -> sorted ys -> sorted ( merge xs ys )
-correctness {xs} {ys} x x₁ =  correctness' x x₁ (<′-wellFounded (length xs + length ys)) 
+sorted-merge : { xs ys : List ℕ } -> sorted xs -> sorted ys -> sorted ( merge xs ys )
+sorted-merge {xs} {ys} x x₁ =  sorted-merge' x x₁ (<′-wellFounded (length xs + length ys)) 

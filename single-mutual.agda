@@ -72,18 +72,18 @@ coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} (two .x .x₄ .L1 x₁ x₇) x₂ x₃ 
 coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} x₁ (two .x .x₅ .L2 x₂ x₆) x₃ | inj₂ y = two x x₅ (merge (x₄ ∷ L1) L2) x₂ x₃
 
 mutual
-  correctness : ( xs ys : List ℕ ) -> sorted xs -> sorted ys -> sorted ( merge xs ys )
-  correctness [] ys x x₁ = x₁
-  correctness (x₂ ∷ xs) [] x x₁ = x
-  correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃
-  correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₁ x₄  = coqlemma x (two x₂ x₃ ys x₄ x₁) (correctness xs (x₃ ∷ ys) (sorted-inv  x) x₁)
-  correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₂ y = coqlemma (two x₃ _ _ y x) x₁ (correctness-aux x₂ xs ys x (sorted-inv  x₁))
+  sorted-merge : ( xs ys : List ℕ ) -> sorted xs -> sorted ys -> sorted ( merge xs ys )
+  sorted-merge [] ys x x₁ = x₁
+  sorted-merge (x₂ ∷ xs) [] x x₁ = x
+  sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃
+  sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₁ x₄  = coqlemma x (two x₂ x₃ ys x₄ x₁) (sorted-merge xs (x₃ ∷ ys) (sorted-inv  x) x₁)
+  sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₂ y = coqlemma (two x₃ _ _ y x) x₁ (sorted-merge-aux x₂ xs ys x (sorted-inv  x₁))
   
-  correctness-aux : (x : ℕ) -> ( xs ys : List ℕ ) -> sorted (x ∷ xs) -> sorted ys -> sorted ( merge (x ∷ xs) ys )
-  correctness-aux x xs [] x₁ x₂ = x₁
-  correctness-aux x xs (x₃ ∷ ys) x₁ x₂ with em x x₃
-  correctness-aux x xs (x₃ ∷ ys) x₁ x₂ | inj₁ x₄ = coqlemma x₁ (two x x₃ ys x₄ x₂) (correctness xs (x₃ ∷ ys) (sorted-inv x₁) x₂) 
-  correctness-aux x xs (x₃ ∷ ys) x₁ x₂ | inj₂ y = coqlemma (two x₃ x xs y x₁) x₂ (correctness-aux x xs ys x₁ (sorted-inv x₂))
+  sorted-merge-aux : (x : ℕ) -> ( xs ys : List ℕ ) -> sorted (x ∷ xs) -> sorted ys -> sorted ( merge (x ∷ xs) ys )
+  sorted-merge-aux x xs [] x₁ x₂ = x₁
+  sorted-merge-aux x xs (x₃ ∷ ys) x₁ x₂ with em x x₃
+  sorted-merge-aux x xs (x₃ ∷ ys) x₁ x₂ | inj₁ x₄ = coqlemma x₁ (two x x₃ ys x₄ x₂) (sorted-merge xs (x₃ ∷ ys) (sorted-inv x₁) x₂) 
+  sorted-merge-aux x xs (x₃ ∷ ys) x₁ x₂ | inj₂ y = coqlemma (two x₃ x xs y x₁) x₂ (sorted-merge-aux x xs ys x₁ (sorted-inv x₂))
 
 _≼_ : ∀ {a} {A : Set a} → Rel (List A) _
 x ≼ x₁ = ( length x )   ≤′ length x₁
@@ -137,7 +137,7 @@ mergesortcorrectness' : ( xs : List ℕ ) -> ( a :  Acc  _<′_ (length xs)) -> 
 mergesortcorrectness' [] a = nil
 mergesortcorrectness' (x ∷ []) a = one
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
-mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = correctness (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
+mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = sorted-merge (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
 
 mergesortcorrectness : ( xs : List ℕ ) -> sorted (mergesort xs)
 mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (length xs) ))

@@ -99,15 +99,15 @@ merge-refl {x} {xs} {x₁ ∷ ys} | inj₂ y = refl
 
 
 mutual
-  correctness : { xs ys : List ℕ } -> sorted xs -> sorted ys -> sorted ( merge xs ys )
-  correctness {[]} {ys} x x₁ = x₁
-  correctness {(x₂ ∷ xs)} {[]} x x₁ = x
-  correctness {(x₂ ∷ xs)} {(x₃ ∷ ys)} x x₁ with em x₂ x₃
-  correctness {(x₂ ∷ xs)} {(x₃ ∷ ys)} x x₁ | inj₁ x₄  = coqlemma x (two x₂ x₃ ys x₄ x₁) (correctness {xs} {x₃ ∷ ys} (sorted-inv  x) x₁)
-  correctness {(x₂ ∷ xs)} {(x₃ ∷ ys)} x x₁ | inj₂ y rewrite merge-refl {x₂} {xs} {ys} = coqlemma (two x₃ x₂ xs y x) x₁ (correctness-aux {x₂} {xs} {ys} x (sorted-inv x₁))
+  sorted-merge : { xs ys : List ℕ } -> sorted xs -> sorted ys -> sorted ( merge xs ys )
+  sorted-merge {[]} {ys} x x₁ = x₁
+  sorted-merge {(x₂ ∷ xs)} {[]} x x₁ = x
+  sorted-merge {(x₂ ∷ xs)} {(x₃ ∷ ys)} x x₁ with em x₂ x₃
+  sorted-merge {(x₂ ∷ xs)} {(x₃ ∷ ys)} x x₁ | inj₁ x₄  = coqlemma x (two x₂ x₃ ys x₄ x₁) (sorted-merge {xs} {x₃ ∷ ys} (sorted-inv  x) x₁)
+  sorted-merge {(x₂ ∷ xs)} {(x₃ ∷ ys)} x x₁ | inj₂ y rewrite merge-refl {x₂} {xs} {ys} = coqlemma (two x₃ x₂ xs y x) x₁ (sorted-merge-aux {x₂} {xs} {ys} x (sorted-inv x₁))
 
-  correctness-aux : {x : ℕ}{ xs ys : List ℕ } -> sorted (x ∷ xs) -> sorted ys -> sorted ( merge (x ∷ xs) ys )
-  correctness-aux {x} {xs} {[]} x₁ x₂ = x₁
-  correctness-aux {x} {xs} {x₃ ∷ ys} x₁ x₂ with em x x₃
-  correctness-aux {x} {xs} {x₃ ∷ ys} x₁ x₂ | inj₁ x₄ = coqlemma x₁ (two x x₃ ys x₄ x₂) ( (correctness {xs} {x₃ ∷ ys} (sorted-inv x₁) x₂ ))
-  correctness-aux {x} {xs} {x₃ ∷ ys} x₁ x₂ | inj₂ y rewrite merge-refl {x} {xs} {ys}  = coqlemma (two x₃ x xs y x₁) x₂ (correctness-aux {x} {xs} {ys} x₁ (sorted-inv x₂))
+  sorted-merge-aux : {x : ℕ}{ xs ys : List ℕ } -> sorted (x ∷ xs) -> sorted ys -> sorted ( merge (x ∷ xs) ys )
+  sorted-merge-aux {x} {xs} {[]} x₁ x₂ = x₁
+  sorted-merge-aux {x} {xs} {x₃ ∷ ys} x₁ x₂ with em x x₃
+  sorted-merge-aux {x} {xs} {x₃ ∷ ys} x₁ x₂ | inj₁ x₄ = coqlemma x₁ (two x x₃ ys x₄ x₂) ( (sorted-merge {xs} {x₃ ∷ ys} (sorted-inv x₁) x₂ ))
+  sorted-merge-aux {x} {xs} {x₃ ∷ ys} x₁ x₂ | inj₂ y rewrite merge-refl {x} {xs} {ys}  = coqlemma (two x₃ x xs y x₁) x₂ (sorted-merge-aux {x} {xs} {ys} x₁ (sorted-inv x₂))

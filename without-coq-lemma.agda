@@ -92,12 +92,12 @@ mutual
   lemma4 y y₁ .(y₂ ∷ L) L₁ x x₁ (two .y y₂ L x₂ x₃) | inj₂ y₃ = two y y₂ (merge (y₁ ∷ L₁) L) x₂ (lemma4 y₂ y₁ L L₁ y₃ x₁ x₃ )
 
 
-correctness : ( xs ys : List ℕ ) -> sorted xs -> sorted ys -> sorted ( merge xs ys )
-correctness [] ys x x₁ = x₁
-correctness (x₂ ∷ xs) [] x x₁ = x
-correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃
-correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₁ x₄ = lemma3 x₂ x₃ xs ys x₄ x₁ x
-correctness (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₂ y = lemma4 x₃ x₂ ys xs y x x₁
+sorted-merge : ( xs ys : List ℕ ) -> sorted xs -> sorted ys -> sorted ( merge xs ys )
+sorted-merge [] ys x x₁ = x₁
+sorted-merge (x₂ ∷ xs) [] x x₁ = x
+sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃
+sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₁ x₄ = lemma3 x₂ x₃ xs ys x₄ x₁ x
+sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₂ y = lemma4 x₃ x₂ ys xs y x x₁
 
 
 _≼_ : ∀ {a} {A : Set a} → Rel (List A) _
@@ -152,7 +152,7 @@ mergesortcorrectness' : ( xs : List ℕ ) -> ( a :  Acc  _<′_ (length xs)) -> 
 mergesortcorrectness' [] a = nil
 mergesortcorrectness' (x ∷ []) a = one
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
-mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = correctness (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
+mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = sorted-merge (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
 
 mergesortcorrectness : ( xs : List ℕ ) -> sorted (mergesort xs)
 mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (length xs) ))
