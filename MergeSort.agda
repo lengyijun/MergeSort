@@ -74,9 +74,9 @@ coqlemma {x} {x₄ ∷ L1} {x₅ ∷ L2} x₁ (two .x .x₅ .L2 x₂ x₆) x₃ 
 sorted-merge : ( xs ys : List ℕ ) -> sorted xs -> sorted ys -> sorted ( merge xs ys )
 sorted-merge [] ys x x₁ = x₁
 sorted-merge (x₂ ∷ xs) [] x x₁ = x
-sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃ |  (sorted-merge xs (x₃ ∷ ys) (sorted-inv _ _ x) x₁) |  (sorted-merge (x₂ ∷ xs) ys x (sorted-inv _ _ x₁))
+sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ with em x₂ x₃ | (sorted-merge xs (x₃ ∷ ys) (sorted-inv _ _ x) x₁) | (sorted-merge (x₂ ∷ xs) ys x (sorted-inv _ _ x₁))
 sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₁ x₄ | m | n = coqlemma x (two x₂ x₃ ys x₄ x₁) m
-sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₂ y | m | n = coqlemma (two x₃ _ _ y x) x₁ n
+sorted-merge (x₂ ∷ xs) (x₃ ∷ ys) x x₁ | inj₂ y  | m | n = coqlemma (two x₃ _ _ y x) x₁ n
 
 
 _≼_ : ∀ {a} {A : Set a} → Rel (List A) _
