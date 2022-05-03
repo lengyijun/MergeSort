@@ -94,27 +94,9 @@ partition-size (x ∷ []) = _≤′_.≤′-refl , _≤′_.≤′-step _≤′_
 partition-size (x ∷ x₁ ∷ xs) with partition xs | partition-size xs
 partition-size (x ∷ x₁ ∷ xs) | fst , snd | fst₁ , snd₁ = s≤′s (_≤′_.≤′-step fst₁) , s≤′s (_≤′_.≤′-step snd₁)
 
-{-
-_≼_ : ∀ {a} {A : Set a} → Rel (List A) _
-x ≼ x₁ = ( length x )  ≤ length x₁
 
-partition-size : (xs : List ℕ) → proj₁ (partition xs) ≼ xs × proj₂ (partition xs) ≼ xs
-partition-size [] = ≤-reflex , ≤-reflex
-partition-size (x ∷ []) = ≤-reflex , s≤s ≤-reflex
-partition-size (x ∷ x₁ ∷ xs) with partition xs | partition-size xs
-partition-size (x ∷ x₁ ∷ xs) | fst , snd | fst₁ , snd₁ = sucsuc _ _ (s≤s fst₁) , sucsuc _ _ (s≤s snd₁)
--}
-
-{-
-example : ( partition ( 1 ∷ 2 ∷ [] ) ) ≡ ( 1 ∷ 2 ∷ [] , [] )
-example with ( partition ( 2 ∷ [] ) ) ≡ ( 2 ∷ [] , []) 
-example | z = refl
-
-partition-size : (xs : List ℕ) → proj₁ (partition xs) ≼ xs × proj₂ (partition xs) ≼ xs
-partition-size [] = ≤-reflex , ≤-reflex
-partition-size (x ∷ xs) with partition xs | partition-size xs
-partition-size (x ∷ xs) | fst , snd | fst₁ , snd₁ = sucsuc _ _ fst₁ , s≤s snd₁
--}
+example : ( partition ( 1 ∷ 2 ∷ [] ) ) ≡ ( 1 ∷ [] , 2 ∷ [] )
+example = refl
 
 
 mergesort' : ( xs : List ℕ ) -> Acc  _<′_ (length xs) -> List ℕ
