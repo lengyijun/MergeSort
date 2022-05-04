@@ -24,14 +24,9 @@ zero≤n : ( n : ℕ )  -> zero ≤ n
 zero≤n zero = ≤-reflex
 zero≤n (suc n) = s≤s (zero≤n n)
 
-transitive : { n m o : ℕ } -> n ≤ m -> m ≤ o -> n ≤ o
-transitive {n} {.n} {o} ≤-reflex x₁ = x₁
-transitive {n} {.(suc _)} {.(suc _)} (s≤s x) ≤-reflex = s≤s x
-transitive {n} {.(suc _)} {.(suc _)} (s≤s x) (s≤s x₁) = s≤s (transitive x (transitive (s≤s ≤-reflex) x₁))
-
 sucsuc : (n m : ℕ ) -> n ≤ m -> (suc n ) ≤ (suc m )
 sucsuc n .n ≤-reflex = ≤-reflex
-sucsuc n .(suc m) (s≤s {m = m} x) = transitive (sucsuc _ _ x) (s≤s ≤-reflex)
+sucsuc n .(suc m) (s≤s {m = m} x) = s≤s (sucsuc n m x)
 
 em : ( m n : ℕ ) -> ( m ≤ n ) ⊎ ( n ≤ m )
 em zero n = inj₁ (zero≤n n)
@@ -40,12 +35,7 @@ em (suc m) (suc n) with em m n
 em (suc m) (suc n) | inj₁ x = inj₁ (sucsuc _ _ x)
 em (suc m) (suc n) | inj₂ y = inj₂ (sucsuc _ _ y)
 
-≤reflrefl : {m n : ℕ} -> m ≤ n -> n ≤ m -> m ≡ n
-≤reflrefl {m} {.m} ≤-reflex x₁ = refl
-≤reflrefl {.(suc _)} {.(suc _)} (s≤s x) ≤-reflex = refl
-≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) with transitive (s≤s ≤-reflex) x₁ |  transitive (s≤s ≤-reflex) x
-≤reflrefl {.(suc m)} {.(suc _)} (s≤s x) (s≤s {m = m} x₁) | a | b = cong suc (≤reflrefl b a)
-  
+
 data sorted : List ℕ -> Set where
   nil : sorted []
   one : {x : ℕ } -> sorted ( x ∷ [] )

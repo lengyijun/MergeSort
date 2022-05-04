@@ -24,14 +24,9 @@ zero≤n : ( n : ℕ )  -> zero ≤ n
 zero≤n zero = ≤-reflex
 zero≤n (suc n) = s≤s (zero≤n n)
 
-transitive : { n m o : ℕ } -> n ≤ m -> m ≤ o -> n ≤ o
-transitive {n} {.n} {o} ≤-reflex x₁ = x₁
-transitive {n} {.(suc _)} {.(suc _)} (s≤s x) ≤-reflex = s≤s x
-transitive {n} {.(suc _)} {.(suc _)} (s≤s x) (s≤s x₁) = s≤s (transitive x (transitive (s≤s ≤-reflex) x₁))
-
 sucsuc : (n m : ℕ ) -> n ≤ m -> (suc n ) ≤ (suc m )
 sucsuc n .n ≤-reflex = ≤-reflex
-sucsuc n .(suc m) (s≤s {m = m} x) = transitive (sucsuc _ _ x) (s≤s ≤-reflex)
+sucsuc n .(suc m) (s≤s {m = m} x) = s≤s (sucsuc n m x)
 
 em : ( m n : ℕ ) -> ( m ≤ n ) ⊎ ( n ≤ m )
 em zero n = inj₁ (zero≤n n)
