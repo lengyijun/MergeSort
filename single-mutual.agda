@@ -130,7 +130,7 @@ mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = sorted-merge (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
 
 mergesortcorrectness : ( xs : List ℕ ) -> sorted (mergesort xs)
-mergesortcorrectness xs = mergesortcorrectness' xs (acc (<′-wellFounded′ (length xs) ))
+mergesortcorrectness xs = mergesortcorrectness' xs (<′-wellFounded (length xs))
 
 data Permutation : List ℕ -> List ℕ -> Set where
   [][] : Permutation [] []
@@ -186,5 +186,5 @@ mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition
 mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ | z = permtrans (permtrans z (permtrans (permtrans (permutation-swap (++merge (x ∷ fst) (x₁ ∷ snd)) ) (merger (x ∷ fst ) (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (x₁ ∷ snd) (mergesortpermutation' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁))) ) )) (mergel (x₁ ∷ snd) (mergesort' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortpermutation' (x₁ ∷ snd ) (rs _ (s≤′s (s≤′s snd₁))))))) (++merge (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) )
 
 mergesortpermutation : ( xs : List ℕ ) -> Permutation xs ( mergesort xs )
-mergesortpermutation xs = mergesortpermutation' xs (acc (<′-wellFounded′ (length xs) ))
+mergesortpermutation xs = mergesortpermutation' xs (<′-wellFounded (length xs))
 
