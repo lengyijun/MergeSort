@@ -81,8 +81,8 @@ partition (x ∷ x₁ ∷ xs) | fst , snd = x ∷ fst , x₁ ∷ snd
 partition-size : (xs : List ℕ) → proj₁ (partition xs) ≼ xs × proj₂ (partition xs) ≼ xs
 partition-size [] = _≤′_.≤′-refl , _≤′_.≤′-refl
 partition-size (x ∷ []) = _≤′_.≤′-refl , _≤′_.≤′-step _≤′_.≤′-refl
-partition-size (x ∷ x₁ ∷ xs) with partition xs | partition-size xs
-partition-size (x ∷ x₁ ∷ xs) | fst , snd | fst₁ , snd₁ = s≤′s (_≤′_.≤′-step fst₁) , s≤′s (_≤′_.≤′-step snd₁)
+partition-size (x ∷ x₁ ∷ xs) with partition-size xs
+partition-size (x ∷ x₁ ∷ xs) | fst₁ , snd₁ = s≤′s (_≤′_.≤′-step fst₁) , s≤′s (_≤′_.≤′-step snd₁)
 
 
 example : ( partition ( 1 ∷ 2 ∷ [] ) ) ≡ ( 1 ∷ [] , 2 ∷ [] )
