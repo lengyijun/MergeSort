@@ -103,7 +103,11 @@ mergesortcorrectness' : ( xs : List ℕ ) -> ( a :  Acc  _<′_ (length xs)) -> 
 mergesortcorrectness' [] a = nil
 mergesortcorrectness' (x ∷ []) a = one
 mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
-mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = sorted-merge (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) (mergesortcorrectness' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
+mergesortcorrectness' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = sorted-merge 
+                                                (mergesort' (x ∷ fst)  (rs _ (s≤′s (s≤′s fst₁)))) 
+                                                (mergesort' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
+                                                (mergesortcorrectness' (x ∷ fst)  (rs _ (s≤′s (s≤′s fst₁)))) 
+                                                (mergesortcorrectness' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) 
 
 mergesortcorrectness : ( xs : List ℕ ) -> sorted (mergesort xs)
 mergesortcorrectness xs = mergesortcorrectness' xs  (<′-wellFounded (length xs))
