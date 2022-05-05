@@ -93,7 +93,9 @@ mergesort' : ( xs : List ℕ ) -> Acc  _<′_ (length xs) -> List ℕ
 mergesort' [] _ = []
 mergesort' (x ∷ []) _ = x ∷ []
 mergesort' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs
-mergesort' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = merge (mergesort' ( x ∷ fst ) (rs _ (s≤′s (s≤′s fst₁))) ) (mergesort' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁))))
+mergesort' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ = merge 
+                                                              (mergesort' (x ∷ fst)  (rs _ (s≤′s (s≤′s fst₁))))
+                                                              (mergesort' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁))))
 
 
 mergesort : List ℕ -> List ℕ
