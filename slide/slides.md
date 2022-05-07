@@ -287,6 +287,19 @@ foo (suc x) (suc y) = foo x (suc (suc y))
 
 ---
 
+# 单个函数终止性总结
+
+必须满足以下两种条件之一
+
+1. 每次递归，固定一个参数A下降
+
+2. 每次递归，必须是以下两种可能
+
+  - 参数 A 下降
+  - 参数 A 不变，参数 B 下降
+
+---
+
 # Termination example : ackermann
 
 <img border="rounded" src="ackermann.svg" >
