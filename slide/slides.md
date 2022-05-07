@@ -221,7 +221,7 @@ foo (suc x) y =  foo x (suc y) + foo x (suc y)
 
 <img border="rounded" src="56.drawio.png" >
 
-Obversation: 所有的递归，固定一个参数下降，可以终止
+Obversation: 所有的递归，固定一个参数下降，函数可以终止
 
 ---
 
@@ -268,6 +268,8 @@ foo (suc x) (suc y) = foo x (suc (suc y))
 # ackermann
 
 <img border="rounded" src="ackermann.svg" >
+
+<br/>
 
 ```
 ackermann : ℕ -> ℕ -> ℕ
