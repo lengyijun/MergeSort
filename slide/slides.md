@@ -277,7 +277,7 @@ foo (suc x) (suc y) = foo x (suc (suc y))
 
 ---
 
-# ackermann
+# Termination example : ackermann
 
 <img border="rounded" src="ackermann.svg" >
 
