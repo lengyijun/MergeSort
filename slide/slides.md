@@ -241,6 +241,10 @@ Obversation: 所有的递归，固定一个参数下降，函数可以终止
 
 ---
 
+<img border="rounded" src="78910-answer.drawio.svg" >
+
+---
+
 # 两个参数都有下降
 
 
