@@ -42,18 +42,18 @@ drawings:
 
 # Part1 : Prepare to sorted
 
-<img border="rounded" src="part1.drawio.png" >
+<img border="rounded" src="part1.drawio.svg" >
 
 ---
 
 # Part2 : Sorted
 
-<img border="rounded" src="part2.drawio.png" >
+<img border="rounded" src="part2.drawio.svg" >
 ---
 
 # Part3 : Permutation
 
-<img border="rounded" src="part3.drawio.png" >
+<img border="rounded" src="part3.drawio.svg" >
 ---
 
 # List 
@@ -192,7 +192,7 @@ fib (suc (suc x)) = fib x + fib (suc x)
 
 递归函数能终止，必须有参数下降 --- 5 种情况
 
-<img border="rounded" src="single-5.drawio.png" >
+<img border="rounded" src="single-5.drawio.svg" >
 
 
 ```
@@ -208,10 +208,16 @@ foo x y = foo (suc x) y
 
 如果发生两种递归，那只有 C(5, 2) = 10 种情况
 
-<img border="rounded" src="1234.drawio.png" >
+<img border="rounded" src="1234.drawio.svg" >
+
+---
+
+<img border="rounded" src="1234-answer.drawio.svg" >
+
+---
 
 ```
-{- terminate -}
+{- -}
 foo : ℕ -> ℕ -> ℕ
 foo zero y = suc y
 foo (suc x) y =  foo x (suc y) + foo x (suc y)
@@ -219,13 +225,19 @@ foo (suc x) y =  foo x (suc y) + foo x (suc y)
 
 ---
 
-<img border="rounded" src="56.drawio.png" >
+<img border="rounded" src="56.drawio.svg" >
+
+---
+
+<img border="rounded" src="56-answer.drawio.svg" >
+
+<br/>
 
 Obversation: 所有的递归，固定一个参数下降，函数可以终止
 
 ---
 
-<img border="rounded" src="78910.drawio.png" >
+<img border="rounded" src="78910.drawio.svg" >
 
 ---
 
@@ -236,7 +248,7 @@ Obversation: 所有的递归，固定一个参数下降，函数可以终止
 <div grid="~ cols-2 gap-4">
 <div>
 
-<img border="rounded" src="10.drawio.png" >
+<img border="rounded" src="10.drawio.svg" >
 
 </div>
 <div>
@@ -259,7 +271,7 @@ foo (suc x) (suc y) = foo x (suc (suc y))
 <div></div>
 
 <div>
-<img border="rounded" src="55.drawio.png" >
+<img border="rounded" src="55.drawio.svg" >
 </div>
 </div>
 
