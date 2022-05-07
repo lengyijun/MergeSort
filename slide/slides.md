@@ -217,6 +217,10 @@ foo zero y = suc y
 foo (suc x) y =  foo x (suc y) + foo x (suc y)
 ```
 
+---
+
+<img border="rounded" src="56.drawio.png" >
+
 Obversation: 所有的递归，固定一个参数下降，可以终止
 
 ---
