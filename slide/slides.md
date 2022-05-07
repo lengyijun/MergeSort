@@ -245,7 +245,7 @@ Obversation: 所有的递归，固定一个参数下降，函数可以终止
 
 ---
 
-# 两个参数都有下降
+# Counter example of (10)
 
 
 
@@ -272,7 +272,13 @@ foo (suc x) (suc y) = foo x (suc (suc y))
 
 
 <div grid="~ cols-2 gap-4">
-<div></div>
+<div>
+
+每次递归满足以下条件，函数可以终止：
+- 参数A下降
+- 参数A不变，参数B下降
+
+</div>
 
 <div>
 <img border="rounded" src="55.drawio.svg" >
