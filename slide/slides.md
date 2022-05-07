@@ -190,10 +190,16 @@ fib (suc (suc x)) = fib x + fib (suc x)
 
 # Observation
 
-递归函数能终止，必须有参数下降 --- 5 种情况
+递归函数能终止，必须有参数下降 (5 种情况)
 
 <img border="rounded" src="single-5.drawio.svg" >
 
+
+--- 
+
+# 2 arguments
+
+显然，如果有多个参数，也必须有至少一个参数下降
 
 ```
 foo: ℕ -> ℕ ->  ℕ
@@ -202,10 +208,6 @@ foo x y = foo (suc x) y
 
 --- 
 
-# 2 arguments
-
-显然，如果有多个参数，也必须有至少一个参数下降
-
 如果发生两种递归，那只有 C(5, 2) = 10 种情况
 
 <img border="rounded" src="1234.drawio.svg" >
@@ -213,15 +215,6 @@ foo x y = foo (suc x) y
 ---
 
 <img border="rounded" src="1234-answer.drawio.svg" >
-
----
-
-```
-{- -}
-foo : ℕ -> ℕ -> ℕ
-foo zero y = suc y
-foo (suc x) y =  foo x (suc y) + foo x (suc y)
-```
 
 ---
 
@@ -274,9 +267,11 @@ foo (suc x) (suc y) = foo x (suc (suc y))
 <div grid="~ cols-2 gap-4">
 <div>
 
-每次递归满足以下条件，函数可以终止：
+每次递归满足以下任意条件，函数可以终止：
 - 参数A下降
 - 参数A不变，参数B下降
+
+A B 可能有多种选择
 
 </div>
 
