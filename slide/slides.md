@@ -221,25 +221,43 @@ Obversation: 所有的递归，固定一个参数下降，可以终止
 
 ---
 
-# 两个参数都有下降
-
 <img border="rounded" src="78910.drawio.png" >
 
 ---
 
+# 两个参数都有下降
+
+
+
+<div grid="~ cols-2 gap-4">
+<div>
+
 <img border="rounded" src="10.drawio.png" >
 
+</div>
+<div>
 
 ```
 {- example of (10) -}
 foo : ℕ -> ℕ -> ℕ
 foo zero y = zero
 foo (suc x) zero = zero
-foo (suc x) (suc y) = foo x (suc (suc y)) 
+foo (suc x) (suc y) = foo x (suc (suc y))
                     + foo (suc (suc x)) y
 ```
 
+</div>
+</div>
+
+
+
+<div grid="~ cols-2 gap-4">
+<div></div>
+
+<div>
 <img border="rounded" src="55.drawio.png" >
+</div>
+</div>
 
 ---
 
