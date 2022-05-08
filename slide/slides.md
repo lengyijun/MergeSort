@@ -138,14 +138,9 @@ fib (suc zero) = one
 fib (suc (suc x)) = fib x + fib (suc x)
 ```
 
---- 
+## Observation
 
-# Observation
-
-递归函数能终止，必须有参数下降 (5 种情况)
-
-<img border="rounded" src="single-5.drawio.svg" >
-
+一个参数的递归函数能终止，参数必须下降 
 
 --- 
 
@@ -157,6 +152,8 @@ fib (suc (suc x)) = fib x + fib (suc x)
 foo: ℕ -> ℕ ->  ℕ
 foo x y = foo (suc x) y
 ```
+
+<img border="rounded" src="single-5.drawio.svg" >
 
 --- 
 
@@ -218,13 +215,6 @@ foo (suc x) (suc y) = foo x (suc (suc y))
 
 <div grid="~ cols-2 gap-4">
 <div>
-
-每次递归满足以下任意条件，函数可以终止：
-- 参数A下降
-- 参数A不变，参数B下降
-
-A B 可能有多种选择
-
 </div>
 
 <div>
@@ -245,6 +235,10 @@ merge (x ∷ xs) (y ∷ ys) with em x y | merge xs (y ∷ ys) | merge (x ∷ xs)
 merge (x ∷ xs) (y ∷ ys) | inj₁ x₁ | b | c = x ∷ b
 merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = y ∷ c
 ```
+
+---
+
+<img border="rounded" src="789-answer.drawio.svg" >
 
 ---
 
