@@ -401,12 +401,16 @@ mutual
 --- 
 
 # Induction
+
 1. induction 分显式的induction 和隐式的induction
 2. coq 是显式的induction。 Agda是隐式的induction
 
 <br/>
 
 ## 什么时候要 induction
+
+<br/>
+
 1. 你可以乱induction（顶多不用induction引入的条件）
 
 ---
