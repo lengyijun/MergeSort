@@ -65,54 +65,6 @@ data List {a} (A : Set a) : Set a where
 
 ---
 
-# ≤
-
-```
-data _≤_ : ℕ  -> ℕ -> Set where
-  ≤-reflex : {n : ℕ } -> n ≤ n
-  s≤s : {n m : ℕ } -> ( n ≤ m ) -> ( n  ≤  suc m )
-```
-
-```
-zero≤n : ( n : ℕ )  -> zero ≤ n
-zero≤n zero = ≤-reflex
-zero≤n (suc n) = s≤s (zero≤n n)
-```
-
-```
-transitive : { n m o : ℕ } -> n ≤ m -> m ≤ o -> n ≤ o
-transitive {n} {.n} {o} ≤-reflex x₁ = x₁
-transitive {n} {.(suc _)} {.(suc _)} (s≤s x) ≤-reflex = s≤s x
-transitive {n} {.(suc _)} {.(suc _)} (s≤s x) (s≤s x₁) = s≤s (transitive x (transitive (s≤s ≤-reflex) x₁))
-```
-
----
-
-# ≤
-
-```
-em : ( m n : ℕ ) -> ( m ≤ n ) ⊎ ( n ≤ m )
-em zero n = inj₁ (zero≤n n)
-em (suc m) zero = inj₂ (zero≤n (suc m))
-em (suc m) (suc n) with em m n
-em (suc m) (suc n) | inj₁ x = inj₁ (sucsuc _ _ x)
-em (suc m) (suc n) | inj₂ y = inj₂ (sucsuc _ _ y)
-```
-
----
-
-# list is sorted
-
-```
-data sorted : List ℕ -> Set where
-  nil : sorted []
-  one : {x : ℕ } -> sorted ( x ∷ [] )
-  two : (x y : ℕ ) -> (L : List ℕ ) -> x ≤ y -> sorted ( y ∷ L ) -> sorted ( x ∷ y ∷ L ) 
-   
-```
-
----
-
 # Question
 
 1. 如果第一步展开错了怎么办？
@@ -243,7 +195,6 @@ Obversation: 所有的递归，固定一个参数下降，函数可以终止
 # Counter example of (10)
 
 
-
 <div grid="~ cols-2 gap-4">
 <div>
 
@@ -280,6 +231,20 @@ A B 可能有多种选择
 <img border="rounded" src="55.drawio.svg" >
 </div>
 </div>
+
+---
+
+<img border="rounded" src="9.drawio.svg" >
+
+
+```
+merge : List ℕ -> List ℕ -> List ℕ
+merge [] x₁ = x₁
+merge (x ∷ x₂) [] = x ∷ x₂
+merge (x ∷ xs) (y ∷ ys) with em x y | merge xs (y ∷ ys) | merge (x ∷ xs) ys
+merge (x ∷ xs) (y ∷ ys) | inj₁ x₁ | b | c = x ∷ b
+merge (x ∷ xs) (y ∷ ys) | inj₂ y₁ | b | c = y ∷ c
+```
 
 ---
 
