@@ -216,6 +216,8 @@ foo x y = foo (suc x) y
 
 <img border="rounded" src="1234-answer.drawio.svg" >
 
+Obversation: 所有的递归，固定一个参数下降，函数可以终止
+
 ---
 
 <img border="rounded" src="56.drawio.svg" >
@@ -251,7 +253,6 @@ Obversation: 所有的递归，固定一个参数下降，函数可以终止
 <div>
 
 ```
-{- example of (10) -}
 foo : ℕ -> ℕ -> ℕ
 foo zero y = zero
 foo (suc x) zero = zero
