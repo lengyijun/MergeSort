@@ -415,6 +415,8 @@ mutual
 
 # Reference
 
+[--termination-depth=N](https://wiki.portal.chalmers.se/agda/ReferenceManual/Pragmas)
+
 [software foudation](https://softwarefoundations.cis.upenn.edu/vfa-current/index.html)
 
 [`Function` in Coq](https://github.com/gtanzer/sort)
