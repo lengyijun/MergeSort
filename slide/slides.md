@@ -298,16 +298,25 @@ A B 可能有多种选择
 
 # Termination example : ackermann
 
+<div grid="~ cols-2 gap-4">
+<div>
 <img border="rounded" src="ackermann.svg" >
+</div>
 
-<br/>
+<div>
 
 ```
 ackermann : ℕ -> ℕ -> ℕ
 ackermann zero y = suc y
 ackermann (suc x) zero = ackermann x (suc zero)
-ackermann (suc x) (suc y) = ackermann x (ackermann (suc x) y)
+ackermann (suc x) (suc y) = 
+              ackermann x (ackermann (suc x) y)
 ```
+
+</div>
+</div>
+
+<img border="rounded" src="ackermann.drawio.svg" >
 
 ---
 
