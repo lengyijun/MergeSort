@@ -312,7 +312,7 @@ ackermann (suc x) (suc y) = ackermann x (ackermann (suc x) y)
 
 # Complexitivy of termination in mutual
 
-就算不下降，也有可能终止
+就算存在不下降的递归，也有可能终止
 
 ```
 {- agda hello.agda --termination-depth=3 -}
@@ -331,6 +331,11 @@ mutual
 # Coq's approach
 
 ---
+
+<img border="rounded" src="sorted-merge.drawio.svg" >
+
+<!--
+
 # Different way to prove sorted
 
 <style type="text/css">
@@ -363,12 +368,13 @@ mutual
 </tbody>
 </table>
 
+-->
+
 ---
 
 # 失败的证明路线
 
 - `merge xs ys = merge ys xs`
-- unfold `sort` in `sorted-merge`
 
 ---
 
@@ -380,7 +386,7 @@ mutual
 # Future work
 
 1. 验证mergesort时间复杂度 O(log n)
-2. Coq 中mutual induction
+2. Coq 中mutual induction，证明lemma3 lemma4
 
 --- 
 
