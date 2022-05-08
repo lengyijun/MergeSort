@@ -124,11 +124,35 @@ foo : ℕ ->  ℕ
 foo x = foo x
 ```
 
+<div grid="~ cols-2 gap-4">
+<div>
+
 ```
 {- ↑ -}
 foo : ℕ ->  ℕ
 foo x = foo (suc x)
+
+
+
+
+
 ```
+
+</div>
+<div>
+
+```
+{- ↑ -}
+id : List ℕ -> List ℕ
+id x = x
+
+foo : List ℕ -> List ℕ
+foo [] = []
+foo (x ∷ xs) = foo (id xs)
+```
+
+</div>
+</div>
 
 ```
 {- ↓ -}
@@ -137,6 +161,7 @@ fib zero = one
 fib (suc zero) = one
 fib (suc (suc x)) = fib x + fib (suc x)
 ```
+
 
 ## Observation
 
