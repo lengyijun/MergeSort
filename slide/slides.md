@@ -411,7 +411,7 @@ mutual
 
 <br/>
 
-1. 你可以乱induction（顶多不用induction引入的条件）
+1. 可以随便induction（大不了不用induction引入的条件）
 
 ---
 
