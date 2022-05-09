@@ -375,6 +375,10 @@ ackermann (suc x) (suc y) =
 </div>
 
 <img border="rounded" src="ackermann.drawio.svg" >
+<br/>
+
+- 第一个参数 下降
+- 第一个参数不变，第二个参数下降
 
 ---
 
