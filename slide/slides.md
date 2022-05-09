@@ -77,6 +77,10 @@ data List {a} (A : Set a) : Set a where
 
 3. with 的含义
 
+  <br/>
+
+4. 不使用 with 证明?
+
 ---
 
 # Question
@@ -96,6 +100,12 @@ data List {a} (A : Set a) : Set a where
 3. with 的含义
 
   mutual 的语法糖
+
+  <br/>
+
+4. 不使用 with 证明?
+  
+  对长度 induction 可以减少 with 的使用
 
 ---
 
