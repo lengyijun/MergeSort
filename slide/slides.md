@@ -412,6 +412,17 @@ mutual
 
 # Coq's approach
 
+```
+foo : A -> B
+bar : C -> D
+
+foo a = foo x , ... bar y
+        x ≤ a       y ≤ a
+
+bar c = foo x , ... bar y
+        x ≤ c       y ≤ c
+```
+
 ---
 
 <img border="rounded" src="sorted-merge.drawio.svg" >
