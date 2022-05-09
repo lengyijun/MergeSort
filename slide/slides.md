@@ -174,7 +174,7 @@ fib (suc (suc x)) = fib x + fib (suc x)
 
 ```
 foo: ℕ -> ℕ ->  ℕ
-foo x y = foo (suc x) y
+foo x y = foo (suc x) y  {- can't terminate -}
 ```
 
 <div grid="~ cols-2 gap-4">
