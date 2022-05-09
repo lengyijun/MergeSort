@@ -162,10 +162,9 @@ fib (suc zero) = one
 fib (suc (suc x)) = fib x + fib (suc x)
 ```
 
+### 单个参数的函数能终止的条件：
 
-## Observation
-
-一个参数的递归函数能终止，参数必须下降 
+每次递归时，这个参数必须下降 
 
 --- 
 
