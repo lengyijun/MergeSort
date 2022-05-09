@@ -142,10 +142,10 @@ foo x = foo (suc x)
 <div>
 
 ```
-{- ↑ -}
 id : List ℕ -> List ℕ
 id x = x
 
+{- ↑ -}
 foo : List ℕ -> List ℕ
 foo [] = []
 foo (x ∷ xs) = foo (id xs)
