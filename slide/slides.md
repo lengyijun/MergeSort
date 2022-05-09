@@ -177,7 +177,36 @@ foo: ℕ -> ℕ ->  ℕ
 foo x y = foo (suc x) y
 ```
 
+<div grid="~ cols-2 gap-4">
+<div>
 <img border="rounded" src="single-5.drawio.svg" >
+</div>
+<div>
+
+```
+{- (1) -}
+foo : ℕ -> ℕ -> ℕ
+foo zero y = zero
+foo (suc x) y = foo x y
+```
+
+```
+{- (2) -}
+foo : ℕ -> ℕ -> ℕ
+foo zero y = zero
+foo (suc x) y = foo x (suc y)
+```
+
+```
+{- (3) -}
+foo : ℕ -> ℕ -> ℕ
+foo zero y = zero
+foo (suc x) zero = zero
+foo (suc x) (suc y) = foo x y
+```
+
+</div>
+</div>
 
 --- 
 
