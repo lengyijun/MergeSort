@@ -251,6 +251,29 @@ foo x (suc y) = foo (suc x) y + foo x y
 
 <img border="rounded" src="56-answer.drawio.svg" >
 
+<div grid="~ cols-2 gap-4">
+<div>
+
+```
+{- (5) -}
+foo : ℕ -> ℕ -> ℕ
+foo zero y = zero
+foo (suc x) y = foo x (suc y) + foo x y
+```
+
+</div>
+<div>
+
+```
+{- (6) -}
+foo : ℕ -> ℕ -> ℕ
+foo x zero = zero
+foo x (suc y) = foo (suc x) y + foo x y
+```
+
+</div>
+</div>
+
 <br/>
 
 Obversation: 所有的递归，固定一个参数下降，函数可以终止
