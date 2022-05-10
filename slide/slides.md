@@ -71,7 +71,7 @@ data List {a} (A : Set a) : Set a where
 
   <br/>
 
-2. 如果没有发现 coqlemma 怎么办？
+2. 如果没有发现 sf-lemma 怎么办？
 
   <br/>
 
@@ -91,7 +91,7 @@ data List {a} (A : Set a) : Set a where
 
   <br/>
 
-2. 如果没有发现 coqlemma 怎么办？
+2. 如果没有发现 sf-lemma 怎么办？
 
   可能不得不引入一些复杂的引理（mutual）
 
