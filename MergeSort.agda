@@ -161,18 +161,21 @@ permutation-tail xs1 xs2 (y ∷ ys) p = skip y (permutation-tail xs1 xs2 ys p)
 permutation-head :  (xs1 xs2 ys : List ℕ) -> Permutation xs1 xs2 -> Permutation (xs1 ++ ys) ( xs2 ++ ys )
 permutation-head xs1 xs2 ys x = permtrans (++swap xs1 ys ) (permtrans (permutation-tail xs1 xs2 ys x) (++swap ys xs2 ) )
 
+permutation-app : {l1 l1' l2 l2' : List ℕ} -> Permutation l1 l1' -> Permutation l2 l2' -> Permutation (l1 ++ l2) (l1' ++ l2')
+permutation-app x x₁ = permtrans (permutation-head _ _ _ x) (permutation-tail _ _ _ x₁)
+
 mergesortpermutation' : (xs : List ℕ ) ->  ∀ ( a :  Acc  _<′_ (length xs)) -> Permutation xs (mergesort' xs a)
 mergesortpermutation' [] a = [][]
 mergesortpermutation' (x ∷ []) a = skip x [][]
 mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) with partition xs | partition-size xs | mergepermutation (x ∷ x₁ ∷ xs )
 mergesortpermutation' (x ∷ x₁ ∷ xs) (acc rs) | fst , snd | fst₁ , snd₁ | z = permtrans
-  (permtrans z
+  z
+  (permtrans
+    (permutation-swap (++merge (x ∷ fst) (x₁ ∷ snd)))
     (permtrans
-      (permtrans
-        (permutation-swap (++merge (x ∷ fst) (x₁ ∷ snd)) )
-        (permutation-head (x ∷ fst ) (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (x₁ ∷ snd) (mergesortpermutation' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁))) ) ))
-      (permutation-tail (x₁ ∷ snd) (mergesort' (x₁ ∷ snd) (rs _ (s≤′s (s≤′s snd₁)))) (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortpermutation' (x₁ ∷ snd ) (rs _ (s≤′s (s≤′s snd₁)))))))
-  (++merge (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁)))) )
+      (permutation-app (mergesortpermutation' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesortpermutation' (x₁ ∷ snd ) (rs _ (s≤′s (s≤′s snd₁)))))
+      (++merge (mergesort' (x ∷ fst) (rs _ (s≤′s (s≤′s fst₁)))) (mergesort' (x₁ ∷ snd)  (rs _ (s≤′s (s≤′s snd₁))))))) 
+
 
 mergesortpermutation : ( xs : List ℕ ) -> Permutation xs ( mergesort xs )
 mergesortpermutation xs = mergesortpermutation' xs (<′-wellFounded (length xs))
