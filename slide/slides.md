@@ -513,9 +513,10 @@ bar c = foo x , ... bar y
 
 [--termination-depth=N](https://wiki.portal.chalmers.se/agda/ReferenceManual/Pragmas)
 
+[mergesort in Agda](https://stackoverflow.com/questions/17910737/termination-check-on-list-merge/17912550#17912550)
+
 [software foudation](https://softwarefoundations.cis.upenn.edu/vfa-current/index.html)
 
 [`Function` in Coq](https://github.com/gtanzer/sort)
 
-[mergesort in Agda](https://stackoverflow.com/questions/17910737/termination-check-on-list-merge/17912550#17912550)
 
