@@ -56,6 +56,7 @@ Inductive sorted: list nat -> Set :=
     sorted (x::nil)
 | sorted_cons: forall x y l,
    x <= y -> sorted (y::l) -> sorted (x::y::l).
+
 (** Mergesort is a well-known sorting algorithm, normally presented
     as an imperative algorithm on arrays, that has worst-case
     O(n log n) execution time and requires O(n) auxiliary space.
@@ -530,6 +531,35 @@ Check mergesort_ind.
     It is perhaps easiest to break out a sub-lemma first:
 *)
 
+(** **** Exercise: 2 stars, standard (sorted_merge1) *)
+Lemma sorted_merge1 : forall x x1 l1 x2 l2,
+    x <= x1 -> x <= x2 -> 
+    sorted (merge (x1::l1) (x2::l2)) ->
+    sorted (x :: merge (x1::l1) (x2::l2)).
+Proof.
+  firstorder.
+  simpl in *.
+  bdestruct (x2 >=? x1 ); constructor; try lia; auto.
+Qed.
+
+Lemma sorted_merge2 : forall x l1 l2 ,
+    sorted (x :: l1) ->
+    sorted (x :: l2) ->
+    sorted (merge l1 l2) ->
+    sorted (x :: merge l1 l2).
+Proof.
+destruct l1; intros.
+rewrite (merge_nil_l l2) in *.
+auto.
+destruct l2.
+simpl in *.
+auto.
+apply sorted_merge1.
+inv H. auto.
+inv H0. auto.
+auto.
+Qed.
+
 Lemma sorted_inv : forall x l , sorted (x :: l) -> sorted l.
 Proof.
   intros.
@@ -539,84 +569,72 @@ Proof.
   auto.
 Qed.
 
-
-(** **** Exercise: 2 stars, standard (sorted_merge1) *)
-Lemma sorted_merge1 : forall x x1 l1 x2 l2,
-    x <= x1 -> x <= x2 -> 
-    sorted (merge (x1::l1) (x2::l2)) ->
-    sorted (x :: merge (x1::l1) (x2::l2)).
-Proof.
-  firstorder.
-  simpl in *.
-  bdestruct (x2 >=? x1); constructor; auto.
-Qed.
-
-Lemma sorted_merge2 : forall x l1 l2 ,                                                                                                                                                        
-    sorted (x :: l1) ->
-    sorted (x :: l2) ->
-    sorted (merge l1 l2) ->
-    sorted (x :: merge l1 l2).
-Proof.
-destruct l1; intros.
-rewrite (merge_nil_l l2) in *.
-auto.
-destruct l2. 
-simpl in *.
-auto.
-apply sorted_merge1.
-inv H. auto.
-inv H0. auto.
-auto.
+Lemma merge_nil_r : forall l , merge l [] = l .
+  Proof.
+induction l.
+simpl.    easy.
+simpl.
+easy.
 Qed.
 
 
 (** **** Exercise: 4 stars, standard (sorted_merge) *)
-Lemma sorted_merge : forall l1, sorted l1 ->
-                     forall l2, sorted l2 ->
-                     sorted (merge l1 l2).
+Lemma sorted_merge (l1 l2 : list nat): sorted l1 ->
+                                    sorted l2 ->
+                                    sorted (merge l1 l2) .
 Proof.
-  intro.
-  induction l1.
-  intros.
-  rewrite (merge_nil_l l2).
-  auto.
-  
-  intro.
-  induction l2; intros; simpl.
+  generalize (lt_n_Sn (length l1 + length l2)).
+  remember (S (length l1 + length l2)).
+  clear Heqn.
+  generalize l1.
+  generalize l2.
+  induction n; intros.
+  lia.
 
-  auto.
+  destruct l3.
+  rewrite (merge_nil_l l0).
+  easy.
+  destruct l0.
+  simpl. easy.
 
-  assert (sorted l1).
-  eapply sorted_inv. apply H.
-  specialize (IHl1 H1).
-  
-  bdestruct (a0 >=? a).
+  simpl.
+  bdestruct (n1 >=? n0).
+
   apply sorted_merge2.
-  auto.
-  constructor; auto.
-  apply IHl1.   
-  auto.
-
-  assert (sorted (a0 :: merge (a :: l1) l2)). 
-  apply sorted_merge2.
-  constructor. lia. auto. auto.
-  apply IHl2.
+  easy.
+  econstructor.
+  easy.
+  easy.
+  apply IHn.
+  simpl in *.
+  lia.
   eapply sorted_inv.
   apply H0.
+  easy.
 
-  exact H3.
+  assert (sorted (n1 :: merge (n0 :: l3) l0)).
+  apply sorted_merge2.
+  econstructor.
+  lia. easy. easy.
 
+  apply IHn.
+  simpl in *.
+  lia.
+  easy.
+  eapply sorted_inv.
+  apply H1.
+  assumption.
+  
 Qed.
 
-    
-  
+
+
 (** **** Exercise: 2 stars, standard (mergesort_sorts) *)
-Lemma mergesort_sorts: forall l, sorted (mergesort l).
+Lemma mergesort_sorts : forall l, sorted (mergesort l).
 Proof.
   intro.
   functional induction (mergesort l).
-  constructor.
-  constructor.
+  constructor. constructor.
   apply sorted_merge; auto.
 Qed.  
 
@@ -676,17 +694,17 @@ Qed.
 (** **** Exercise: 3 stars, advanced (mergesort_perm) *)
 Lemma mergesort_perm: forall l, Permutation l (mergesort l).
 Proof.
-    apply mergesort_ind; intros.
+  intros.
+  functional induction (mergesort l).
     auto.
     auto.
-    subst _x.
     econstructor.
     apply (split_perm l l1 l2 e0).
     assert (Permutation (l1 ++ l2) ((mergesort l1) ++ (mergesort l2))).
     apply Permutation_app.
     auto. auto.
     econstructor.
-    apply H1.
+    apply H.
     apply merge_perm.
 Qed.
 
