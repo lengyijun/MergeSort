@@ -645,6 +645,7 @@ Proof.
   intros. rewrite (merge_nil_l l2).
   simpl in *.
   auto.
+  
   induction l2.
   simpl.
   assert (a :: l1 ++ [] = a :: l1).
