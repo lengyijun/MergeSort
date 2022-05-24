@@ -76,20 +76,6 @@ Next Obligation.
   apply le_plus_l.
 Qed.
 
-(*
-Definition my_mergesort_spec :=
- DECLARE _my_mergesort
- WITH p: val, l: list val
- PRE [ Tarray tint (Zlength l) noattr , tint ]
-     PROP()
-     PARAMS (p; length)
-     SEP (data_at Tsh (Tarray tint length noattr ) l p )
- POST [ Tarray tint x noattr  ]
-    EX r: val,
-     PROP()
-     RETURN(r)
-     SEP (data_at Tsh (Tarray tint length noattr ) l p).
- *)
 
 Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
