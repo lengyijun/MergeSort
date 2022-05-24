@@ -82,7 +82,8 @@ Definition my_mergesort_spec : ident * funspec :=
  WITH p: val,  sh : share, il: list Z, gv: globals
  PRE [ tptr tuint , tint ] 
     PROP (readable_share sh ) 
-    PARAMS (p; Vint (Int.repr (Zlength il)) ) GLOBALS(gv) 
+    PARAMS (p; Vint (Int.repr (Zlength il)) )
+    GLOBALS(gv) 
     SEP  (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr il)) p)
  POST [ tptr tuint ] 
     PROP ( ) RETURN (p )
