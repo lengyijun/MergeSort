@@ -141,39 +141,41 @@ Definition f_my_mergesort := {|
     (Sifthenelse (Ebinop Oeq (Etempvar _len tint)
                    (Econst_int (Int.repr 2) tint) tint)
       (Ssequence
-        (Sset _t'9
-          (Ederef
-            (Ebinop Oadd (Etempvar _arr (tptr tint))
-              (Econst_int (Int.repr 0) tint) (tptr tint)) tint))
         (Ssequence
-          (Sset _t'10
+          (Sset _t'9
             (Ederef
               (Ebinop Oadd (Etempvar _arr (tptr tint))
-                (Econst_int (Int.repr 1) tint) (tptr tint)) tint))
-          (Sifthenelse (Ebinop Ogt (Etempvar _t'9 tint) (Etempvar _t'10 tint)
-                         tint)
-            (Ssequence
-              (Sset _t
-                (Ederef
-                  (Ebinop Oadd (Etempvar _arr (tptr tint))
-                    (Econst_int (Int.repr 1) tint) (tptr tint)) tint))
+                (Econst_int (Int.repr 0) tint) (tptr tint)) tint))
+          (Ssequence
+            (Sset _t'10
+              (Ederef
+                (Ebinop Oadd (Etempvar _arr (tptr tint))
+                  (Econst_int (Int.repr 1) tint) (tptr tint)) tint))
+            (Sifthenelse (Ebinop Ogt (Etempvar _t'9 tint)
+                           (Etempvar _t'10 tint) tint)
               (Ssequence
+                (Sset _t
+                  (Ederef
+                    (Ebinop Oadd (Etempvar _arr (tptr tint))
+                      (Econst_int (Int.repr 1) tint) (tptr tint)) tint))
                 (Ssequence
-                  (Sset _t'11
-                    (Ederef
-                      (Ebinop Oadd (Etempvar _arr (tptr tint))
-                        (Econst_int (Int.repr 0) tint) (tptr tint)) tint))
+                  (Ssequence
+                    (Sset _t'11
+                      (Ederef
+                        (Ebinop Oadd (Etempvar _arr (tptr tint))
+                          (Econst_int (Int.repr 0) tint) (tptr tint)) tint))
+                    (Sassign
+                      (Ederef
+                        (Ebinop Oadd (Etempvar _arr (tptr tint))
+                          (Econst_int (Int.repr 1) tint) (tptr tint)) tint)
+                      (Etempvar _t'11 tint)))
                   (Sassign
                     (Ederef
                       (Ebinop Oadd (Etempvar _arr (tptr tint))
-                        (Econst_int (Int.repr 1) tint) (tptr tint)) tint)
-                    (Etempvar _t'11 tint)))
-                (Sassign
-                  (Ederef
-                    (Ebinop Oadd (Etempvar _arr (tptr tint))
-                      (Econst_int (Int.repr 0) tint) (tptr tint)) tint)
-                  (Etempvar _t tint))))
-            Sskip)))
+                        (Econst_int (Int.repr 0) tint) (tptr tint)) tint)
+                    (Etempvar _t tint))))
+              Sskip)))
+        (Sreturn None))
       Sskip)
     (Ssequence
       (Sset _p

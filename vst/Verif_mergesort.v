@@ -81,16 +81,33 @@ Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
  WITH p: val,  sh : share, il: list Z, gv: globals
  PRE [ tptr tint , tint ] 
-    PROP (readable_share sh ) 
+    PROP (readable_share sh;
+          0 < Zlength il <= Int.max_signed) 
     PARAMS (p; Vint (Int.repr (Zlength il)) )
     GLOBALS(gv) 
     SEP  (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr il)) p)
  POST [ tvoid ] 
     PROP ( ) RETURN ()
-    SEP (data_at sh (tarray tuint (Zlength (mergesort il)))  (map Vint (map Int.repr (mergesort il))) p ).
+    SEP (data_at sh (tarray tuint (Zlength (mergesort il))) (map Vint (map Int.repr (mergesort il))) p).
 
 Definition Gprog : funspecs := [ my_mergesort_spec ].
 
 Lemma body_my_mergesort: semax_body Vprog Gprog f_my_mergesort my_mergesort_spec.
 Proof.
   start_function.
+  forward_if (Zlength il > 1).
+  {
+    forward.
+    destruct il.
+    rewrite Zlength_nil in H. inv H0. 
+    destruct il. admit. admit.
+  }
+  {
+    forward.
+    entailer!.
+  }
+   forward_if (Zlength il > 2).
+  {
+    rewrite H0.
+    
+  }
