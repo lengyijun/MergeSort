@@ -81,8 +81,11 @@ Definition _a : ident := $"a".
 Definition _arr : ident := $"arr".
 Definition _arr1 : ident := $"arr1".
 Definition _arr2 : ident := $"arr2".
+Definition _exit : ident := $"exit".
 Definition _free : ident := $"free".
 Definition _i : ident := $"i".
+Definition _j : ident := $"j".
+Definition _k : ident := $"k".
 Definition _len : ident := $"len".
 Definition _main : ident := $"main".
 Definition _malloc : ident := $"malloc".
@@ -90,12 +93,8 @@ Definition _memcpy : ident := $"memcpy".
 Definition _my_mergesort : ident := $"my_mergesort".
 Definition _p : ident := $"p".
 Definition _printf : ident := $"printf".
-Definition _rt : ident := $"rt".
 Definition _t : ident := $"t".
-Definition _t__1 : ident := $"t__1".
 Definition _t'1 : ident := 128%positive.
-Definition _t'10 : ident := 137%positive.
-Definition _t'11 : ident := 138%positive.
 Definition _t'2 : ident := 129%positive.
 Definition _t'3 : ident := 130%positive.
 Definition _t'4 : ident := 131%positive.
@@ -103,7 +102,6 @@ Definition _t'5 : ident := 132%positive.
 Definition _t'6 : ident := 133%positive.
 Definition _t'7 : ident := 134%positive.
 Definition _t'8 : ident := 135%positive.
-Definition _t'9 : ident := 136%positive.
 
 Definition v___stringlit_2 := {|
   gvar_info := (tarray tschar 2);
@@ -125,12 +123,11 @@ Definition f_my_mergesort := {|
   fn_callconv := cc_default;
   fn_params := ((_arr, (tptr tint)) :: (_len, tint) :: nil);
   fn_vars := nil;
-  fn_temps := ((_t, tint) :: (_p, tint) :: (_arr1, (tptr tint)) ::
-               (_arr2, (tptr tint)) :: (_t__1, (tptr tint)) ::
-               (_rt, (tptr tint)) :: (_t'2, tint) :: (_t'1, (tptr tvoid)) ::
-               (_t'11, tint) :: (_t'10, tint) :: (_t'9, tint) ::
-               (_t'8, tint) :: (_t'7, tint) :: (_t'6, tint) ::
-               (_t'5, tint) :: (_t'4, tint) :: (_t'3, tint) :: nil);
+  fn_temps := ((_p, tint) :: (_arr1, (tptr tint)) :: (_arr2, (tptr tint)) ::
+               (_t, (tptr tint)) :: (_i, tint) :: (_j, tint) :: (_k, tint) ::
+               (_t'2, tint) :: (_t'1, (tptr tvoid)) :: (_t'8, tint) ::
+               (_t'7, tint) :: (_t'6, tint) :: (_t'5, tint) ::
+               (_t'4, tint) :: (_t'3, tint) :: nil);
   fn_body :=
 (Ssequence
   (Sifthenelse (Ebinop Oeq (Etempvar _len tint)
@@ -138,196 +135,175 @@ Definition f_my_mergesort := {|
     (Sreturn None)
     Sskip)
   (Ssequence
-    (Sifthenelse (Ebinop Oeq (Etempvar _len tint)
-                   (Econst_int (Int.repr 2) tint) tint)
-      (Ssequence
-        (Ssequence
-          (Sset _t'9
-            (Ederef
-              (Ebinop Oadd (Etempvar _arr (tptr tint))
-                (Econst_int (Int.repr 0) tint) (tptr tint)) tint))
-          (Ssequence
-            (Sset _t'10
-              (Ederef
-                (Ebinop Oadd (Etempvar _arr (tptr tint))
-                  (Econst_int (Int.repr 1) tint) (tptr tint)) tint))
-            (Sifthenelse (Ebinop Ogt (Etempvar _t'9 tint)
-                           (Etempvar _t'10 tint) tint)
-              (Ssequence
-                (Sset _t
-                  (Ederef
-                    (Ebinop Oadd (Etempvar _arr (tptr tint))
-                      (Econst_int (Int.repr 1) tint) (tptr tint)) tint))
-                (Ssequence
-                  (Ssequence
-                    (Sset _t'11
-                      (Ederef
-                        (Ebinop Oadd (Etempvar _arr (tptr tint))
-                          (Econst_int (Int.repr 0) tint) (tptr tint)) tint))
-                    (Sassign
-                      (Ederef
-                        (Ebinop Oadd (Etempvar _arr (tptr tint))
-                          (Econst_int (Int.repr 1) tint) (tptr tint)) tint)
-                      (Etempvar _t'11 tint)))
-                  (Sassign
-                    (Ederef
-                      (Ebinop Oadd (Etempvar _arr (tptr tint))
-                        (Econst_int (Int.repr 0) tint) (tptr tint)) tint)
-                    (Etempvar _t tint))))
-              Sskip)))
-        (Sreturn None))
-      Sskip)
+    (Sset _p
+      (Ebinop Odiv (Etempvar _len tint) (Econst_int (Int.repr 2) tint) tint))
     (Ssequence
-      (Sset _p
-        (Ebinop Odiv (Etempvar _len tint) (Econst_int (Int.repr 2) tint)
-          tint))
+      (Sset _arr1 (Etempvar _arr (tptr tint)))
       (Ssequence
-        (Sset _arr1 (Etempvar _arr (tptr tint)))
+        (Sset _arr2
+          (Ebinop Oadd (Etempvar _arr (tptr tint)) (Etempvar _p tint)
+            (tptr tint)))
         (Ssequence
-          (Sset _arr2
-            (Ebinop Oadd (Etempvar _arr (tptr tint)) (Etempvar _p tint)
-              (tptr tint)))
+          (Scall None
+            (Evar _my_mergesort (Tfunction
+                                  (Tcons (tptr tint) (Tcons tint Tnil)) tvoid
+                                  cc_default))
+            ((Etempvar _arr1 (tptr tint)) :: (Etempvar _p tint) :: nil))
           (Ssequence
             (Scall None
               (Evar _my_mergesort (Tfunction
                                     (Tcons (tptr tint) (Tcons tint Tnil))
                                     tvoid cc_default))
-              ((Etempvar _arr1 (tptr tint)) :: (Etempvar _p tint) :: nil))
+              ((Etempvar _arr2 (tptr tint)) ::
+               (Ebinop Osub (Etempvar _len tint) (Etempvar _p tint) tint) ::
+               nil))
             (Ssequence
-              (Scall None
-                (Evar _my_mergesort (Tfunction
-                                      (Tcons (tptr tint) (Tcons tint Tnil))
-                                      tvoid cc_default))
-                ((Etempvar _arr2 (tptr tint)) ::
-                 (Ebinop Osub (Etempvar _len tint) (Etempvar _p tint) tint) ::
-                 nil))
               (Ssequence
+                (Scall (Some _t'1)
+                  (Evar _malloc (Tfunction (Tcons tulong Tnil) (tptr tvoid)
+                                  cc_default))
+                  ((Ebinop Omul (Esizeof tint tulong) (Etempvar _len tint)
+                     tulong) :: nil))
+                (Sset _t (Etempvar _t'1 (tptr tvoid))))
+              (Ssequence
+                (Sifthenelse (Eunop Onotbool (Etempvar _t (tptr tint)) tint)
+                  (Scall None
+                    (Evar _exit (Tfunction (Tcons tint Tnil) tvoid
+                                  cc_default))
+                    ((Econst_int (Int.repr 1) tint) :: nil))
+                  Sskip)
                 (Ssequence
-                  (Scall (Some _t'1)
-                    (Evar _malloc (Tfunction (Tcons tulong Tnil) (tptr tvoid)
-                                    cc_default))
-                    ((Ebinop Omul (Esizeof tint tulong) (Etempvar _len tint)
-                       tulong) :: nil))
-                  (Sset _t__1 (Etempvar _t'1 (tptr tvoid))))
-                (Ssequence
-                  (Sset _rt (Etempvar _t__1 (tptr tint)))
+                  (Sset _i (Econst_int (Int.repr 0) tint))
                   (Ssequence
-                    (Sloop
+                    (Sset _j (Etempvar _p tint))
+                    (Ssequence
+                      (Sset _k (Econst_int (Int.repr 0) tint))
                       (Ssequence
-                        Sskip
-                        (Ssequence
+                        (Sloop
                           (Ssequence
-                            (Sifthenelse (Ebinop Olt
-                                           (Etempvar _arr1 (tptr tint))
-                                           (Ebinop Oadd
-                                             (Etempvar _arr (tptr tint))
-                                             (Etempvar _p tint) (tptr tint))
-                                           tint)
-                              (Sset _t'2
-                                (Ecast
-                                  (Ebinop Olt (Etempvar _arr2 (tptr tint))
-                                    (Ebinop Oadd (Etempvar _arr (tptr tint))
-                                      (Etempvar _len tint) (tptr tint)) tint)
-                                  tbool))
-                              (Sset _t'2 (Econst_int (Int.repr 0) tint)))
-                            (Sifthenelse (Etempvar _t'2 tint)
+                            (Ssequence
+                              (Sifthenelse (Ebinop Olt (Etempvar _i tint)
+                                             (Etempvar _p tint) tint)
+                                (Sset _t'2
+                                  (Ecast
+                                    (Ebinop Olt (Etempvar _j tint)
+                                      (Etempvar _len tint) tint) tbool))
+                                (Sset _t'2 (Econst_int (Int.repr 0) tint)))
+                              (Sifthenelse (Etempvar _t'2 tint) Sskip Sbreak))
+                            (Ssequence
+                              (Sset _t'5
+                                (Ederef
+                                  (Ebinop Oadd (Etempvar _arr (tptr tint))
+                                    (Etempvar _i tint) (tptr tint)) tint))
                               (Ssequence
-                                (Sset _t'5
-                                  (Ederef (Etempvar _arr1 (tptr tint)) tint))
-                                (Ssequence
-                                  (Sset _t'6
-                                    (Ederef (Etempvar _arr2 (tptr tint))
-                                      tint))
-                                  (Sifthenelse (Ebinop Ole
-                                                 (Etempvar _t'5 tint)
-                                                 (Etempvar _t'6 tint) tint)
-                                    (Ssequence
-                                      (Ssequence
-                                        (Sset _t'8
-                                          (Ederef
-                                            (Etempvar _arr1 (tptr tint))
-                                            tint))
-                                        (Sassign
-                                          (Ederef
-                                            (Etempvar _t__1 (tptr tint))
-                                            tint) (Etempvar _t'8 tint)))
-                                      (Sset _arr1
-                                        (Ebinop Oadd
-                                          (Etempvar _arr1 (tptr tint))
-                                          (Econst_int (Int.repr 1) tint)
-                                          (tptr tint))))
-                                    (Ssequence
-                                      (Ssequence
-                                        (Sset _t'7
-                                          (Ederef
-                                            (Etempvar _arr2 (tptr tint))
-                                            tint))
-                                        (Sassign
-                                          (Ederef
-                                            (Etempvar _t__1 (tptr tint))
-                                            tint) (Etempvar _t'7 tint)))
-                                      (Sset _arr2
-                                        (Ebinop Oadd
-                                          (Etempvar _arr2 (tptr tint))
-                                          (Econst_int (Int.repr 1) tint)
-                                          (tptr tint)))))))
-                              (Sifthenelse (Ebinop Olt
-                                             (Etempvar _arr1 (tptr tint))
-                                             (Ebinop Oadd
-                                               (Etempvar _arr (tptr tint))
-                                               (Etempvar _p tint)
-                                               (tptr tint)) tint)
-                                (Ssequence
-                                  (Ssequence
-                                    (Sset _t'4
-                                      (Ederef (Etempvar _arr1 (tptr tint))
-                                        tint))
-                                    (Sassign
-                                      (Ederef (Etempvar _t__1 (tptr tint))
-                                        tint) (Etempvar _t'4 tint)))
-                                  (Sset _arr1
-                                    (Ebinop Oadd (Etempvar _arr1 (tptr tint))
-                                      (Econst_int (Int.repr 1) tint)
-                                      (tptr tint))))
-                                (Sifthenelse (Ebinop Olt
-                                               (Etempvar _arr2 (tptr tint))
-                                               (Ebinop Oadd
-                                                 (Etempvar _arr (tptr tint))
-                                                 (Etempvar _len tint)
-                                                 (tptr tint)) tint)
+                                (Sset _t'6
+                                  (Ederef
+                                    (Ebinop Oadd (Etempvar _arr (tptr tint))
+                                      (Etempvar _j tint) (tptr tint)) tint))
+                                (Sifthenelse (Ebinop Ole (Etempvar _t'5 tint)
+                                               (Etempvar _t'6 tint) tint)
                                   (Ssequence
                                     (Ssequence
-                                      (Sset _t'3
-                                        (Ederef (Etempvar _arr2 (tptr tint))
+                                      (Sset _t'8
+                                        (Ederef
+                                          (Ebinop Oadd
+                                            (Etempvar _arr (tptr tint))
+                                            (Etempvar _i tint) (tptr tint))
                                           tint))
                                       (Sassign
-                                        (Ederef (Etempvar _t__1 (tptr tint))
-                                          tint) (Etempvar _t'3 tint)))
-                                    (Sset _arr2
+                                        (Ederef
+                                          (Ebinop Oadd
+                                            (Etempvar _t (tptr tint))
+                                            (Etempvar _k tint) (tptr tint))
+                                          tint) (Etempvar _t'8 tint)))
+                                    (Sset _i
+                                      (Ebinop Oadd (Etempvar _i tint)
+                                        (Econst_int (Int.repr 1) tint) tint)))
+                                  (Ssequence
+                                    (Ssequence
+                                      (Sset _t'7
+                                        (Ederef
+                                          (Ebinop Oadd
+                                            (Etempvar _arr (tptr tint))
+                                            (Etempvar _j tint) (tptr tint))
+                                          tint))
+                                      (Sassign
+                                        (Ederef
+                                          (Ebinop Oadd
+                                            (Etempvar _t (tptr tint))
+                                            (Etempvar _k tint) (tptr tint))
+                                          tint) (Etempvar _t'7 tint)))
+                                    (Sset _j
+                                      (Ebinop Oadd (Etempvar _j tint)
+                                        (Econst_int (Int.repr 1) tint) tint)))))))
+                          (Sset _k
+                            (Ebinop Oadd (Etempvar _k tint)
+                              (Econst_int (Int.repr 1) tint) tint)))
+                        (Ssequence
+                          (Sloop
+                            (Ssequence
+                              (Sifthenelse (Ebinop Olt (Etempvar _i tint)
+                                             (Etempvar _p tint) tint)
+                                Sskip
+                                Sbreak)
+                              (Ssequence
+                                (Sset _t'4
+                                  (Ederef
+                                    (Ebinop Oadd (Etempvar _arr (tptr tint))
+                                      (Etempvar _i tint) (tptr tint)) tint))
+                                (Sassign
+                                  (Ederef
+                                    (Ebinop Oadd (Etempvar _t (tptr tint))
+                                      (Etempvar _k tint) (tptr tint)) tint)
+                                  (Etempvar _t'4 tint))))
+                            (Ssequence
+                              (Sset _i
+                                (Ebinop Oadd (Etempvar _i tint)
+                                  (Econst_int (Int.repr 1) tint) tint))
+                              (Sset _k
+                                (Ebinop Oadd (Etempvar _k tint)
+                                  (Econst_int (Int.repr 1) tint) tint))))
+                          (Ssequence
+                            (Sloop
+                              (Ssequence
+                                (Sifthenelse (Ebinop Olt (Etempvar _j tint)
+                                               (Etempvar _len tint) tint)
+                                  Sskip
+                                  Sbreak)
+                                (Ssequence
+                                  (Sset _t'3
+                                    (Ederef
                                       (Ebinop Oadd
-                                        (Etempvar _arr2 (tptr tint))
-                                        (Econst_int (Int.repr 1) tint)
-                                        (tptr tint))))
-                                  Sbreak))))
-                          (Sset _t__1
-                            (Ebinop Oadd (Etempvar _t__1 (tptr tint))
-                              (Econst_int (Int.repr 1) tint) (tptr tint)))))
-                      Sskip)
-                    (Ssequence
-                      (Scall None
-                        (Evar _memcpy (Tfunction
-                                        (Tcons (tptr tvoid)
-                                          (Tcons (tptr tvoid)
-                                            (Tcons tulong Tnil)))
-                                        (tptr tvoid) cc_default))
-                        ((Etempvar _arr (tptr tint)) ::
-                         (Etempvar _rt (tptr tint)) ::
-                         (Ebinop Omul (Esizeof tint tulong)
-                           (Etempvar _len tint) tulong) :: nil))
-                      (Scall None
-                        (Evar _free (Tfunction (Tcons (tptr tvoid) Tnil)
-                                      tvoid cc_default))
-                        ((Etempvar _rt (tptr tint)) :: nil)))))))))))))
+                                        (Etempvar _arr (tptr tint))
+                                        (Etempvar _j tint) (tptr tint)) tint))
+                                  (Sassign
+                                    (Ederef
+                                      (Ebinop Oadd (Etempvar _t (tptr tint))
+                                        (Etempvar _k tint) (tptr tint)) tint)
+                                    (Etempvar _t'3 tint))))
+                              (Ssequence
+                                (Sset _j
+                                  (Ebinop Oadd (Etempvar _j tint)
+                                    (Econst_int (Int.repr 1) tint) tint))
+                                (Sset _k
+                                  (Ebinop Oadd (Etempvar _k tint)
+                                    (Econst_int (Int.repr 1) tint) tint))))
+                            (Ssequence
+                              (Scall None
+                                (Evar _memcpy (Tfunction
+                                                (Tcons (tptr tvoid)
+                                                  (Tcons (tptr tvoid)
+                                                    (Tcons tulong Tnil)))
+                                                (tptr tvoid) cc_default))
+                                ((Etempvar _arr (tptr tint)) ::
+                                 (Etempvar _t (tptr tint)) ::
+                                 (Ebinop Omul (Esizeof tint tulong)
+                                   (Etempvar _len tint) tulong) :: nil))
+                              (Scall None
+                                (Evar _free (Tfunction
+                                              (Tcons (tptr tvoid) Tnil) tvoid
+                                              cc_default))
+                                ((Etempvar _t (tptr tint)) :: nil)))))))))))))))))
 |}.
 
 Definition f_main := {|
@@ -719,6 +695,10 @@ Definition global_definitions : list (ident * globdef fundef type) :=
  (_malloc,
    Gfun(External EF_malloc (Tcons tulong Tnil) (tptr tvoid) cc_default)) ::
  (_free, Gfun(External EF_free (Tcons (tptr tvoid) Tnil) tvoid cc_default)) ::
+ (_exit,
+   Gfun(External (EF_external "exit"
+                   (mksignature (AST.Tint :: nil) AST.Tvoid cc_default))
+     (Tcons tint Tnil) tvoid cc_default)) ::
  (_memcpy,
    Gfun(External (EF_external "memcpy"
                    (mksignature (AST.Tlong :: AST.Tlong :: AST.Tlong :: nil)
@@ -729,7 +709,7 @@ Definition global_definitions : list (ident * globdef fundef type) :=
  (_main, Gfun(Internal f_main)) :: nil).
 
 Definition public_idents : list ident :=
-(_main :: _my_mergesort :: _memcpy :: _free :: _malloc :: _printf ::
+(_main :: _my_mergesort :: _memcpy :: _exit :: _free :: _malloc :: _printf ::
  ___builtin_debug :: ___builtin_write32_reversed ::
  ___builtin_write16_reversed :: ___builtin_read32_reversed ::
  ___builtin_read16_reversed :: ___builtin_fnmsub :: ___builtin_fnmadd ::

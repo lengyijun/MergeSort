@@ -1,4 +1,3 @@
-// let's code mergesort in c, can you do?
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,14 +5,6 @@
 void my_mergesort(int *arr, int len) {
   //printf("%p %d\n", arr, len);
   if (len == 1) { return; }
-  if (len == 2) {
-    if (arr[0] > arr[1]) {
-      int t = arr[1];
-      arr[1] = arr[0];
-      arr[0] = t;
-    }
-    return;
-  }
 
   int p = len/2;
   int *arr1 = arr;
@@ -23,30 +14,33 @@ void my_mergesort(int *arr, int len) {
   my_mergesort(arr2, len-p);
 
   int *t = malloc(sizeof(int)*len);
-  int *rt = t;
-  while (1) {
-    if (arr1 < arr+p && arr2 < arr+len) {
-      if (*arr1 <= *arr2) {
-        *t = *arr1;
-        arr1++;
-      } else {
-        *t = *arr2;
-        arr2++;
-      }
-    } else if(arr1 < arr+p) {
-      *t = *arr1;
-      arr1++;
-    } else if(arr2 < arr+len) {
-      *t = *arr2;
-      arr2++;
-    } else {
-      break;
+  if(!t){exit(1);}
+
+
+  int i=0; 
+  int j =p;
+  int k=0;
+
+  for(; i< p && j < len ; k++){
+    if(arr[i]<=arr[j]){
+      t[k]=arr[i];
+      i++;
+    }else{
+      t[k]=arr[j];
+      j++;
     }
-    t++;
   }
 
-  memcpy(arr, rt, sizeof(int)*len);
-  free(rt);
+  for(;i<p ; i++, k++){
+    t[k]=arr[i];
+  }
+  for(;j<len ; j++, k++){
+    t[k]=arr[j];
+  }
+
+
+  memcpy(arr, t, sizeof(int)*len);
+  free(t);
 }
 
 int main() {
