@@ -75,9 +75,29 @@ Next Obligation.
   apply le_plus_l.
 Qed.
 
-Lemma mergesort_length (l : list Z) : Zlength (mergesort l) = Zlength l.
+Lemma merge_length : forall l1 , forall l2 , Zlength (merge l1 l2 ) = Zlength l1 + Zlength l2.
 Proof.
- Admitted.
+  induction l1.
+  intros.
+  intuition.
+
+  induction l2.
+  intuition.
+
+  unfold merge.
+  unfold merge_func.
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+  destruct (a <? a0); simpl; do 3 rewrite Zlength_cons.
+
+  specialize (IHl1 (a0 :: l2)). 
+  unfold merge in IHl1.
+  rewrite IHl1.
+  intuition.
+
+  unfold merge in IHl2.
+  rewrite IHl2.
+  intuition.
+Qed.
 
 
 Definition my_mergesort_spec : ident * funspec :=
