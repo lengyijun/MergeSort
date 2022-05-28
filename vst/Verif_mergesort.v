@@ -99,6 +99,32 @@ Proof.
   intuition.
 Qed.
 
+Lemma mergesort_length : forall l,  length (mergesort l ) = length l.
+Proof.
+  intro.
+ generalize (lt_n_Sn (length l)).
+remember (S (length l)).
+clear Heqn.
+generalize l. clear l.
+induction n; intros.
+destruct l; simpl in *; auto.
+inv H.
+
+destruct l.
+simpl; auto.
+destruct l.
+simpl; auto.
+destruct l.
+unfold mergesort.
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold mergesort.
+destruct (z <? z0); simpl; auto.
+
+unfold mergesort.
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold mergesort.
+Admitted.
+
+
+
 
 Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
@@ -379,8 +405,6 @@ Proof.
 
   Intro i. Intro j. Intro k. Intros.
 
-Search (Z -> Z -> bool).
-  
   forward_if (
      PROP ( )
      LOCAL (temp _k (Vint (Int.repr k));
