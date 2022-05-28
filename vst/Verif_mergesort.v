@@ -297,5 +297,67 @@ Proof.
   forward.
   forward.
   forward.
-
   
+  forward_loop (
+     EX i, EX j, EX k,
+     PROP(0 <= i <= Z.div2 (Zlength il);
+           Z.div2 (Zlength il) <= j <= Zlength il;
+           0 <= k <= Zlength il)
+     LOCAL (temp _k (Vint (Int.repr k));
+            temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            temp _i (Vint (Int.repr i));
+            temp _t t;
+            temp _arr2
+       (force_val
+          (sem_binary_operation' Oadd (tptr tint) tint p
+                                 (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)))));
+            temp _arr1 p;
+            temp _p (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            gvars gv; 
+            temp _arr p;
+            temp _len (Vint (Int.repr (Zlength il))))
+     
+     SEP (mem_mgr gv;
+          malloc_token Ews (tarray tint (Zlength il)) t;
+          data_at_ Ews (tarray tint (Zlength il)) t;
+          data_at sh (tarray tuint (Zlength (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+       (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+       (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
+     data_at sh (tarray tuint (Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
+       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
+    )%assert
+    break:
+    (
+     EX i, EX j, EX k,
+      PROP( i = Z.div2 (Zlength il) \/ j <= Zlength il;
+           0 <= k <= Zlength il)
+     LOCAL (temp _k (Vint (Int.repr k));
+            temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            temp _i (Vint (Int.repr i));
+            temp _t t;
+            temp _arr2
+       (force_val
+          (sem_binary_operation' Oadd (tptr tint) tint p
+                                 (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)))));
+            temp _arr1 p;
+            temp _p (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            gvars gv; 
+            temp _arr p;
+            temp _len (Vint (Int.repr (Zlength il))))
+     
+     SEP (mem_mgr gv; malloc_token Ews (tarray tint (Zlength il)) t;
+     data_at_ Ews (tarray tint (Zlength il)) t;
+     data_at sh (tarray tuint (Zlength (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+       (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+       (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
+     data_at sh (tarray tuint (Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
+       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
+    )%assert.
+
+  Exists 0.
+  Exists (Z.div2 (Zlength il)).
+  Exists 0.
+  entailer!.
+
+  Intro i. Intro j. Intro k. Intros.
+  forward_if (t).
