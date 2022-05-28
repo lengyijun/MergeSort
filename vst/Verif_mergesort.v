@@ -124,7 +124,13 @@ rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold mergesort.
 Admitted.
 
 
-
+Lemma mergesort_zlength : forall l,  Zlength (mergesort l ) = Zlength l.
+Proof.
+intros.
+do 2 rewrite Zlength_correct.
+f_equal.
+apply mergesort_length.
+Qed.
 
 Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
@@ -314,7 +320,7 @@ Proof.
 
   { 
     rewrite Zlength_solver.Zlength_skipn_to_nat. 
-    rewrite  Zmax_left; try rep_lia.  
+    rewrite Zmax_left; try rep_lia.  
     rewrite Zmax_left; try rep_lia.
     split; try rep_lia.
     assert ( Z.div2 (Zlength il) < Zlength il). {apply div2_le2. lia. }
@@ -337,6 +343,14 @@ Proof.
   forward.
   forward.
   forward.
+
+  do 2 rewrite mergesort_zlength.
+  rewrite Zlength_solver.Zlength_firstn_to_nat. 
+  rewrite Zmax_left; try rep_lia.
+  rewrite Z.min_l; try rep_lia.
+  rewrite Zlength_solver.Zlength_skipn_to_nat.
+  rewrite Zmax_left; try rep_lia.
+  rewrite Zmax_left; try rep_lia.    
   
   forward_loop (
      EX i, EX j, EX k,
@@ -362,10 +376,10 @@ Proof.
      SEP (mem_mgr gv;
           malloc_token Ews (tarray tint (Zlength il)) t;
           data_at_ Ews (tarray tint (Zlength il)) t;
-          data_at sh (tarray tuint (Zlength (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+          data_at sh  (tarray tuint (Zlength il - Z.div2 (Zlength il)))
        (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
        (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
-     data_at sh (tarray tuint (Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
+     data_at sh  (tarray tuint (Z.div2 (Zlength il)))
        (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
     )
     break:
@@ -391,10 +405,10 @@ Proof.
      
      SEP (mem_mgr gv; malloc_token Ews (tarray tint (Zlength il)) t;
      data_at_ Ews (tarray tint (Zlength il)) t;
-     data_at sh (tarray tuint (Zlength (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+     data_at sh  (tarray tuint (Zlength il - Z.div2 (Zlength il)))
        (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
        (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
-     data_at sh (tarray tuint (Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
+     data_at sh  (tarray tuint (Z.div2 (Zlength il)))
        (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
     ).
 
@@ -422,10 +436,10 @@ Proof.
      
      SEP (mem_mgr gv; malloc_token Ews (tarray tint (Zlength il)) t;
      data_at_ Ews (tarray tint (Zlength il)) t;
-     data_at sh (tarray tuint (Zlength (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+     data_at sh   (tarray tuint (Zlength il - Z.div2 (Zlength il)))
        (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
        (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
-     data_at sh (tarray tuint (Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
+     data_at sh   (tarray tuint (Z.div2 (Zlength il)))
        (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
     ).
   forward.
@@ -433,7 +447,32 @@ Proof.
   {
     f_equal.
     unfold Int.divs.
+    rewrite Int.signed_repr; try rep_lia.
+    rewrite Int.signed_repr; try rep_lia.
+    unfold Int.lt.
+    rewrite Int.signed_repr; try rep_lia.
+    rewrite Int.signed_repr; try rep_lia.
+    rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.
+    destruct  (  zlt (Zlength il / 2) (Zlength il)).
+    auto.
+    assert (Z.div2 (Zlength il) < Zlength il ).
+    { apply div2_le2; rep_lia. }
+    rewrite Zdiv2_div in H16.
+    contradiction.
+    rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.
   }
   forward.
   entailer!.
+  admit.
+
   forward_if True.
+  forward.
+  entailer!.
+  discriminate.
+  abbreviate_semax.
+  Intros.
+  
+
+
+
+  forward.
