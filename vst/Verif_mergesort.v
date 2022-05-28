@@ -20,10 +20,8 @@ Program Fixpoint merge (x : list Z) (y : list Z) {measure (length x + length y)}
   | _ => y
   end.
 Next Obligation.
-  apply Nat.add_le_lt_mono.
-  reflexivity.
-  auto.
-Qed.
+  apply Nat.add_le_lt_mono; auto.
+Qed. 
 
 Lemma skipn_length (n : nat) :
   forall {A} (l : list A), length (skipn n l) = Nat.sub (length l) n.
@@ -77,6 +75,10 @@ Next Obligation.
   apply le_plus_l.
 Qed.
 
+Lemma mergesort_length (l : list Z) : Zlength (mergesort l) = Zlength l.
+Proof.
+ Admitted.
+
 
 Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
@@ -93,25 +95,6 @@ Definition my_mergesort_spec : ident * funspec :=
     SEP (data_at sh (tarray tuint (Zlength (mergesort il))) (map Vint (map Int.repr (mergesort il))) p;
          mem_mgr gv).
 
-(*
-Definition malloc_spec_example  :=
- DECLARE _malloc
- WITH t:type, count : Z , gv: globals
- PRE [ tulong ]
-    PROP (0 <= sizeof t <= Int.max_unsigned;
-          complete_legal_cosu_type t = true;
-          natural_aligned natural_alignment t = true)
-    PARAMS (Vlong (Int64.repr( (sizeof t) * count)))
-    SEP (mem_mgr gv)
- POST [ tptr tvoid ] EX p:_,
-    PROP ()
-    RETURN (p)
-    SEP (mem_mgr gv;
-            if eq_dec p nullval then emp
-            else (malloc_token Ews t p * data_at_ Ews t p)).
-
-Definition Gprog : funspecs := [ my_mergesort_spec ; malloc_spec_example ].
- *)
 
 Definition Gprog : funspecs :=
   ltac:(with_library prog [
