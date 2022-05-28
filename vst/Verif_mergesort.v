@@ -123,9 +123,19 @@ Proof.
 intros.
 unfold Z.div2.
 destruct z.
-lia.
-destruct p; unfold Pos.div2; lia.
-contradiction.
+- lia.
+- destruct p; unfold Pos.div2; lia.
+- contradiction.
+Qed.
+
+Lemma div2_le2 : forall z, z > 0 -> Z.div2 z < z .
+Proof.
+intros.
+unfold Z.div2.
+destruct z.
+- lia.
+- destruct p; unfold Pos.div2; lia.
+- discriminate.
 Qed.
 
 Lemma z2n : forall x : Z , 0 < x <= Int.max_signed -> Int.divs (Int.repr x) (Int.repr 2) = Int.repr (Z.div2 x).
@@ -278,7 +288,8 @@ Proof.
     rewrite  Zmax_left; try rep_lia.  
     rewrite Zmax_left; try rep_lia.
     split; try rep_lia.
-    admit.
+    assert ( Z.div2 (Zlength il) < Zlength il). {apply div2_le2. lia. }
+    rep_lia.
   }
 
   forward_call ( tarray tint (Zlength il), gv).
@@ -301,8 +312,9 @@ Proof.
   forward_loop (
      EX i, EX j, EX k,
      PROP(0 <= i <= Z.div2 (Zlength il);
-           Z.div2 (Zlength il) <= j <= Zlength il;
-           0 <= k <= Zlength il)
+          Z.div2 (Zlength il) <= j <= Zlength il;
+          0 <= k <= Zlength il;
+          Z.add k (Z.div2 (Zlength il)) = Z.add i j )
      LOCAL (temp _k (Vint (Int.repr k));
             temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
             temp _i (Vint (Int.repr i));
@@ -315,8 +327,9 @@ Proof.
             temp _p (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
             gvars gv; 
             temp _arr p;
-            temp _len (Vint (Int.repr (Zlength il))))
-     
+            temp _len (Vint (Int.repr (Zlength il)))
+       )
+       
      SEP (mem_mgr gv;
           malloc_token Ews (tarray tint (Zlength il)) t;
           data_at_ Ews (tarray tint (Zlength il)) t;
@@ -325,12 +338,14 @@ Proof.
        (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
      data_at sh (tarray tuint (Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
        (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
-    )%assert
+    )
     break:
     (
      EX i, EX j, EX k,
       PROP( i = Z.div2 (Zlength il) \/ j <= Zlength il;
-           0 <= k <= Zlength il)
+            0 <= k <= Zlength il;
+            Z.add k (Z.div2 (Zlength il)) = Z.add i j 
+          )
      LOCAL (temp _k (Vint (Int.repr k));
             temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
             temp _i (Vint (Int.repr i));
@@ -352,7 +367,7 @@ Proof.
        (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
      data_at sh (tarray tuint (Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
        (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
-    )%assert.
+    ).
 
   Exists 0.
   Exists (Z.div2 (Zlength il)).
@@ -360,4 +375,38 @@ Proof.
   entailer!.
 
   Intro i. Intro j. Intro k. Intros.
-  forward_if (t).
+
+Search (Z -> Z -> bool).
+  
+  forward_if (
+     PROP ( )
+     LOCAL (temp _k (Vint (Int.repr k));
+     temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2))); temp _i (Vint (Int.repr i));
+     temp _t t;
+     temp _arr2
+       (force_val
+          (sem_binary_operation' Oadd (tptr tint) tint p
+             (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2))))); temp _arr1 p;
+     temp _p (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2))); gvars gv; 
+            temp _arr p;
+            temp _len (Vint (Int.repr (Zlength il)));
+            temp _t'2 (Val.of_bool true)
+           )
+     
+     SEP (mem_mgr gv; malloc_token Ews (tarray tint (Zlength il)) t;
+     data_at_ Ews (tarray tint (Zlength il)) t;
+     data_at sh (tarray tuint (Zlength (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+       (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+       (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
+     data_at sh (tarray tuint (Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
+       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
+    ).
+  forward.
+  entailer!.
+  {
+    f_equal.
+    unfold Int.divs.
+  }
+  forward.
+  entailer!.
+  forward_if True.
