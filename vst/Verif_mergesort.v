@@ -135,7 +135,7 @@ Qed.
 Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
  WITH p: val,  sh : share, il: list Z, gv: globals
- PRE [ tptr tint , tint ] 
+ PRE [ tptr tuint , tint ] 
     PROP (readable_share sh;
           0 < Zlength il <= Int.max_signed) 
     PARAMS (p; Vint (Int.repr (Zlength il)) )

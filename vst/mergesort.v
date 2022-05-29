@@ -121,13 +121,14 @@ Definition v___stringlit_1 := {|
 Definition f_my_mergesort := {|
   fn_return := tvoid;
   fn_callconv := cc_default;
-  fn_params := ((_arr, (tptr tint)) :: (_len, tint) :: nil);
+  fn_params := ((_arr, (tptr tuint)) :: (_len, tint) :: nil);
   fn_vars := nil;
-  fn_temps := ((_p, tint) :: (_arr1, (tptr tint)) :: (_arr2, (tptr tint)) ::
-               (_t, (tptr tint)) :: (_i, tint) :: (_j, tint) :: (_k, tint) ::
-               (_t'2, tint) :: (_t'1, (tptr tvoid)) :: (_t'8, tint) ::
-               (_t'7, tint) :: (_t'6, tint) :: (_t'5, tint) ::
-               (_t'4, tint) :: (_t'3, tint) :: nil);
+  fn_temps := ((_p, tint) :: (_arr1, (tptr tuint)) ::
+               (_arr2, (tptr tuint)) :: (_t, (tptr tuint)) :: (_i, tint) ::
+               (_j, tint) :: (_k, tint) :: (_t'2, tint) ::
+               (_t'1, (tptr tvoid)) :: (_t'8, tuint) :: (_t'7, tuint) ::
+               (_t'6, tuint) :: (_t'5, tuint) :: (_t'4, tuint) ::
+               (_t'3, tuint) :: nil);
   fn_body :=
 (Ssequence
   (Sifthenelse (Ebinop Oeq (Etempvar _len tint)
@@ -138,23 +139,23 @@ Definition f_my_mergesort := {|
     (Sset _p
       (Ebinop Odiv (Etempvar _len tint) (Econst_int (Int.repr 2) tint) tint))
     (Ssequence
-      (Sset _arr1 (Etempvar _arr (tptr tint)))
+      (Sset _arr1 (Etempvar _arr (tptr tuint)))
       (Ssequence
         (Sset _arr2
-          (Ebinop Oadd (Etempvar _arr (tptr tint)) (Etempvar _p tint)
-            (tptr tint)))
+          (Ebinop Oadd (Etempvar _arr (tptr tuint)) (Etempvar _p tint)
+            (tptr tuint)))
         (Ssequence
           (Scall None
             (Evar _my_mergesort (Tfunction
-                                  (Tcons (tptr tint) (Tcons tint Tnil)) tvoid
-                                  cc_default))
-            ((Etempvar _arr1 (tptr tint)) :: (Etempvar _p tint) :: nil))
+                                  (Tcons (tptr tuint) (Tcons tint Tnil))
+                                  tvoid cc_default))
+            ((Etempvar _arr1 (tptr tuint)) :: (Etempvar _p tint) :: nil))
           (Ssequence
             (Scall None
               (Evar _my_mergesort (Tfunction
-                                    (Tcons (tptr tint) (Tcons tint Tnil))
+                                    (Tcons (tptr tuint) (Tcons tint Tnil))
                                     tvoid cc_default))
-              ((Etempvar _arr2 (tptr tint)) ::
+              ((Etempvar _arr2 (tptr tuint)) ::
                (Ebinop Osub (Etempvar _len tint) (Etempvar _p tint) tint) ::
                nil))
             (Ssequence
@@ -166,7 +167,7 @@ Definition f_my_mergesort := {|
                      tulong) :: nil))
                 (Sset _t (Etempvar _t'1 (tptr tvoid))))
               (Ssequence
-                (Sifthenelse (Eunop Onotbool (Etempvar _t (tptr tint)) tint)
+                (Sifthenelse (Eunop Onotbool (Etempvar _t (tptr tuint)) tint)
                   (Scall None
                     (Evar _exit (Tfunction (Tcons tint Tnil) tvoid
                                   cc_default))
@@ -193,29 +194,30 @@ Definition f_my_mergesort := {|
                             (Ssequence
                               (Sset _t'5
                                 (Ederef
-                                  (Ebinop Oadd (Etempvar _arr (tptr tint))
-                                    (Etempvar _i tint) (tptr tint)) tint))
+                                  (Ebinop Oadd (Etempvar _arr (tptr tuint))
+                                    (Etempvar _i tint) (tptr tuint)) tuint))
                               (Ssequence
                                 (Sset _t'6
                                   (Ederef
-                                    (Ebinop Oadd (Etempvar _arr (tptr tint))
-                                      (Etempvar _j tint) (tptr tint)) tint))
-                                (Sifthenelse (Ebinop Ole (Etempvar _t'5 tint)
-                                               (Etempvar _t'6 tint) tint)
+                                    (Ebinop Oadd (Etempvar _arr (tptr tuint))
+                                      (Etempvar _j tint) (tptr tuint)) tuint))
+                                (Sifthenelse (Ebinop Ole
+                                               (Etempvar _t'5 tuint)
+                                               (Etempvar _t'6 tuint) tint)
                                   (Ssequence
                                     (Ssequence
                                       (Sset _t'8
                                         (Ederef
                                           (Ebinop Oadd
-                                            (Etempvar _arr (tptr tint))
-                                            (Etempvar _i tint) (tptr tint))
-                                          tint))
+                                            (Etempvar _arr (tptr tuint))
+                                            (Etempvar _i tint) (tptr tuint))
+                                          tuint))
                                       (Sassign
                                         (Ederef
                                           (Ebinop Oadd
-                                            (Etempvar _t (tptr tint))
-                                            (Etempvar _k tint) (tptr tint))
-                                          tint) (Etempvar _t'8 tint)))
+                                            (Etempvar _t (tptr tuint))
+                                            (Etempvar _k tint) (tptr tuint))
+                                          tuint) (Etempvar _t'8 tuint)))
                                     (Sset _i
                                       (Ebinop Oadd (Etempvar _i tint)
                                         (Econst_int (Int.repr 1) tint) tint)))
@@ -224,15 +226,15 @@ Definition f_my_mergesort := {|
                                       (Sset _t'7
                                         (Ederef
                                           (Ebinop Oadd
-                                            (Etempvar _arr (tptr tint))
-                                            (Etempvar _j tint) (tptr tint))
-                                          tint))
+                                            (Etempvar _arr (tptr tuint))
+                                            (Etempvar _j tint) (tptr tuint))
+                                          tuint))
                                       (Sassign
                                         (Ederef
                                           (Ebinop Oadd
-                                            (Etempvar _t (tptr tint))
-                                            (Etempvar _k tint) (tptr tint))
-                                          tint) (Etempvar _t'7 tint)))
+                                            (Etempvar _t (tptr tuint))
+                                            (Etempvar _k tint) (tptr tuint))
+                                          tuint) (Etempvar _t'7 tuint)))
                                     (Sset _j
                                       (Ebinop Oadd (Etempvar _j tint)
                                         (Econst_int (Int.repr 1) tint) tint)))))))
@@ -249,13 +251,13 @@ Definition f_my_mergesort := {|
                               (Ssequence
                                 (Sset _t'4
                                   (Ederef
-                                    (Ebinop Oadd (Etempvar _arr (tptr tint))
-                                      (Etempvar _i tint) (tptr tint)) tint))
+                                    (Ebinop Oadd (Etempvar _arr (tptr tuint))
+                                      (Etempvar _i tint) (tptr tuint)) tuint))
                                 (Sassign
                                   (Ederef
-                                    (Ebinop Oadd (Etempvar _t (tptr tint))
-                                      (Etempvar _k tint) (tptr tint)) tint)
-                                  (Etempvar _t'4 tint))))
+                                    (Ebinop Oadd (Etempvar _t (tptr tuint))
+                                      (Etempvar _k tint) (tptr tuint)) tuint)
+                                  (Etempvar _t'4 tuint))))
                             (Ssequence
                               (Sset _i
                                 (Ebinop Oadd (Etempvar _i tint)
@@ -274,13 +276,14 @@ Definition f_my_mergesort := {|
                                   (Sset _t'3
                                     (Ederef
                                       (Ebinop Oadd
-                                        (Etempvar _arr (tptr tint))
-                                        (Etempvar _j tint) (tptr tint)) tint))
+                                        (Etempvar _arr (tptr tuint))
+                                        (Etempvar _j tint) (tptr tuint))
+                                      tuint))
                                   (Sassign
                                     (Ederef
-                                      (Ebinop Oadd (Etempvar _t (tptr tint))
-                                        (Etempvar _k tint) (tptr tint)) tint)
-                                    (Etempvar _t'3 tint))))
+                                      (Ebinop Oadd (Etempvar _t (tptr tuint))
+                                        (Etempvar _k tint) (tptr tuint))
+                                      tuint) (Etempvar _t'3 tuint))))
                               (Ssequence
                                 (Sset _j
                                   (Ebinop Oadd (Etempvar _j tint)
@@ -295,92 +298,93 @@ Definition f_my_mergesort := {|
                                                   (Tcons (tptr tvoid)
                                                     (Tcons tulong Tnil)))
                                                 (tptr tvoid) cc_default))
-                                ((Etempvar _arr (tptr tint)) ::
-                                 (Etempvar _t (tptr tint)) ::
+                                ((Etempvar _arr (tptr tuint)) ::
+                                 (Etempvar _t (tptr tuint)) ::
                                  (Ebinop Omul (Esizeof tint tulong)
                                    (Etempvar _len tint) tulong) :: nil))
                               (Scall None
                                 (Evar _free (Tfunction
                                               (Tcons (tptr tvoid) Tnil) tvoid
                                               cc_default))
-                                ((Etempvar _t (tptr tint)) :: nil)))))))))))))))))
+                                ((Etempvar _t (tptr tuint)) :: nil)))))))))))))))))
 |}.
 
 Definition f_main := {|
   fn_return := tint;
   fn_callconv := cc_default;
   fn_params := nil;
-  fn_vars := ((_a, (tarray tint 9)) :: nil);
-  fn_temps := ((_len, tint) :: (_i, tint) :: (_t'1, tint) :: nil);
+  fn_vars := ((_a, (tarray tuint 9)) :: nil);
+  fn_temps := ((_len, tint) :: (_i, tint) :: (_t'1, tuint) :: nil);
   fn_body :=
 (Ssequence
   (Ssequence
     (Sassign
       (Ederef
-        (Ebinop Oadd (Evar _a (tarray tint 9)) (Econst_int (Int.repr 0) tint)
-          (tptr tint)) tint) (Econst_int (Int.repr 5) tint))
+        (Ebinop Oadd (Evar _a (tarray tuint 9))
+          (Econst_int (Int.repr 0) tint) (tptr tuint)) tuint)
+      (Econst_int (Int.repr 5) tint))
     (Ssequence
       (Sassign
         (Ederef
-          (Ebinop Oadd (Evar _a (tarray tint 9))
-            (Econst_int (Int.repr 1) tint) (tptr tint)) tint)
+          (Ebinop Oadd (Evar _a (tarray tuint 9))
+            (Econst_int (Int.repr 1) tint) (tptr tuint)) tuint)
         (Econst_int (Int.repr 9) tint))
       (Ssequence
         (Sassign
           (Ederef
-            (Ebinop Oadd (Evar _a (tarray tint 9))
-              (Econst_int (Int.repr 2) tint) (tptr tint)) tint)
+            (Ebinop Oadd (Evar _a (tarray tuint 9))
+              (Econst_int (Int.repr 2) tint) (tptr tuint)) tuint)
           (Econst_int (Int.repr 1) tint))
         (Ssequence
           (Sassign
             (Ederef
-              (Ebinop Oadd (Evar _a (tarray tint 9))
-                (Econst_int (Int.repr 3) tint) (tptr tint)) tint)
+              (Ebinop Oadd (Evar _a (tarray tuint 9))
+                (Econst_int (Int.repr 3) tint) (tptr tuint)) tuint)
             (Econst_int (Int.repr 3) tint))
           (Ssequence
             (Sassign
               (Ederef
-                (Ebinop Oadd (Evar _a (tarray tint 9))
-                  (Econst_int (Int.repr 4) tint) (tptr tint)) tint)
+                (Ebinop Oadd (Evar _a (tarray tuint 9))
+                  (Econst_int (Int.repr 4) tint) (tptr tuint)) tuint)
               (Econst_int (Int.repr 4) tint))
             (Ssequence
               (Sassign
                 (Ederef
-                  (Ebinop Oadd (Evar _a (tarray tint 9))
-                    (Econst_int (Int.repr 5) tint) (tptr tint)) tint)
+                  (Ebinop Oadd (Evar _a (tarray tuint 9))
+                    (Econst_int (Int.repr 5) tint) (tptr tuint)) tuint)
                 (Econst_int (Int.repr 6) tint))
               (Ssequence
                 (Sassign
                   (Ederef
-                    (Ebinop Oadd (Evar _a (tarray tint 9))
-                      (Econst_int (Int.repr 6) tint) (tptr tint)) tint)
+                    (Ebinop Oadd (Evar _a (tarray tuint 9))
+                      (Econst_int (Int.repr 6) tint) (tptr tuint)) tuint)
                   (Econst_int (Int.repr 6) tint))
                 (Ssequence
                   (Sassign
                     (Ederef
-                      (Ebinop Oadd (Evar _a (tarray tint 9))
-                        (Econst_int (Int.repr 7) tint) (tptr tint)) tint)
+                      (Ebinop Oadd (Evar _a (tarray tuint 9))
+                        (Econst_int (Int.repr 7) tint) (tptr tuint)) tuint)
                     (Econst_int (Int.repr 3) tint))
                   (Ssequence
                     (Sassign
                       (Ederef
-                        (Ebinop Oadd (Evar _a (tarray tint 9))
-                          (Econst_int (Int.repr 8) tint) (tptr tint)) tint)
+                        (Ebinop Oadd (Evar _a (tarray tuint 9))
+                          (Econst_int (Int.repr 8) tint) (tptr tuint)) tuint)
                       (Econst_int (Int.repr 2) tint))
                     (Ssequence
                       (Sset _len
                         (Ecast
-                          (Ebinop Odiv (Esizeof (tarray tint 9) tulong)
-                            (Esizeof tint tulong) tulong) tint))
+                          (Ebinop Odiv (Esizeof (tarray tuint 9) tulong)
+                            (Esizeof tuint tulong) tulong) tint))
                       (Ssequence
                         (Scall None
                           (Evar _my_mergesort (Tfunction
-                                                (Tcons (tptr tint)
+                                                (Tcons (tptr tuint)
                                                   (Tcons tint Tnil)) tvoid
                                                 cc_default))
-                          ((Evar _a (tarray tint 9)) ::
-                           (Ebinop Odiv (Esizeof (tarray tint 9) tulong)
-                             (Esizeof tint tulong) tulong) :: nil))
+                          ((Evar _a (tarray tuint 9)) ::
+                           (Ebinop Odiv (Esizeof (tarray tuint 9) tulong)
+                             (Esizeof tuint tulong) tulong) :: nil))
                         (Ssequence
                           (Ssequence
                             (Sset _i (Econst_int (Int.repr 0) tint))
@@ -393,15 +397,16 @@ Definition f_main := {|
                                 (Ssequence
                                   (Sset _t'1
                                     (Ederef
-                                      (Ebinop Oadd (Evar _a (tarray tint 9))
-                                        (Etempvar _i tint) (tptr tint)) tint))
+                                      (Ebinop Oadd (Evar _a (tarray tuint 9))
+                                        (Etempvar _i tint) (tptr tuint))
+                                      tuint))
                                   (Scall None
                                     (Evar _printf (Tfunction
                                                     (Tcons (tptr tschar)
                                                       Tnil) tint
                                                     {|cc_vararg:=(Some 1); cc_unproto:=false; cc_structret:=false|}))
                                     ((Evar ___stringlit_1 (tarray tschar 4)) ::
-                                     (Etempvar _t'1 tint) :: nil))))
+                                     (Etempvar _t'1 tuint) :: nil))))
                               (Sset _i
                                 (Ebinop Oadd (Etempvar _i tint)
                                   (Econst_int (Int.repr 1) tint) tint))))
