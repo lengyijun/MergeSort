@@ -350,13 +350,24 @@ Proof.
   rewrite Z.min_l; try rep_lia.
   rewrite Zlength_solver.Zlength_skipn_to_nat.
   rewrite Zmax_left; try rep_lia.
-  rewrite Zmax_left; try rep_lia.    
+  rewrite Zmax_left; try rep_lia.
+
+  assert (0 < Z.div2 (Zlength il)). {
+    remember (Zlength il).
+    destruct z; try lia.
+    unfold Z.div2.
+    destruct p0; lia.
+  }
+
+  assert ( Z.div2 (Zlength il) < Zlength il ). {
+    apply div2_le2; lia.
+  }
   
   forward_loop (
      EX i, EX j, EX k,
-     PROP(0 <= i <= Z.div2 (Zlength il);
-          Z.div2 (Zlength il) <= j <= Zlength il;
-          0 <= k <= Zlength il;
+     PROP(0 <= i < Z.div2 (Zlength il);
+          Z.div2 (Zlength il) <= j < Zlength il;
+          0 <= k < Zlength il;
           Z.add k (Z.div2 (Zlength il)) = Z.add i j )
      LOCAL (temp _k (Vint (Int.repr k));
             temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
@@ -416,19 +427,22 @@ Proof.
   Exists (Z.div2 (Zlength il)).
   Exists 0.
   entailer!.
-
+  
   Intro i. Intro j. Intro k. Intros.
 
   forward_if (
      PROP ( )
      LOCAL (temp _k (Vint (Int.repr k));
-     temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2))); temp _i (Vint (Int.repr i));
-     temp _t t;
-     temp _arr2
+            temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            temp _i (Vint (Int.repr i));
+            temp _t t;
+            temp _arr2
        (force_val
           (sem_binary_operation' Oadd (tptr tint) tint p
-             (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2))))); temp _arr1 p;
-     temp _p (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2))); gvars gv; 
+                                 (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)))));
+            temp _arr1 p;
+            temp _p (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            gvars gv; 
             temp _arr p;
             temp _len (Vint (Int.repr (Zlength il)));
             temp _t'2 (Val.of_bool true)
@@ -455,11 +469,8 @@ Proof.
     rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.
     destruct  (  zlt (Zlength il / 2) (Zlength il)).
     auto.
-    assert (Z.div2 (Zlength il) < Zlength il ).
-    { apply div2_le2; rep_lia. }
-    rewrite Zdiv2_div in H16.
-    contradiction.
-    rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.
+    lia.
+    rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.  
   }
   forward.
   entailer!.
@@ -471,8 +482,20 @@ Proof.
   discriminate.
   abbreviate_semax.
   Intros.
-  
 
+  assert (0 <= i < Zlength (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))).
+  {
+    rewrite Zlength_map.
+    rewrite mergesort_zlength.
+    rewrite Zlength_solver.Zlength_firstn_to_nat.       
+    rewrite Zmax_left; try rep_lia.     
+  }
 
+  assert ((0 <= i < Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))) ).
+  {
+    rewrite mergesort_zlength.
+    rewrite Zlength_solver.Zlength_firstn_to_nat.     
+    rewrite Zmax_left; try rep_lia.     
+  }
 
   forward.
