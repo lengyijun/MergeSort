@@ -367,7 +367,7 @@ Proof.
   rewrite Int.signed_repr; try rep_lia.
   rewrite Int.signed_repr; try rep_lia.
   rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.
-   
+
   forward_loop (
      EX i, EX j, EX k,
      PROP(0 <= i < Z.div2 (Zlength il);
@@ -431,6 +431,32 @@ Proof.
   
   Intro i. Intro j. Intro k. Intros.
 
+    assert (
+  data_at sh (tarray tuint (Zlength il - Z.div2 (Zlength il)))
+    (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
+    (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p) *
+  data_at sh (tarray tuint (Z.div2 (Zlength il)))
+    (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p
+  |-- data_at sh (tarray tuint (Zlength il))
+        (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))) ++
+         map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))) p
+    ).
+  {
+    rewrite (split2_data_at_Tarray_app (Z.div2 (Zlength il))).
+    entailer!.
+    do 2 rewrite Zlength_map.
+    rewrite mergesort_zlength.
+      rewrite Zlength_solver.Zlength_firstn_to_nat. 
+      rewrite H80.
+      rewrite H71. auto.
+
+      do 2 rewrite Zlength_map.
+          rewrite mergesort_zlength.
+      rewrite Zlength_solver.Zlength_skipn_to_nat.       
+      rewrite H80.
+      rewrite Zmax_left; rep_lia.
+  }
+  
   forward_if (
      PROP ( )
      LOCAL (temp _k (Vint (Int.repr k));
@@ -449,11 +475,11 @@ Proof.
      
      SEP (mem_mgr gv; malloc_token Ews (tarray tint (Zlength il)) t;
      data_at_ Ews (tarray tint (Zlength il)) t;
-     data_at sh   (tarray tuint (Zlength il - Z.div2 (Zlength il)))
-       (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
-       (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
-     data_at sh   (tarray tuint (Z.div2 (Zlength il)))
-       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
+      data_at sh (tarray tuint (Zlength il))
+          ((map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) ++
+           (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
+              p
+         )
     ).
 
   forward.
@@ -468,35 +494,24 @@ Proof.
     lia. 
   }
 
+  auto. 
+  
   forward.
   entailer!.
-
+  auto.
+  
   forward_if True.
   forward.
   entailer!.
   discriminate.
   abbreviate_semax; Intros.
 
-  assert (0 <= i < Zlength (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))).
-  {
-    rewrite Zlength_map.
-    rewrite mergesort_zlength.
-    rewrite Zlength_solver.Zlength_firstn_to_nat.       
-    rewrite Zmax_left; try rep_lia.     
-  }
-
-  assert ((0 <= i < Zlength (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))) ).
-  {
-    rewrite mergesort_zlength.
-    rewrite Zlength_solver.Zlength_firstn_to_nat.     
-    rewrite Zmax_left; try rep_lia.     
-  }
+  forward.
+  entailer!.
+  list_solve.
 
   forward.
+  entailer!.
+ list_solve.
 
-  assert (
-      (0 <= Zlength il / 2 <
- Zlength (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
-    ). {
-    (* can't prove *)
-  }
+
