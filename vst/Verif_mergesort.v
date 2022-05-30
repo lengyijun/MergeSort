@@ -193,7 +193,12 @@ Proof.
     forward.
     destruct il.
     rewrite Zlength_nil in H. inv H0. 
-    destruct il. { admit. }  {
+    destruct il. {
+      rewrite mergesort_zlength.
+      unfold mergesort.
+      simpl.
+      entailer!.
+    }  {
       do 2 rewrite Zlength_cons in H0.
       assert (0 <= Zlength il ).
       apply Zlength_nonneg.
