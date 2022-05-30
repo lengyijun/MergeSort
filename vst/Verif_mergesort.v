@@ -537,11 +537,22 @@ Proof.
 
  (*  分类讨论 _t'5 <= _t'6 *)
  
+ remember ((Znth i
+          (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il) ++
+          mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))
+           <=?
+          (Znth j
+               (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il) ++
+                mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il) ))
+          ).
+destruct b.
+
+
   forward_if (
      PROP ( )
      LOCAL (temp _k (Vint (Int.repr k));
             temp _j (Vint (Int.repr j));
-            temp _i (Vint (Int.repr i));
+            temp _i (Vint (Int.repr (i + 1)));
             temp _t t;
             temp _arr2
        (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
@@ -554,11 +565,12 @@ Proof.
            )
      
      SEP (mem_mgr gv;
-     data_at sh (tarray tuint (Zlength il))
+          malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
                 (map Vint (map Int.repr (merge
-                (sublist 0 i (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
-                (sublist 0 j (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
-                ++  Zrepeat Vundef (Zlength il - k)) t;
+                (sublist 0 (i + 1) (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+                (sublist 0 (j - (Zlength il /2)) (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
+                ++  Zrepeat  (default_val tuint) (Zlength il - (k + 1))) t;
       data_at sh (tarray tuint (Zlength il))
           ((map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) ++
            (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
@@ -566,3 +578,9 @@ Proof.
          )
     ).
 
+  forward.
+  forward.
+  forward.
+  entailer!.
+
+  rewrite upd_Znth_app2.
