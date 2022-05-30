@@ -163,7 +163,7 @@ Definition f_my_mergesort := {|
                 (Scall (Some _t'1)
                   (Evar _malloc (Tfunction (Tcons tulong Tnil) (tptr tvoid)
                                   cc_default))
-                  ((Ebinop Omul (Esizeof tint tulong) (Etempvar _len tint)
+                  ((Ebinop Omul (Esizeof tuint tulong) (Etempvar _len tint)
                      tulong) :: nil))
                 (Sset _t (Etempvar _t'1 (tptr tvoid))))
               (Ssequence

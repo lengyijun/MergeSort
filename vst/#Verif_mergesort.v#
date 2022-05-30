@@ -327,7 +327,7 @@ Proof.
     rep_lia.
   }
 
-  forward_call ( tarray tuint (Zlength il), gv).
+  forward_call ( tarray tint (Zlength il), gv).
   simpl; rewrite Zmax_right; rep_lia.
   
   Intro t.
@@ -388,8 +388,8 @@ Proof.
        )
        
      SEP (mem_mgr gv;
-          malloc_token Ews (tarray tuint (Zlength il)) t;
-          data_at_ Ews (tarray tuint (Zlength il)) t;
+          malloc_token Ews (tarray tint (Zlength il)) t;
+          data_at_ Ews (tarray tint (Zlength il)) t;
           data_at sh  (tarray tuint (Zlength il - Z.div2 (Zlength il)))
        (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
        (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
@@ -415,8 +415,8 @@ Proof.
             temp _arr p;
             temp _len (Vint (Int.repr (Zlength il))))
      
-     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
-     data_at_ Ews (tarray tuint (Zlength il)) t;
+     SEP (mem_mgr gv; malloc_token Ews (tarray tint (Zlength il)) t;
+     data_at_ Ews (tarray tint (Zlength il)) t;
      data_at sh  (tarray tuint (Zlength il - Z.div2 (Zlength il)))
        (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
        (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
@@ -473,8 +473,8 @@ Proof.
             temp _t'2 (Val.of_bool true)
            )
      
-     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
-     data_at_ Ews (tarray tuint (Zlength il)) t;
+     SEP (mem_mgr gv; malloc_token Ews (tarray tint (Zlength il)) t;
+     data_at_ Ews (tarray tint (Zlength il)) t;
       data_at sh (tarray tuint (Zlength il))
           ((map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) ++
            (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
@@ -545,5 +545,5 @@ Proof.
 
   forward.
   rewrite data_at__tarray.
-  forward.
+  simpl.
   forward.

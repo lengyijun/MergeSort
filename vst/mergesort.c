@@ -13,7 +13,7 @@ void my_mergesort(unsigned *arr, int len) {
   my_mergesort(arr1, p);
   my_mergesort(arr2, len-p);
 
-  unsigned *t = malloc(sizeof(int)*len);
+  unsigned *t = malloc(sizeof(unsigned)*len);
   if(!t){exit(1);}
 
 
