@@ -362,7 +362,12 @@ Proof.
   assert ( Z.div2 (Zlength il) < Zlength il ). {
     apply div2_le2; lia.
   }
-  
+
+  unfold Int.divs.
+  rewrite Int.signed_repr; try rep_lia.
+  rewrite Int.signed_repr; try rep_lia.
+  rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.
+   
   forward_loop (
      EX i, EX j, EX k,
      PROP(0 <= i < Z.div2 (Zlength il);
@@ -370,15 +375,13 @@ Proof.
           0 <= k < Zlength il;
           Z.add k (Z.div2 (Zlength il)) = Z.add i j )
      LOCAL (temp _k (Vint (Int.repr k));
-            temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            temp _j (Vint (Int.repr (Zlength il / 2)));
             temp _i (Vint (Int.repr i));
             temp _t t;
             temp _arr2
-       (force_val
-          (sem_binary_operation' Oadd (tptr tint) tint p
-                                 (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)))));
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
             temp _arr1 p;
-            temp _p (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            temp _p (Vint (Int.repr (Zlength il / 2)));
             gvars gv; 
             temp _arr p;
             temp _len (Vint (Int.repr (Zlength il)))
@@ -401,15 +404,13 @@ Proof.
             Z.add k (Z.div2 (Zlength il)) = Z.add i j 
           )
      LOCAL (temp _k (Vint (Int.repr k));
-            temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            temp _j (Vint (Int.repr (Zlength il / 2)));
             temp _i (Vint (Int.repr i));
             temp _t t;
             temp _arr2
-       (force_val
-          (sem_binary_operation' Oadd (tptr tint) tint p
-                                 (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)))));
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
             temp _arr1 p;
-            temp _p (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            temp _p (Vint (Int.repr (Zlength il / 2)));
             gvars gv; 
             temp _arr p;
             temp _len (Vint (Int.repr (Zlength il))))
@@ -433,15 +434,13 @@ Proof.
   forward_if (
      PROP ( )
      LOCAL (temp _k (Vint (Int.repr k));
-            temp _j (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            temp _j (Vint (Int.repr (Zlength il / 2)));
             temp _i (Vint (Int.repr i));
             temp _t t;
             temp _arr2
-       (force_val
-          (sem_binary_operation' Oadd (tptr tint) tint p
-                                 (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)))));
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
             temp _arr1 p;
-            temp _p (Vint (Int.divs (Int.repr (Zlength il)) (Int.repr 2)));
+            temp _p (Vint (Int.repr (Zlength il / 2)));
             gvars gv; 
             temp _arr p;
             temp _len (Vint (Int.repr (Zlength il)));
@@ -456,25 +455,21 @@ Proof.
      data_at sh   (tarray tuint (Z.div2 (Zlength il)))
        (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
     ).
+
   forward.
   entailer!.
   {
     f_equal.
-    unfold Int.divs.
-    rewrite Int.signed_repr; try rep_lia.
-    rewrite Int.signed_repr; try rep_lia.
     unfold Int.lt.
     rewrite Int.signed_repr; try rep_lia.
     rewrite Int.signed_repr; try rep_lia.
-    rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.
     destruct  (  zlt (Zlength il / 2) (Zlength il)).
     auto.
-    lia.
-    rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.  
+    lia. 
   }
+
   forward.
   entailer!.
-  admit.
 
   forward_if True.
   forward.
@@ -498,4 +493,11 @@ Proof.
     rewrite Zmax_left; try rep_lia.     
   }
 
-  forward.
+    forward.
+
+  assert (
+      (0 <= Zlength il / 2 <
+ Zlength (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))))
+    ). {
+    (* can't prove *)
+  }
