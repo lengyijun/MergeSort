@@ -375,7 +375,7 @@ Proof.
           0 <= k < Zlength il;
           Z.add k (Z.div2 (Zlength il)) = Z.add i j )
      LOCAL (temp _k (Vint (Int.repr k));
-            temp _j (Vint (Int.repr (Zlength il / 2)));
+            temp _j (Vint (Int.repr j));
             temp _i (Vint (Int.repr i));
             temp _t t;
             temp _arr2
@@ -404,7 +404,7 @@ Proof.
             Z.add k (Z.div2 (Zlength il)) = Z.add i j 
           )
      LOCAL (temp _k (Vint (Int.repr k));
-            temp _j (Vint (Int.repr (Zlength il / 2)));
+            temp _j (Vint (Int.repr j));
             temp _i (Vint (Int.repr i));
             temp _t t;
             temp _arr2
@@ -425,7 +425,7 @@ Proof.
     ).
 
   Exists 0.
-  Exists (Z.div2 (Zlength il)).
+  Exists ((Zlength il) / 2).
   Exists 0.
   entailer!.
   
@@ -434,7 +434,7 @@ Proof.
   forward_if (
      PROP ( )
      LOCAL (temp _k (Vint (Int.repr k));
-            temp _j (Vint (Int.repr (Zlength il / 2)));
+            temp _j (Vint (Int.repr j));
             temp _i (Vint (Int.repr i));
             temp _t t;
             temp _arr2
@@ -463,7 +463,7 @@ Proof.
     unfold Int.lt.
     rewrite Int.signed_repr; try rep_lia.
     rewrite Int.signed_repr; try rep_lia.
-    destruct  (  zlt (Zlength il / 2) (Zlength il)).
+    destruct (zlt j (Zlength il)).
     auto.
     lia. 
   }
@@ -475,8 +475,7 @@ Proof.
   forward.
   entailer!.
   discriminate.
-  abbreviate_semax.
-  Intros.
+  abbreviate_semax; Intros.
 
   assert (0 <= i < Zlength (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))).
   {
@@ -493,7 +492,7 @@ Proof.
     rewrite Zmax_left; try rep_lia.     
   }
 
-    forward.
+  forward.
 
   assert (
       (0 <= Zlength il / 2 <
