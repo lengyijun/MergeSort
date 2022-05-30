@@ -368,70 +368,7 @@ Proof.
   rewrite Int.signed_repr; try rep_lia.
   rewrite Zquot.Zquot_Zdiv_pos; auto; try rep_lia.
 
-  forward_loop (
-     EX i, EX j, EX k,
-     PROP(0 <= i < Z.div2 (Zlength il);
-          Z.div2 (Zlength il) <= j < Zlength il;
-          0 <= k < Zlength il;
-          Z.add k (Z.div2 (Zlength il)) = Z.add i j )
-     LOCAL (temp _k (Vint (Int.repr k));
-            temp _j (Vint (Int.repr j));
-            temp _i (Vint (Int.repr i));
-            temp _t t;
-            temp _arr2
-       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
-            temp _arr1 p;
-            temp _p (Vint (Int.repr (Zlength il / 2)));
-            gvars gv; 
-            temp _arr p;
-            temp _len (Vint (Int.repr (Zlength il)))
-       )
-       
-     SEP (mem_mgr gv;
-          malloc_token Ews (tarray tuint (Zlength il)) t;
-          data_at_ Ews (tarray tuint (Zlength il)) t;
-          data_at sh  (tarray tuint (Zlength il - Z.div2 (Zlength il)))
-       (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
-       (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
-     data_at sh  (tarray tuint (Z.div2 (Zlength il)))
-       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
-    )
-    break:
-    (
-     EX i, EX j, EX k,
-      PROP( i = Z.div2 (Zlength il) \/ j <= Zlength il;
-            0 <= k <= Zlength il;
-            Z.add k (Z.div2 (Zlength il)) = Z.add i j 
-          )
-     LOCAL (temp _k (Vint (Int.repr k));
-            temp _j (Vint (Int.repr j));
-            temp _i (Vint (Int.repr i));
-            temp _t t;
-            temp _arr2
-       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
-            temp _arr1 p;
-            temp _p (Vint (Int.repr (Zlength il / 2)));
-            gvars gv; 
-            temp _arr p;
-            temp _len (Vint (Int.repr (Zlength il))))
-     
-     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
-     data_at_ Ews (tarray tuint (Zlength il)) t;
-     data_at sh  (tarray tuint (Zlength il - Z.div2 (Zlength il)))
-       (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
-       (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p);
-     data_at sh  (tarray tuint (Z.div2 (Zlength il)))
-       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)
-    ).
-
-  Exists 0.
-  Exists ((Zlength il) / 2).
-  Exists 0.
-  entailer!.
-  
-  Intro i. Intro j. Intro k. Intros.
-
-    assert (
+      assert (
   data_at sh (tarray tuint (Zlength il - Z.div2 (Zlength il)))
     (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))
     (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p) *
@@ -457,6 +394,85 @@ Proof.
       rewrite Zmax_left; rep_lia.
   }
   
+  forward_loop (
+     EX i, EX j, EX k,
+     PROP(0 <= i < Z.div2 (Zlength il);
+          Z.div2 (Zlength il) <= j < Zlength il;
+          0 <= k < Zlength il;
+          Z.add k (Z.div2 (Zlength il)) = Z.add i j )
+     LOCAL (temp _k (Vint (Int.repr k));
+            temp _j (Vint (Int.repr j));
+            temp _i (Vint (Int.repr i));
+            temp _t t;
+            temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+            temp _arr1 p;
+            temp _p (Vint (Int.repr (Zlength il / 2)));
+            gvars gv; 
+            temp _arr p;
+            temp _len (Vint (Int.repr (Zlength il)))
+       )
+       
+     SEP (mem_mgr gv;
+          malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
+                (map Vint (map Int.repr (merge
+                (sublist 0 i (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+                (sublist 0 (j - (Zlength il / 2)) (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
+                ++  Zrepeat (default_val tuint) (Zlength il - k)) t;
+      data_at sh (tarray tuint (Zlength il))
+          ((map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) ++
+           (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
+              p
+         )
+    )
+    break:
+    (
+     EX i, EX j, EX k,
+      PROP( i = Z.div2 (Zlength il) \/ j <= Zlength il;
+            0 <= k <= Zlength il;
+            Z.add k (Z.div2 (Zlength il)) = Z.add i j 
+          )
+     LOCAL (temp _k (Vint (Int.repr k));
+            temp _j (Vint (Int.repr j));
+            temp _i (Vint (Int.repr i));
+            temp _t t;
+            temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+            temp _arr1 p;
+            temp _p (Vint (Int.repr (Zlength il / 2)));
+            gvars gv; 
+            temp _arr p;
+            temp _len (Vint (Int.repr (Zlength il))))
+     
+     SEP (mem_mgr gv;
+          malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
+                (map Vint (map Int.repr (merge
+                (sublist 0 i (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+                (sublist 0 (j - (Zlength il /2)) (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
+                ++  Zrepeat (default_val tuint) (Zlength il - k)) t;
+      data_at sh (tarray tuint (Zlength il))
+          ((map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) ++
+           (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
+              p
+         )
+    ).
+
+  Exists 0.
+  Exists ((Zlength il) / 2).
+  Exists 0.
+  sep_apply H3.
+  rewrite data_at__tarray.
+  rewrite sublist_nil.
+  assert ((Zlength il / 2 - Zlength il / 2) = 0 ). { lia. }
+  rewrite H4.
+  entailer!.
+  simpl.
+  entailer!.
+  
+  Intro i. Intro j. Intro k. Intros.
+  
   forward_if (
      PROP ( )
      LOCAL (temp _k (Vint (Int.repr k));
@@ -473,8 +489,13 @@ Proof.
             temp _t'2 (Val.of_bool true)
            )
      
-     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
-     data_at_ Ews (tarray tuint (Zlength il)) t;
+     SEP (mem_mgr gv;
+          malloc_token Ews (tarray tuint (Zlength il)) t;
+               data_at Ews (tarray tuint (Zlength il))
+                (map Vint (map Int.repr (merge
+                (sublist 0 i (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+                (sublist 0 (j - (Zlength il /2)) (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
+                ++  Zrepeat (default_val tuint) (Zlength il - k)) t;
       data_at sh (tarray tuint (Zlength il))
           ((map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) ++
            (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
@@ -514,6 +535,8 @@ Proof.
   entailer!.
  list_solve.
 
+ (*  分类讨论 _t'5 <= _t'6 *)
+ 
   forward_if (
      PROP ( )
      LOCAL (temp _k (Vint (Int.repr k));
@@ -543,7 +566,3 @@ Proof.
          )
     ).
 
-  forward.
-  rewrite data_at__tarray.
-  forward.
-  forward.
