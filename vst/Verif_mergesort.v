@@ -21,8 +21,163 @@ Program Fixpoint merge (x : list Z) (y : list Z) {measure (length x + length y)}
   end.
 Next Obligation.
   apply Nat.add_le_lt_mono; auto.
-Qed. 
+Qed.
 
+Lemma merge_l :  forall (xs : list Z)(y : Z)(ys : list Z),
+    (forall i,  Nat.lt i (length xs) -> nth i xs 0 < y )
+ -> merge xs (y :: ys) = xs ++ (y :: ys).
+Proof.
+induction xs.
+simpl.
+intros.
+unfold merge; unfold merge_func;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func; auto.
+
+intros.
+unfold merge; unfold merge_func;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+
+assert (G := H 0%nat).
+simpl in G.
+assert ( a < y).
+apply G; lia.
+
+remember (a <? y).
+destruct b.
+f_equal.
+apply IHxs.
+intros.
+specialize (H (S i)).
+simpl in H.
+apply H; auto.
+lia.
+
+lia.
+Qed.
+
+
+Lemma merge_r :  forall (xs : list Z)(y : Z)(ys : list Z),
+    (forall i,  Nat.lt i (length xs) -> nth i xs 0 < y )
+ -> merge (y :: ys) xs = xs ++ (y :: ys).
+Proof.
+induction xs.
+simpl.
+intros.
+unfold merge; unfold merge_func;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func; auto.
+
+intros.
+unfold merge; unfold merge_func;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+
+assert (G := H 0%nat).
+simpl in G.
+assert ( a < y).
+apply G; lia.
+
+remember (y <? a).
+destruct b.
+lia.
+f_equal.
+unfold merge in IHxs.
+apply IHxs.
+intros.
+specialize (H (S i)).
+simpl in H.
+apply H; auto.
+lia.
+Qed.
+
+
+Lemma merge_firstn_l :  forall (j : nat)(xs : list Z)(y : Z)(ys : list Z),
+    Nat.le j (length xs)
+ -> (forall i,  Nat.lt i j -> nth i xs 0 < y )
+ -> merge xs (y :: ys) = firstn j xs ++ merge (skipn j xs) (y :: ys).
+Proof.
+induction j.
+intuition.
+
+intros.
+destruct xs; simpl in H.
+inv H.
+simpl.
+unfold merge at 1; unfold merge_func;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+
+remember (z <? y).
+destruct b.
+f_equal.
+apply IHj.
+lia.
+intros.
+specialize (H0 (S i)).
+simpl in H0.
+apply H0; lia.
+
+specialize (H0 0%nat).
+simpl in H0.
+assert (z < y).
+apply H0.
+lia.
+lia.
+Qed.
+
+
+Lemma merge_firstn_r :  forall (j : nat)(xs : list Z)(y : Z)(ys : list Z),
+    Nat.le j (length xs)
+ -> (forall i,  Nat.lt i j -> nth i xs 0 < y )
+ -> merge (y :: ys) xs = firstn j xs ++ merge (y :: ys) (skipn j xs) .
+Proof.
+induction j.
+intuition.
+
+intros.
+destruct xs; simpl in H.
+inv H.
+simpl.
+unfold merge at 1; unfold merge_func;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+
+remember (y <? z).
+destruct b.
+
+- specialize (H0 0%nat).
+simpl in H0.
+assert (z < y).
+apply H0.
+lia.
+lia.
+
+- f_equal.
+  unfold merge in IHj at 1.
+apply IHj.
+lia.
+intros.
+specialize (H0 (S i)).
+simpl in H0.
+apply H0; lia.
+Qed.
+
+Lemma merge_inv : forall (xs : list Z) (i : nat) (ys : list Z)(j : nat),
+       Nat.lt i (length xs)
+    -> Nat.lt j (length ys)           
+    -> merge (firstn i xs) (firstn j ys) = firstn (i + j) (merge xs ys)
+    -> nth i xs 0 <= nth j ys 0
+    -> merge (firstn (i + 1) xs) (firstn j ys) = firstn (i + 1 + j) (merge xs ys).
+Proof.
+  induction xs.
+  intros; simpl in H;  destruct i; inv H.
+  induction i.
+  simpl; intros.
+  
+
+
+
+  
+
+
+  
+  
 Lemma skipn_length (n : nat) :
   forall {A} (l : list A), length (skipn n l) = Nat.sub (length l) n.
 Proof.
