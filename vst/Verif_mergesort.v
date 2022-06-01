@@ -417,25 +417,41 @@ eapply sorted_inv; apply H1.
 auto.
 Qed.
 
-
-Lemma merge_invariant : forall (xs : list Z) (i : nat) (ys : list Z)(j : nat),
+Lemma nat_add0 : forall (x : nat), Nat.add x 0%nat = x.
+Proof. lia. Qed.
+  
+Lemma merge_invariant : forall (xs ys: list Z) (i : nat)(j : nat),
        Nat.lt i (length xs)
     -> Nat.lt j (length ys)           
     -> merge (firstn i xs) (firstn j ys) = firstn (i + j) (merge xs ys)
     -> nth i xs 0 <= nth j ys 0
-    -> merge (firstn (i + 1) xs) (firstn j ys) = firstn (i + 1 + j) (merge xs ys).
+    -> merge (firstn (S i) xs) (firstn j ys) = firstn (S (i + j)) (merge xs ys).
 Proof.
   induction xs.
-  intros; simpl in H;  destruct i; inv H.
-  induction i.
-  simpl; intros.
-Admitted.  
+  intros.
+  simpl in H.
+  inv H.
 
+  induction ys.
+  intros.
+  simpl in H0.
+  inv H0.
 
-
-  
-
-
+  intros.
+  destruct j.
+  assert (G :=  merge_firstn_l (S i) (a :: xs) a0 ys).
+  simpl in *.
+  rewrite nat_add0 in *.
+  rewrite merge_nil_r in *.
+  assert ( merge (a :: xs) (a0 :: ys) = a :: firstn i xs ++ merge (skipn i xs) (a0 :: ys) ).
+  {
+    apply G.
+    lia.
+    intros.
+    destruct i0.
+    clear H3.
+    admit.
+  }
   
   
 Lemma skipn_length (n : nat) :
