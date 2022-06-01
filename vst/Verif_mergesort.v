@@ -55,6 +55,7 @@ lia.
 lia.
 Qed.
 
+
 (*
 Lemma merge_r :  forall (xs : list Z)(y : Z)(ys : list Z),
     (forall i,  Nat.lt i (length xs) -> nth i xs 0 <= y )
@@ -92,6 +93,7 @@ lia.
 Qed.
 *)
 
+
 Lemma merge_firstn_l :  forall (j : nat)(xs : list Z)(y : Z)(ys : list Z),
     Nat.le j (length xs)
  -> (forall i,  Nat.lt i j -> nth i xs 0 <= y )
@@ -124,6 +126,7 @@ apply H0.
 lia.
 lia.
 Qed.
+
 
 (*
 Lemma merge_firstn_r :  forall (j : nat)(xs : list Z)(y : Z)(ys : list Z),
@@ -164,6 +167,8 @@ apply H0; lia.
 Qed.
 *)
 
+
+  
 Lemma merge_nil_l : forall xs , merge [] xs = xs .
 Proof.
   intros.
@@ -189,6 +194,17 @@ Inductive sorted: list Z -> Set :=
 | sorted_cons: forall x y l,
     x <= y -> sorted (y :: l) -> sorted (x::y::l).
 
+Lemma sorted_inv : forall (xs : list Z)(a : Z),
+    sorted (a :: xs) -> sorted xs.
+Proof.           
+  intros.
+  inv H; auto.
+  constructor.
+Qed.  
+
+
+
+    
 Lemma merge_float_l : forall (xs ys : list Z)(a : Z),
        sorted (a :: xs)
     -> sorted (a :: ys)
@@ -248,14 +264,50 @@ Proof.
   auto.
 Qed.
 
-Lemma sorted_inv : forall (xs : list Z)(a : Z),
-    sorted (a :: xs) -> sorted xs.
-Proof.           
-  intros.
-  inv H; auto.
-  constructor.
-Qed.  
 
+Lemma merge_firstn_r :  forall (ys xs: list Z)(j : nat),
+    Nat.le j (length ys)
+    -> firstn j ys = firstn j (merge xs ys)
+    -> sorted xs
+    -> sorted ys
+    -> merge xs ys = firstn j ys ++ merge xs (skipn j ys) .
+Proof.
+  induction ys.
+  intros.
+  rewrite firstn_nil.
+  rewrite skipn_nil.
+  simpl; auto.
+
+  induction xs.
+  intros.
+  repeat rewrite merge_nil_l.
+  rewrite firstn_skipn; auto.
+  
+  destruct j; intros.
+  simpl; auto.
+
+    unfold merge ; unfold merge_func;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func; auto.
+    unfold merge in H0; unfold merge_func in H0;
+      rewrite Wf.WfExtensionality.fix_sub_eq_ext in H0; simpl in H0; fold merge_func in H0; auto.
+
+    remember (a0 <=? a). destruct b; inv H0; f_equal.
+            assert (G := merge_float xs ys a0 H1 H2).
+
+    unfold merge in G.
+    rewrite G.
+    apply IHys; auto; try lia.
+    simpl in H; lia.
+    rewrite H5.
+    unfold merge.
+    rewrite G; auto.
+    eapply sorted_inv; apply H2.
+
+    apply IHys; try lia; auto.
+    simpl in H; lia.
+    eapply sorted_inv; apply H2.
+Qed.
+    
 Lemma merge_append_l : forall (ys xs: list Z)(j : nat),
     Nat.le j (length xs)
  -> firstn (j + length ys) (merge xs ys) = merge (firstn j xs) ys
@@ -461,9 +513,22 @@ Proof.
     eapply sorted_inv; apply H1.
 Qed.    
 
+(*
+Lemma merge_invariant : forall (ys xs: list Z) (j : nat)(a : Z),
+       Nat.le (S j) (length ys)           
+    -> firstn (S j) ys = firstn (S j) (merge (a :: xs) ys)
+    -> sorted xs
+    -> sorted ys
+    -> nth j ys 0 <= a .
+  (*  -> (forall i,  Nat.le i j -> nth i ys 0 <= a ). *)
+Proof.
+  intros.
+  induction ys; simpl in H; try lia.
+ *)
+  
 
 
-Lemma merge_invariant : forall (xs ys: list Z) (j i : nat),
+Lemma merge_invariant : forall (xs ys: list Z) (i j : nat),
        Nat.lt i (length xs)
     -> Nat.lt j (length ys)           
     -> merge (firstn i xs) (firstn j ys) = firstn (i + j) (merge xs ys)
@@ -471,14 +536,109 @@ Lemma merge_invariant : forall (xs ys: list Z) (j i : nat),
     -> sorted ys
     -> merge xs ys = merge (firstn i xs) (firstn j ys) ++ merge (skipn i xs) (skipn j ys).
 Proof.
+  intro. intro.
+ generalize (lt_n_Sn (length xs + length ys)).        
+remember ( S (Datatypes.length xs + Datatypes.length ys)%nat ).
+clear Heqn.
+generalize xs ys. clear xs ys.
+induction n.
+{
   intros.
+  assert ((Datatypes.length xs + Datatypes.length ys >= 0)%nat ).
+  { list_solve. }
+  lia.
+}
+
+intros.
+destruct xs. {
+  rewrite firstn_nil.
+  rewrite skipn_nil.
+  repeat rewrite merge_nil_l.
+  rewrite firstn_skipn; auto.
+}
+destruct ys. {
+    rewrite firstn_nil.
+  rewrite skipn_nil.
+  repeat rewrite merge_nil_r.
+  rewrite firstn_skipn; auto.
+}
+destruct i. {
+  simpl in *.
+  rewrite merge_nil_l in *.
+  apply merge_firstn_r; auto; try lia.
+  simpl; lia. 
+}
+destruct j. {
+  simpl.
+  simpl in H2.
+  rewrite merge_nil_r in H2.
+  assert (Nat.add i 0 = i). { lia. }
+  rewrite H5 in H2.
+  unfold merge in H2;  unfold merge_func in H2;
+         rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.
+             unfold merge ;  unfold merge_func;
+               rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+             simpl in H.
+             remember (z <=? z0).
+             destruct b; inv H2; f_equal.
+
+      specialize (IHn xs (z0 :: ys)).
+      assert ( (Datatypes.length xs + Datatypes.length (z0 :: ys) < n)%nat ).
+      { simpl. lia. }
+      specialize (IHn H2 i 0%nat).
+      simpl in IHn.
+      rewrite merge_nil_r in IHn.
+      apply IHn; auto; try lia.
+      simpl in H0; lia.
+      rewrite H5; auto.
+      eapply sorted_inv; apply H3.
 
 
+      specialize (IHn xs (z0 :: ys)).
+      assert ((Datatypes.length xs + Datatypes.length (z0 :: ys) < n)%nat ).
+      {simpl. lia. }
+      specialize (IHn H2 i 0%nat ).
+      simpl in IHn.
+      assert (G := merge_float xs ys z0 H3 H4).
+      unfold merge in G at 2.
+      rewrite <- G.
+      rewrite merge_nil_r in IHn.
+      apply IHn; auto; try lia.
+}
+
+simpl in *.
+      unfold merge in H2;  unfold merge_func in H2;
+        rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.
+  unfold merge_func in H2 at 3;
+        rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.     
+      unfold merge ;  unfold merge_func;
+        rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+ unfold merge_func at 3;
+        rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+
+ remember (z <=? z0). destruct b; inv H2; simpl; f_equal.
+
+ specialize (IHn xs (z0 :: ys)).
+ assert ( (Datatypes.length xs + Datatypes.length (z0 :: ys) < n)%nat ).
+ { simpl. lia. }
+ specialize (IHn H2 i (S j) ).
+ apply IHn; auto; try lia.
+ eapply sorted_inv; apply H3.
+
+  specialize (IHn (z :: xs) ys).
+  assert ( (Datatypes.length (z :: xs) + Datatypes.length ys < n)%nat ).
+  { simpl. lia. }
+  specialize (IHn H2 (S i) j H0).
+  apply IHn; auto; try lia.
+  assert ( Nat.add i (S j) = S (Nat.add i  j)). { lia. }
+  rewrite H5 in H6.
+  simpl in H6.
+  auto.
+  eapply sorted_inv; apply H4.
+Qed.
 
 
-  
-  
-(*
+  (*
 Lemma merge_invariant_1 : forall (xs ys: list Z) (j i : nat),
        Nat.lt i (length xs)
     -> Nat.lt j (length ys)           
