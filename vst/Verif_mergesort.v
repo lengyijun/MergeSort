@@ -462,6 +462,23 @@ Proof.
 Qed.    
 
 
+
+Lemma merge_invariant : forall (xs ys: list Z) (j i : nat),
+       Nat.lt i (length xs)
+    -> Nat.lt j (length ys)           
+    -> merge (firstn i xs) (firstn j ys) = firstn (i + j) (merge xs ys)
+    -> sorted xs
+    -> sorted ys
+    -> merge xs ys = merge (firstn i xs) (firstn j ys) ++ merge (skipn i xs) (skipn j ys).
+Proof.
+  intros.
+
+
+
+
+  
+  
+(*
 Lemma merge_invariant_1 : forall (xs ys: list Z) (j i : nat),
        Nat.lt i (length xs)
     -> Nat.lt j (length ys)           
@@ -590,6 +607,7 @@ simpl in H6.
 auto.
 eapply sorted_inv; apply H4.
 Qed.
+ *)
 
 
 Lemma skipn_length (n : nat) :
