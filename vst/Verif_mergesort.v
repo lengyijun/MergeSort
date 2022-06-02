@@ -676,7 +676,7 @@ Next Obligation.
   apply le_plus_l.
 Qed.
 
-Lemma merge_length : forall l1 , forall l2 , Zlength (merge l1 l2 ) = Zlength l1 + Zlength l2.
+Lemma merge_Zlength : forall l1 , forall l2 , Zlength (merge l1 l2 ) = Zlength l1 + Zlength l2.
 Proof.
   induction l1.
   intros.
@@ -1189,3 +1189,14 @@ destruct b.
   entailer!.
 
   rewrite upd_Znth_app2.
+  repeat rewrite Zlength_map.
+  rewrite merge_Zlength.
+  repeat rewrite Zlength_sublist.
+  assert ( (k - (i - 0 + (j - Zlength il / 2 - 0))) = 0). { lia. }
+  rewrite H19; clear H19.
+  rewrite Znth_app1.
+  assert ( (Zlength il - k) =  1 + (Zlength il - (k + 1)) ). { lia. }
+  rewrite H19; clear H19.
+  rewrite <- (Zrepeat_app 1).
+  rewrite <- cons_Zrepeat_1_app.
+  rewrite upd_Znth0.
