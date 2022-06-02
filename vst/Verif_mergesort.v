@@ -23,6 +23,8 @@ Next Obligation.
   apply Nat.add_le_lt_mono; auto.
 Qed.
 
+(*
+(* useless *)
 Lemma merge_l :  forall (xs : list Z)(y : Z)(ys : list Z),
     (forall i,  Nat.lt i (length xs) -> nth i xs 0 <= y )
  -> merge xs (y :: ys) = xs ++ (y :: ys).
@@ -54,6 +56,7 @@ lia.
 
 lia.
 Qed.
+*)
 
 
 (*
@@ -93,7 +96,8 @@ lia.
 Qed.
 *)
 
-
+(*
+(* useless *)
 Lemma merge_firstn_l :  forall (j : nat)(xs : list Z)(y : Z)(ys : list Z),
     Nat.le j (length xs)
  -> (forall i,  Nat.lt i j -> nth i xs 0 <= y )
@@ -126,6 +130,7 @@ apply H0.
 lia.
 lia.
 Qed.
+*)
 
 
 (*
@@ -214,14 +219,14 @@ Proof.
   destruct ys.
   do 2 rewrite merge_nil_r; auto.
 
-    unfold merge ; unfold merge_func;
-rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+  unfold merge ; unfold merge_func;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
 
-    inv H0.
-    remember (a <=? z).
-    destruct b.
-    auto.
-    lia.
+  inv H0.
+  remember (a <=? z).
+  destruct b.
+  auto.
+  lia.
 Qed.
 
 Lemma merge_float_r : forall (xs ys : list Z)(a : Z),
@@ -231,25 +236,25 @@ Lemma merge_float_r : forall (xs ys : list Z)(a : Z),
 Proof.
   intros.
   induction xs.
-    do 2 rewrite merge_nil_l; auto.
+  do 2 rewrite merge_nil_l; auto.
 
-        unfold merge ; unfold merge_func;
-rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+  unfold merge ; unfold merge_func;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
 
-        inv H.
-remember (a0 <=? a).        
-destruct b.  
-assert (a0 = a). { lia. }
-subst.
-f_equal.
-assert ( merge xs (a :: ys) = a :: merge xs ys ). { apply IHxs. auto. }
-unfold merge in H at 1.
-rewrite H.
-assert ( G := merge_float_l xs ys a H5 H0).
-unfold merge in G at 1.
-rewrite G.
-auto.
-auto.
+  inv H.
+  remember (a0 <=? a).        
+  destruct b.  
+  assert (a0 = a). { lia. }
+  subst.
+  f_equal.
+  assert ( merge xs (a :: ys) = a :: merge xs ys ). { apply IHxs. auto. }
+  unfold merge in H at 1.
+  rewrite H.
+  assert ( G := merge_float_l xs ys a H5 H0).
+  unfold merge in G at 1.
+  rewrite G.
+  auto.
+  auto.
 Qed.
 
 
@@ -286,26 +291,27 @@ Proof.
   destruct j; intros.
   simpl; auto.
 
-    unfold merge ; unfold merge_func;
-rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func; auto.
-    unfold merge in H0; unfold merge_func in H0;
-      rewrite Wf.WfExtensionality.fix_sub_eq_ext in H0; simpl in H0; fold merge_func in H0; auto.
+  unfold merge ; unfold merge_func;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func; auto.
+  unfold merge in H0; unfold merge_func in H0;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext in H0; simpl in H0; fold merge_func in H0; auto.
 
-    remember (a0 <=? a). destruct b; inv H0; f_equal.
-            assert (G := merge_float xs ys a0 H1 H2).
+  remember (a0 <=? a). 
+  destruct b; inv H0; f_equal.
 
-    unfold merge in G.
-    rewrite G.
-    apply IHys; auto; try lia.
-    simpl in H; lia.
-    rewrite H5.
-    unfold merge.
-    rewrite G; auto.
-    eapply sorted_inv; apply H2.
+  assert (G := merge_float xs ys a0 H1 H2).
+  unfold merge in G.
+  rewrite G.
+  apply IHys; auto; try lia.
+  simpl in H; lia.
+  rewrite H5.
+  unfold merge.
+  rewrite G; auto.
+  eapply sorted_inv; apply H2.
 
-    apply IHys; try lia; auto.
-    simpl in H; lia.
-    eapply sorted_inv; apply H2.
+  apply IHys; try lia; auto.
+  simpl in H; lia.
+  eapply sorted_inv; apply H2.
 Qed.
     
 Lemma merge_append_l : forall (ys xs: list Z)(j : nat),
@@ -477,6 +483,7 @@ Qed.
 Lemma nat_add0 : forall (x : nat), Nat.add x 0%nat = x.
 Proof. lia. Qed.
 
+(*
 Lemma merge_jiting : forall(i0 i: nat)(xs ys : list Z)(a0 : Z),
     firstn i xs = firstn i (merge xs (a0 :: ys))
  -> Nat.le i (Datatypes.length xs)
@@ -503,15 +510,16 @@ Proof.
   lia.
   simpl in *.
   apply (IHi0 i xs ys a0); try lia; auto.
-    unfold merge in H;  unfold merge_func in H;
-    rewrite Wf.WfExtensionality.fix_sub_eq_ext in H; simpl in H; fold merge_func in H.
-    remember (z <=? a0).
-    destruct b; inv H; auto.
+  unfold merge in H;  unfold merge_func in H;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext in H; simpl in H; fold merge_func in H.
+  remember (z <=? a0).
+  destruct b; inv H; auto.
 
-    rewrite (merge_float xs ys a0 H1 H2).
-    auto.
-    eapply sorted_inv; apply H1.
+  rewrite (merge_float xs ys a0 H1 H2).
+  auto.
+  eapply sorted_inv; apply H1.
 Qed.    
+*)
 
 
 Lemma merge_invariant : forall (xs ys: list Z) (i j : nat),
@@ -593,16 +601,17 @@ destruct j. {
 }
 
 simpl in *.
-      unfold merge in H2;  unfold merge_func in H2;
-        rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.
-  unfold merge_func in H2 at 3;
-        rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.     
-      unfold merge ;  unfold merge_func;
-        rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
- unfold merge_func at 3;
-        rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+unfold merge in H2;  unfold merge_func in H2;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.
+unfold merge_func in H2 at 3;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.     
+unfold merge ;  unfold merge_func;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+unfold merge_func at 3;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
 
- remember (z <=? z0). destruct b; inv H2; simpl; f_equal.
+ remember (z <=? z0). 
+ destruct b; inv H2; simpl; f_equal.
 
  specialize (IHn xs (z0 :: ys)).
  assert ( (Datatypes.length xs + Datatypes.length (z0 :: ys) < n)%nat ).
@@ -863,7 +872,8 @@ Proof.
     split; try rep_lia.
     apply Z.div_str_pos; rep_lia.
  }
- 
+
+ remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.
 
   (* mergesort 2 *)
   forward_call ( (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p) , sh , skipn (Z.to_nat (Z.div2 (Zlength il))) il, gv).
@@ -1063,7 +1073,7 @@ Proof.
               p
          )
     ).
-
+  
   Exists 0.
   Exists ((Zlength il) / 2).
   Exists 0.
@@ -1077,6 +1087,9 @@ Proof.
   entailer!.
   
   Intro i. Intro j. Intro k. Intros.
+
+  remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
+  repeat rewrite Heql1.
   
   forward_if (
      PROP ( )
@@ -1200,3 +1213,14 @@ destruct b.
   rewrite <- (Zrepeat_app 1).
   rewrite <- cons_Zrepeat_1_app.
   rewrite upd_Znth0.
+
+   remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.
+   remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
+
+   assert (
+  (merge (sublist 0 i l1) (sublist 0 (j - Zlength il / 2) l2)) ++
+      Znth i l1 :: []
+    =
+   merge (sublist 0 (i + 1) l1) (sublist 0 (j - Zlength il / 2) l2)
+     ).
+   
