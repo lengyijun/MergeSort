@@ -687,7 +687,7 @@ Proof.
 
   unfold merge;  unfold merge_func;
   rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
-  destruct (a <? a0); simpl; do 3 rewrite Zlength_cons.
+  destruct (a <=? a0); simpl; do 3 rewrite Zlength_cons.
 
   specialize (IHl1 (a0 :: l2)). 
   unfold merge in IHl1.
