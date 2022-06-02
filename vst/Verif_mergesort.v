@@ -1432,8 +1432,7 @@ destruct b.
             ).
      apply merge_invariant.
      rewrite  Zlength_correct in H20.
-     apply Nat2Z.inj_lt.
-     rewrite Z2Nat_id'.
+     apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
      rewrite Z.max_r; lia.
 
        apply Nat2Z.inj_lt.
@@ -1447,6 +1446,25 @@ destruct b.
              rewrite <- H8.
              f_equal; rep_lia.
             rewrite   Heql1; apply sorted_mergesort.
-                 rewrite   Heql2; apply sorted_mergesort.
+            rewrite   Heql2; apply sorted_mergesort.
+                             rewrite Z2Nat.inj_add in H8; try lia.
+     assert (G := merge_invariant_l l1 l2  (Z.to_nat i) (Z.to_nat (j - Zlength il / 2)) (Z.to_nat i + 1) ).
+     assert ( merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2)) l2) =
+      firstn (Z.to_nat i + Z.to_nat (j - Zlength il / 2)) (merge (firstn (Z.to_nat i + 1) l1) l2) ).
+     apply G.
+     
+   apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+   rewrite Z.max_r.
+     rewrite <- Zlength_correct. lia.
+ lia.
+
+    apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+   rewrite Z.max_r.
+     rewrite <- Zlength_correct. lia.
+ lia.
+ lia.
+  rewrite Zdiv2_div in H8; auto.
+            rewrite   Heql1; apply sorted_mergesort.
+            rewrite   Heql2; apply sorted_mergesort.
 
    }
