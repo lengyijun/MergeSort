@@ -671,7 +671,7 @@ rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
   eapply sorted_inv; apply H4.
 Qed.
 
-
+(*
 Lemma merge_invariant_l : forall (xs ys: list Z) (i j k : nat),
        Nat.lt i (length xs)
     -> Nat.lt j (length ys)
@@ -940,6 +940,8 @@ specialize (IHn H3 (S i) j k).
     apply IHn; auto; try lia.
     eapply sorted_inv; apply H5.
 Qed.
+ *)
+
 
 Lemma merge_invariant_lr : forall (xs ys: list Z) (i j p q : nat),
        Nat.lt i (length xs)
@@ -1156,11 +1158,6 @@ Next Obligation.
 Qed.
 
 
-
-
-
-  
-  
 Lemma merge_Zlength : forall l1 , forall l2 , Zlength (merge l1 l2 ) = Zlength l1 + Zlength l2.
 Proof.
   induction l1.
@@ -1213,7 +1210,7 @@ rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold mergesort.
 Admitted.
 
 
-Lemma mergesort_zlength : forall l,  Zlength (mergesort l ) = Zlength l.
+Lemma mergesort_Zlength : forall l,  Zlength (mergesort l ) = Zlength l.
 Proof.
 intros.
 do 2 rewrite Zlength_correct.
@@ -1283,7 +1280,7 @@ Proof.
     destruct il.
     rewrite Zlength_nil in H. inv H0. 
     destruct il. {
-      rewrite mergesort_zlength.
+      rewrite mergesort_Zlength.
       unfold mergesort.
       simpl.
       entailer!.
@@ -1439,7 +1436,7 @@ Proof.
   forward.
   forward.
 
-  do 2 rewrite mergesort_zlength.
+  do 2 rewrite mergesort_Zlength.
   rewrite Zlength_solver.Zlength_firstn_to_nat. 
   rewrite Zmax_left; try rep_lia.
   rewrite Z.min_l; try rep_lia.
@@ -1477,13 +1474,13 @@ Proof.
     rewrite (split2_data_at_Tarray_app (Z.div2 (Zlength il))).
     entailer!.
     do 2 rewrite Zlength_map.
-    rewrite mergesort_zlength.
+    rewrite mergesort_Zlength.
       rewrite Zlength_solver.Zlength_firstn_to_nat. 
       rewrite H80.
       rewrite H71. auto.
 
       do 2 rewrite Zlength_map.
-          rewrite mergesort_zlength.
+          rewrite mergesort_Zlength.
       rewrite Zlength_solver.Zlength_skipn_to_nat.       
       rewrite H80.
       rewrite Zmax_left; rep_lia.
@@ -1702,13 +1699,13 @@ destruct b.
 
    assert (i < Zlength l1). {
       rewrite   Heql1.
-      rewrite mergesort_zlength.
+      rewrite mergesort_Zlength.
       rewrite Zlength_firstn.
       rewrite Z.max_r; lia.
    }
    assert (Zlength l2 = Zlength il - Zlength il / 2 ). {
      rewrite Heql2.
-     rewrite mergesort_zlength.
+     rewrite mergesort_Zlength.
      rewrite Zlength_skipn.
      rewrite Z.max_r; lia.
    }
@@ -1760,36 +1757,66 @@ assert (
 
   rewrite firstn_length.
   rewrite Nat.min_l; try lia.
-  
-  Check H8.
-  
 
-  
-(*
-  rewrite Z2Nat.inj_add in H8; try lia.
-  assert (G := merge_invariant_l l1 l2  (Z.to_nat i) (Z.to_nat (j - Zlength il / 2)) (Z.to_nat i + 1) ).
+  symmetry.
+  assert (G := merge_invariant_lr l1 l2 (Z.to_nat i) (Z.to_nat (j - Zlength il / 2))  (Z.to_nat (i + 1))  (Z.to_nat (j - Zlength il / 2)) ).
+  apply G; auto; try lia.
 
-  assert ( H40: merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2)) l2) =
-              firstn (Z.to_nat i + Z.to_nat (j - Zlength il / 2)) (merge (firstn (Z.to_nat i + 1) l1) l2) ). 
-  {
-    apply G.
+  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia.
+  lia.
 
-    apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
-    rewrite Z.max_r.
-    rewrite <- Zlength_correct. lia.
-    lia.
+  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia.
+  lia.
 
-    apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
-    rewrite Z.max_r.
-    rewrite <- Zlength_correct. lia.
-    lia.
-    lia.
-    rewrite Zdiv2_div in H8; auto.
-    rewrite   Heql1; apply sorted_mergesort.
-    rewrite   Heql2; apply sorted_mergesort.
-  }
-*)     
+  rewrite Zdiv2_div in H8.
+  rewrite <- H8.
+  f_equal; lia.
 
+  rewrite   Heql1; apply sorted_mergesort.
+  rewrite   Heql2; apply sorted_mergesort.   
 
+  apply Nat2Z.inj_le; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia.
+  lia.
+
+  apply sorted_firstn;  rewrite   Heql1; apply sorted_mergesort.
+  apply sorted_firstn;  rewrite   Heql2; apply sorted_mergesort.
 }
+rewrite  <- H23.
+repeat rewrite map_app.
+
+simpl; list_solve.
+
+lia.
+lia.
+
+repeat rewrite Zlength_map.
+rewrite mergesort_Zlength.
+rewrite Zlength_firstn.
+lia.
+
+repeat rewrite mergesort_Zlength.
+repeat rewrite Zlength_map.
+repeat rewrite merge_Zlength.
+repeat rewrite Zlength_firstn.
+repeat rewrite mergesort_Zlength.
+repeat rewrite Zlength_skipn.
+repeat rewrite Zlength_Zrepeat.
+repeat rewrite Zlength_firstn.
+lia.
+
+lia.
+
+forward.
+forward.
+forward.
+entailer!.
+
+
+  }
 
