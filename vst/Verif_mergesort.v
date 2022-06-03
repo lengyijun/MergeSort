@@ -1635,16 +1635,11 @@ Proof.
 
  (*  分类讨论 _t'5 <= _t'6 *)
 
- remember ((Znth i
-          (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il) ++
-          mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))
+ remember ((Znth i (l1 ++ l2) )
            <=?
-          (Znth j
-               (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il) ++
-                mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il) ))
+          (Znth j (l1 ++ l2))
           ).
 destruct b.
-
 
   forward_if (
      PROP ( )
@@ -1812,10 +1807,34 @@ lia.
 
 lia.
 
-forward.
-forward.
-forward.
-entailer!.
+unfold both_int in H9.
+unfold sem_cast_i2i in H9.
+rewrite Znth_app1 in H9.
+rewrite (Znth_map i) in H9.
+rewrite Znth_app2 in H9.
+rewrite Znth_map in H9.
+simpl in H9.
+
+rewrite Znth_app1 in Heqb.
+rewrite Znth_app2 in Heqb.
+repeat rewrite Zlength_map in H9.
+
+assert (G := typed_false_of_bool _ H9).
+unfold negb in G.
+
+remember (Int.ltu (Znth (j - Zlength l1) (map Int.repr l2)) (Znth i (map Int.repr l1)) ).
+destruct b; try inv G.
+
+symmetry in Heqb0.
+assert ( M := ltu_inv _ _ Heqb0).
+
+rewrite Znth_map in M.
+rewrite Znth_map in M.
+rewrite Int.unsigned_repr in M.
+rewrite Int.unsigned_repr in M.
+lia.
+
+
 
 
   }
