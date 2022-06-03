@@ -1223,7 +1223,8 @@ Definition my_mergesort_spec : ident * funspec :=
  WITH p: val,  sh : share, il: list Z, gv: globals
  PRE [ tptr tuint , tint ] 
     PROP (readable_share sh;
-          0 < Zlength il <= Int.max_signed) 
+          0 < Zlength il <= Int.max_signed;
+          Forall (fun x => 0 <= x <= Int.max_unsigned) il) 
     PARAMS (p; Vint (Int.repr (Zlength il)) )
     GLOBALS(gv) 
     SEP  (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr il)) p;
@@ -1278,18 +1279,18 @@ Proof.
   {
     forward.
     destruct il.
-    rewrite Zlength_nil in H. inv H0. 
+    rewrite Zlength_nil in H1. inv H1. 
     destruct il. {
       rewrite mergesort_Zlength.
       unfold mergesort.
       simpl.
       entailer!.
     }  {
-      do 2 rewrite Zlength_cons in H0.
+      do 2 rewrite Zlength_cons in H1.
       assert (0 <= Zlength il ).
       apply Zlength_nonneg.
       assert (Z.succ (Z.succ (Zlength il)) >= 2). lia.
-      rewrite H0 in H5. contradiction.
+      rewrite H1 in H6. contradiction.
     }
   }
   {
@@ -1298,8 +1299,8 @@ Proof.
   }
   forward.
   entailer!.
-  destruct H4.
-  inv H5.
+  destruct H5.
+  inv H6.
   forward.
   forward.
 
@@ -1346,8 +1347,12 @@ Proof.
     rewrite Zlength_solver.Zlength_firstn_to_nat.
     rewrite H80. rewrite H71.
     rewrite Zdiv2_div .
+    split.
     split; try rep_lia.
     apply Z.div_str_pos; rep_lia.
+    {
+      apply Forall_firstn; auto.
+    }
  }
 
  remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.
@@ -1414,9 +1419,11 @@ Proof.
     rewrite Zlength_solver.Zlength_skipn_to_nat. 
     rewrite Zmax_left; try rep_lia.  
     rewrite Zmax_left; try rep_lia.
+    split.
     split; try rep_lia.
     assert ( Z.div2 (Zlength il) < Zlength il). {apply div2_le2. lia. }
     rep_lia.
+    {  apply Forall_skipn; auto. }
   }
 
   forward_call ( tarray tuint (Zlength il), gv).
@@ -1425,7 +1432,7 @@ Proof.
   Intro t.
   destruct ( eq_dec t nullval ).
   forward_if False.
-  forward_call. inv H2. congruence.
+  forward_call. inv H3. congruence.
 
   forward_if True.
   congruence.
@@ -1560,13 +1567,13 @@ Proof.
   Exists 0.
   Exists ((Zlength il) / 2).
   Exists 0.
-  sep_apply H3.
+  sep_apply H4.
   rewrite data_at__tarray.
 (*  rewrite sublist_nil. *)
   assert ((Zlength il / 2 - Zlength il / 2) = 0 ). { lia. }
-  rewrite H4.
+  rewrite H5.
   entailer!.
-  rewrite Zdiv2_div; rewrite H4; simpl; rewrite merge_nil_r; auto.
+  rewrite Zdiv2_div; rewrite H5; simpl; rewrite merge_nil_r; auto.
   simpl; entailer!.
   
   Intro i. Intro j. Intro k. Intros.
@@ -1711,7 +1718,7 @@ destruct b.
   rewrite Z.max_r; try lia.
   rewrite Z.min_l; try lia.
   assert (  (k - (i + (j - Zlength il / 2))) = 0  ). { lia. }
-  rewrite H22.
+  rewrite H23.
   rewrite upd_Znth0.
   
    
@@ -1767,12 +1774,12 @@ assert (
   rewrite <- Zlength_correct. lia.
   lia.
 
-  rewrite Zdiv2_div in H8.
-  rewrite <- H8.
+  rewrite Zdiv2_div in H9.
+  rewrite <- H9.
   f_equal; lia.
 
-  rewrite   Heql1; apply sorted_mergesort.
-  rewrite   Heql2; apply sorted_mergesort.   
+  rewrite Heql1; apply sorted_mergesort.
+  rewrite Heql2; apply sorted_mergesort.   
 
   apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
@@ -1782,7 +1789,7 @@ assert (
   apply sorted_firstn;  rewrite   Heql1; apply sorted_mergesort.
   apply sorted_firstn;  rewrite   Heql2; apply sorted_mergesort.
 }
-rewrite  <- H23.
+rewrite  <- H24.
 repeat rewrite map_app.
 
 simpl; list_solve.
@@ -1807,19 +1814,19 @@ lia.
 
 lia.
 
-unfold both_int in H9.
-unfold sem_cast_i2i in H9.
-rewrite Znth_app1 in H9.
-rewrite (Znth_map i) in H9.
-rewrite Znth_app2 in H9.
-rewrite Znth_map in H9.
-simpl in H9.
+unfold both_int in H10.
+unfold sem_cast_i2i in H10.
+rewrite Znth_app1 in H10.
+rewrite (Znth_map i) in H10.
+rewrite Znth_app2 in H10.
+rewrite Znth_map in H10.
+simpl in H10.
 
 rewrite Znth_app1 in Heqb.
 rewrite Znth_app2 in Heqb.
-repeat rewrite Zlength_map in H9.
+repeat rewrite Zlength_map in H10.
 
-assert (G := typed_false_of_bool _ H9).
+assert (G := typed_false_of_bool _ H10).
 unfold negb in G.
 
 remember (Int.ltu (Znth (j - Zlength l1) (map Int.repr l2)) (Znth i (map Int.repr l1)) ).
