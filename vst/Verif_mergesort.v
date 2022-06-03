@@ -1513,8 +1513,8 @@ Proof.
 
   forward_loop (
      EX i, EX j, EX k,
-     PROP(0 <= i < Z.div2 (Zlength il);
-          Z.div2 (Zlength il) <= j < Zlength il;
+     PROP(0 <= i <= Z.div2 (Zlength il);
+          Z.div2 (Zlength il) <= j <= Zlength il;
           0 <= k < Zlength il;
           Z.add k (Z.div2 (Zlength il)) = Z.add i j;
           firstn (Z.to_nat (i + (j - Z.div2 (Zlength il)))) (merge l1 l2) =
@@ -1548,8 +1548,8 @@ Proof.
     break:
     (
      EX i, EX j, EX k,
-      PROP( i = Z.div2 (Zlength il) \/ j <= Zlength il;
-            0 <= k <= Zlength il;
+      PROP( i = Z.div2 (Zlength il) \/ j = Zlength il;
+            0 <= k < Zlength il;
             Z.add k (Z.div2 (Zlength il)) = Z.add i j;
             firstn (Z.to_nat (i + (j - Z.div2 (Zlength il)))) (merge l1 l2) =
             merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j -  (Zlength il) / 2 )) l2)
@@ -1593,7 +1593,7 @@ Proof.
   simpl; entailer!.
   
   Intro i. Intro j. Intro k. Intros.
-  
+
   forward_if (
      PROP ( )
      LOCAL (temp _k (Vint (Int.repr k));
@@ -1607,7 +1607,7 @@ Proof.
             gvars gv; 
             temp _arr p;
             temp _len (Vint (Int.repr (Zlength il)));
-            temp _t'2 (Val.of_bool true)
+            temp _t'2 (Val.of_bool ((Z.ltb i (Zlength il /2) ) && (Z.ltb j (Zlength il))))
            )
      
      SEP (mem_mgr gv;
@@ -1631,21 +1631,61 @@ Proof.
     unfold Int.lt.
     rewrite Int.signed_repr; try rep_lia.
     rewrite Int.signed_repr; try rep_lia.
-    destruct (zlt j (Zlength il)).
-    auto.
-    lia. 
+    destruct (zlt j (Zlength il)); lia.
   }
+  
+  forward.
+  entailer!.
+  
+  {
+    assert (i <? Zlength il /2 = false). {
+      apply Z.ltb_ge; lia.
+    }
+    rewrite H19.
+    simpl.
+    auto.
+  }
+  
+  forward_if   (PROP ( i < Zlength il /2 ;
+                       j < Zlength il )
+     LOCAL (temp _k (Vint (Int.repr k)); temp _j (Vint (Int.repr j)); temp _i (Vint (Int.repr i));
+     temp _t t;
+     temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+     temp _arr1 p; temp _p (Vint (Int.repr (Zlength il / 2))); gvars gv; 
+     temp _arr p; temp _len (Vint (Int.repr (Zlength il)));
+     temp _t'2 (Val.of_bool ((i <? Zlength il / 2) && (j <? Zlength il))))
+     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
+       (map Vint
+          (map Int.repr (merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2)) l2))) ++
+        Zrepeat (default_val tuint) (Zlength il - k)) t;
+     data_at sh (tarray tuint (Zlength il))
+             (map Vint (map Int.repr l1) ++ map Vint (map Int.repr l2)) p)).
+  
+  forward.
+  entailer!.
+  forward.
 
-  auto. 
-  
-  forward.
-  entailer!.
-  auto.
-  
-  forward_if True.
-  forward.
-  entailer!.
-  discriminate.
+  assert ((i <? Zlength il / 2) = false \/  (j <? Zlength il) = false ).
+  {
+    apply andb_false_iff; auto.
+  }
+  destruct H11.
+  assert (i = Zlength il /2). { lia. }
+  Exists i. Exists j. Exists k. entailer!.
+  rewrite H9.
+  f_equal.
+  rewrite  Zdiv2_div; auto.
+
+  assert (j = Zlength il). { lia. }
+  Exists i. Exists j. Exists k. entailer!.
+  rewrite H9.
+  f_equal.
+  rewrite  Zdiv2_div; auto.
+
+
+ 
   abbreviate_semax; Intros.
 
   forward.
@@ -1654,7 +1694,7 @@ Proof.
 
   forward.
   entailer!.
- list_solve.
+  list_solve.
 
  (*  分类讨论 _t'5 <= _t'6 *)
 
@@ -1677,7 +1717,7 @@ destruct b.
             gvars gv; 
             temp _arr p;
             temp _len (Vint (Int.repr (Zlength il)));
-            temp _t'2 (Val.of_bool true)
+            temp _t'2 (Val.of_bool ((i <? Zlength il / 2) && (j <? Zlength il)))
            )
      
      SEP (mem_mgr gv;
@@ -1698,7 +1738,7 @@ destruct b.
   forward.
   forward.
   entailer!.
-
+    
   rewrite upd_Znth_app2.
   repeat rewrite Zlength_map.
   rewrite merge_Zlength.
@@ -1733,12 +1773,12 @@ destruct b.
   rewrite Z.min_l; try lia.
   rewrite Z.max_r; try lia.
   rewrite Z.min_l; try lia.
-  assert (  (k - (i + (j - Zlength il / 2))) = 0  ). { lia. }
-  rewrite H23.
+  assert ( H40 : (k - (i + (j - Zlength il / 2))) = 0  ). { lia. }
+  rewrite H40.
   rewrite upd_Znth0.
   
    
-assert (
+assert ( H50 :
   (merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2)) l2)) ++
       Znth i l1 :: []
     =
@@ -1805,7 +1845,7 @@ assert (
   apply sorted_firstn;  rewrite   Heql1; apply sorted_mergesort.
   apply sorted_firstn;  rewrite   Heql2; apply sorted_mergesort.
 }
-rewrite  <- H24.
+rewrite  <- H50.
 repeat rewrite map_app.
 
 simpl; list_solve.
@@ -1830,19 +1870,19 @@ lia.
 
 lia.
 
-unfold both_int in H10.
-unfold sem_cast_i2i in H10.
-rewrite Znth_app1 in H10.
-rewrite (Znth_map i) in H10.
-rewrite Znth_app2 in H10.
-rewrite Znth_map in H10.
+unfold both_int in H12.
+unfold sem_cast_i2i in H12.
+rewrite Znth_app1 in H12.
+rewrite (Znth_map i) in H12.
+rewrite Znth_app2 in H12.
+rewrite Znth_map in H12.
 simpl in H10.
 
 rewrite Znth_app1 in Heqb.
 rewrite Znth_app2 in Heqb.
-repeat rewrite Zlength_map in H10.
+repeat rewrite Zlength_map in H12.
 
-assert (G := typed_false_of_bool _ H10).
+assert (G := typed_false_of_bool _ H12).
 unfold negb in G.
 
 remember (Int.ltu (Znth (j - Zlength l1) (map Int.repr l2)) (Znth i (map Int.repr l1)) ).
@@ -1881,22 +1921,17 @@ rewrite Zlength_skipn.
 rewrite Zlength_firstn.
 rep_lia.
 
-rep_lia.
-rep_lia.
-repeat rewrite Zlength_map.
+rewrite <- Heqb0 in H14.
+inv H14.
 
 rep_lia.
+rep_lia.
 repeat rewrite Zlength_map; rep_lia.
-
 repeat rewrite Zlength_map; rep_lia.
 repeat rewrite Zlength_map; rep_lia.
-
+repeat rewrite Zlength_map; rep_lia.
 
 forward.
-
-
-Exists (i + 1).
-Exists j.
-Exists (k + 1).
+Exists (i + 1). Exists j. Exists (k + 1).
 entailer!.
-split.
+
