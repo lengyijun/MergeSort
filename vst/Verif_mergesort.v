@@ -938,8 +938,8 @@ Qed.
 
 Lemma merge_invariant_lr : forall (xs ys: list Z) (i j p q : nat),
        merge (firstn i xs) (firstn j ys) = firstn (i + j) (merge xs ys)
-    -> Nat.lt i (length xs)
-    -> Nat.lt j (length ys)
+    -> Nat.le i (length xs)
+    -> Nat.le j (length ys)
     -> Nat.le i p
     -> Nat.le j q
     -> sorted xs
@@ -962,12 +962,22 @@ induction n; intros.
 destruct xs.
 {
   simpl in H1.
-  destruct i; lia.
+  destruct i; try lia.
+  repeat rewrite firstn_nil.
+  repeat rewrite merge_nil_l.
+  rewrite firstn_firstn.
+  rewrite Nat.min_l; try lia.
+  f_equal; lia.
 }
 destruct ys.
 {
   simpl in H2.
-  destruct j; lia.
+  destruct j; try lia.
+  repeat rewrite firstn_nil.
+  repeat rewrite merge_nil_r.
+  rewrite firstn_firstn.
+  rewrite Nat.min_l; try lia.
+  f_equal; lia.
 }
 destruct p.
 destruct i; try lia.
@@ -1840,12 +1850,12 @@ assert ( H50 :
   rewrite <- H9.
   f_equal; lia.
   
-  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
   rewrite <- Zlength_correct. lia.
   lia.
 
-  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
   rewrite <- Zlength_correct. lia.
   lia.
@@ -2021,12 +2031,12 @@ assert (H96 :   merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Z.div2 (Zl
                (merge (firstn (Z.to_nat (i + 1)) l1) (firstn (Z.to_nat (j - Z.div2 (Zlength il))) l2)) ).
 {
   apply H95; try lia.
-    apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+    apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
   rewrite <- Zlength_correct. lia. 
   lia. 
 
-      apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+      apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
   rewrite <- Zlength_correct. lia. 
   lia. 
@@ -2171,12 +2181,12 @@ lia.
   rewrite <- ZtoNat_Zlength; lia.
 
 
-  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
   rewrite <- Zlength_correct. lia.
   lia.
 
-  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
   rewrite <- Zlength_correct. lia.
   lia.
