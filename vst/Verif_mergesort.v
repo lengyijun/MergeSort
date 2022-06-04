@@ -1864,8 +1864,8 @@ assert ( H50 :
   rewrite <- Zlength_correct. lia.
   lia.
 
-  apply sorted_firstn;  rewrite   Heql1; apply sorted_mergesort.
-  apply sorted_firstn;  rewrite   Heql2; apply sorted_mergesort.
+  apply sorted_firstn; rewrite Heql1; apply sorted_mergesort.
+  apply sorted_firstn; rewrite Heql2; apply sorted_mergesort.
 }
 rewrite  <- H50.
 repeat rewrite map_app.
@@ -2205,11 +2205,11 @@ forward; forward; forward; entailer!.
 
 apply derives_refl'; f_equal.
 {
-  rewrite upd_Znth_app2.
-  rewrite Znth_app2.
-  repeat  rewrite Zlength_map.
-  repeat rewrite merge_Zlength.
-  repeat rewrite Zlength_firstn.
+  rewrite upd_Znth_app2; try lia.
+  rewrite Znth_app2; try lia.
+  repeat  rewrite Zlength_map; try lia.
+  repeat rewrite merge_Zlength; try lia.
+  repeat rewrite Zlength_firstn; try lia.
   rewrite Z.max_r.
   rewrite Z.max_r.
   rewrite Z.min_l.
@@ -2223,11 +2223,114 @@ apply derives_refl'; f_equal.
  rewrite <- cons_Zrepeat_1_app.    
  rewrite upd_Znth0.
 
+    remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.                                                                                                                   
+   remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
+
+   assert ( H50 :
+  (merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2)) l2)) ++
+      Znth  (j - Zlength il / 2) l2 :: []
+    =
+   merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2 + 1)) l2)
+  ).
+{
+
+  assert (H30 : [Znth  (j - Zlength il / 2)  l2] = skipn (Z.to_nat  (j - Zlength il / 2) ) (firstn (Z.to_nat ( j - Zlength il / 2 + 1)) l2)).
+  {
+    rewrite <- sublist_skip; auto; try lia.
+    rewrite Zlength_solver.Zlength_firstn_to_nat.
+    rewrite Z.max_l; try lia.
+    rewrite Z.min_l; try lia.
+    rewrite (sublist_len_1 ); auto; try lia.
+    rewrite Znth_firstn; auto; try lia.
+    rewrite Zlength_solver.Zlength_firstn_to_nat.
+    rewrite Z.max_l; try lia.
+  }
+
+  rewrite H30.
+  symmetry.
+   
+  assert (M := merge_append_r  (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2 + 1)) l2) (Z.to_nat (j - Zlength il / 2)) ).
+  assert (H50: (firstn (Z.to_nat (j - Zlength il /2)) (firstn (Z.to_nat (j - Zlength il / 2 + 1)) l2)) = firstn (Z.to_nat (j - Zlength il / 2)) l2 ).
+  { rewrite firstn_firstn.
+    rewrite Nat.min_l ; auto; try lia.
+  }
+  rewrite H50 in M.
+  apply M.
+
+  rewrite firstn_length.
+  rewrite Nat.min_l; try lia.
+  rewrite <- ZtoNat_Zlength; lia.
+
+  rewrite firstn_length.
+  rewrite Nat.min_l; try lia.
+
+  symmetry in H9.
+  assert ( H40 : 
+           Z.to_nat (i + (j - Z.div2 (Zlength il))) =
+         Nat.add   (Z.to_nat i)  (Z.to_nat (j - Z.div2 (Zlength il)))
+    ). { lia. }
+  rewrite H40 in H9.
+  assert (G := merge_invariant_lr _ _ _ _ (Z.to_nat i) (Z.to_nat (j - Zlength il / 2 + 1)) H9 ).
+  symmetry.
+   rewrite Zdiv2_div in G.
+  rewrite G; f_equal; try lia.
+  
+  
+  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia.
+  lia.
+
+  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia.
+  lia.
+
+
+  rewrite Heql1; apply sorted_mergesort.
+  rewrite Heql2; apply sorted_mergesort.   
+
+  apply Nat2Z.inj_le; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia.
+  lia.
+
+  apply sorted_firstn; rewrite Heql2; apply sorted_mergesort.
+    apply sorted_firstn; rewrite Heql1; apply sorted_mergesort.
+}
+assert (H51: Nat.add (Z.to_nat (j - Zlength il / 2)) 1 = (Z.to_nat (j - Zlength il / 2 + 1))).
+{ lia. }
+rewrite H51.
+rewrite  <- H50.
+repeat rewrite map_app.
+simpl; list_solve.
+lia.
+lia.
+lia.
+lia.
+lia.
+lia.
+
+repeat rewrite Zlength_map.
+rewrite mergesort_Zlength.
+rewrite Zlength_firstn.
+lia.
+
+repeat rewrite Zlength_map.
+repeat rewrite merge_Zlength.
+repeat rewrite Zlength_firstn.
+repeat rewrite Zlength_Zrepeat.
+repeat rewrite mergesort_Zlength.
+repeat rewrite Zlength_firstn.
+repeat rewrite Zlength_skipn.
+lia.
+lia.
 }
 
+forward.
 
 
-   remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.                                                                                                                   
-   remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
+
+
 
    
