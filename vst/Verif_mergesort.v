@@ -562,9 +562,9 @@ Qed.
 
 
 Lemma merge_invariant : forall (xs ys: list Z) (i j : nat),
-       Nat.lt i (length xs)
+       merge (firstn i xs) (firstn j ys) = firstn (i + j) (merge xs ys)
+    -> Nat.lt i (length xs)
     -> Nat.lt j (length ys)           
-    -> merge (firstn i xs) (firstn j ys) = firstn (i + j) (merge xs ys)
     -> sorted xs
     -> sorted ys
     -> merge xs ys = merge (firstn i xs) (firstn j ys) ++ merge (skipn i xs) (skipn j ys).
@@ -603,34 +603,34 @@ destruct i. {
 }
 destruct j. {
   simpl.
-  simpl in H2.
-  rewrite merge_nil_r in H2.
+  simpl in H0.
+  rewrite merge_nil_r in H0.
   assert (Nat.add i 0 = i). { lia. }
-  rewrite H5 in H2.
-  unfold merge in H2;  unfold merge_func in H2;
-         rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.
+  rewrite H5 in H0.
+  unfold merge in H0;  unfold merge_func in H0;
+         rewrite Wf.WfExtensionality.fix_sub_eq_ext in H0; simpl in H0; fold merge_func in H0.
              unfold merge ;  unfold merge_func;
                rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
              simpl in H.
              remember (z <=? z0).
-             destruct b; inv H2; f_equal.
+             destruct b; inv H0; f_equal.
 
       specialize (IHn xs (z0 :: ys)).
       assert ( (Datatypes.length xs + Datatypes.length (z0 :: ys) < n)%nat ).
       { simpl. lia. }
-      specialize (IHn H2 i 0%nat).
+      specialize (IHn H0 i 0%nat).
       simpl in IHn.
       rewrite merge_nil_r in IHn.
       apply IHn; auto; try lia.
-      simpl in H0; lia.
-      rewrite H5; auto.
+      rewrite H7; f_equal; try lia.
+      simpl in H1; lia.
       eapply sorted_inv; apply H3.
 
 
       specialize (IHn xs (z0 :: ys)).
-      assert ((Datatypes.length xs + Datatypes.length (z0 :: ys) < n)%nat ).
+      assert (H20 : (Datatypes.length xs + Datatypes.length (z0 :: ys) < n)%nat ).
       {simpl. lia. }
-      specialize (IHn H2 i 0%nat ).
+      specialize (IHn H20 i 0%nat ).
       simpl in IHn.
       assert (G := merge_float xs ys z0 H3 H4).
       unfold merge in G at 2.
@@ -640,32 +640,32 @@ destruct j. {
 }
 
 simpl in *.
-unfold merge in H2;  unfold merge_func in H2;
-rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.
-unfold merge_func in H2 at 3;
-rewrite Wf.WfExtensionality.fix_sub_eq_ext in H2; simpl in H2; fold merge_func in H2.     
+unfold merge in H0;  unfold merge_func in H0;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext in H0; simpl in H0; fold merge_func in H0.
+unfold merge_func in H0 at 3;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext in H0; simpl in H0; fold merge_func in H0.     
 unfold merge ;  unfold merge_func;
 rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
 unfold merge_func at 3;
 rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
 
  remember (z <=? z0). 
- destruct b; inv H2; simpl; f_equal.
+ destruct b; inv H0; simpl; f_equal.
 
  specialize (IHn xs (z0 :: ys)).
- assert ( (Datatypes.length xs + Datatypes.length (z0 :: ys) < n)%nat ).
+ assert ( H20 : (Datatypes.length xs + Datatypes.length (z0 :: ys) < n)%nat ).
  { simpl. lia. }
- specialize (IHn H2 i (S j) ).
+ specialize (IHn H20 i (S j) ).
  apply IHn; auto; try lia.
  eapply sorted_inv; apply H3.
 
   specialize (IHn (z :: xs) ys).
-  assert ( (Datatypes.length (z :: xs) + Datatypes.length ys < n)%nat ).
+  assert ( H20 : (Datatypes.length (z :: xs) + Datatypes.length ys < n)%nat ).
   { simpl. lia. }
-  specialize (IHn H2 (S i) j H0).
+  specialize (IHn H20 (S i) j).
   apply IHn; auto; try lia.
-  assert ( Nat.add i (S j) = S (Nat.add i  j)). { lia. }
-  rewrite H5 in H6.
+  assert ( H30 : Nat.add i (S j) = S (Nat.add i  j)). { lia. }
+  rewrite H30 in H6.
   simpl in H6.
   auto.
   eapply sorted_inv; apply H4.
@@ -1743,14 +1743,11 @@ destruct b.
   repeat rewrite Zlength_map.
   rewrite merge_Zlength.
   repeat rewrite Zlength_sublist.
- (* assert ( H50 : (k - (i - 0 + (j - Zlength il / 2 - 0))) = 0). { lia. }
-  rewrite H50; clear H50. *)
   rewrite Znth_app1.
-  assert ( H50 : (Zlength il - k) =  1 + (Zlength il - (k + 1)) ). { lia. }
-  rewrite H50; clear H50.
+  assert ( H60 : (Zlength il - k) =  1 + (Zlength il - (k + 1)) ). { lia. }
+  rewrite H60; clear H60.
   rewrite <- (Zrepeat_app 1).
   rewrite <- cons_Zrepeat_1_app.
-  (* rewrite upd_Znth0. *)
 
    remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.
    remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
@@ -1935,3 +1932,16 @@ forward.
 Exists (i + 1). Exists j. Exists (k + 1).
 entailer!.
 
+   remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.       
+   remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
+
+
+   assert ( H90 : (Z.to_nat (i + 1 + (j - Z.div2 (Zlength il)))) =  Nat.add ( Z.to_nat (i + (j - Z.div2 (Zlength il))))  1%nat ).
+{ lia. }
+rewrite H90.
+
+
+Check merge_invariant.
+assert (G := merge_invariant l1 l2 ).
+
+rewrite <- sublist.firstn_app.
