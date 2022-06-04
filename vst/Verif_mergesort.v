@@ -1158,6 +1158,30 @@ Next Obligation.
 Qed.
 
 
+Lemma merge_length : forall l1 , forall l2 , length (merge l1 l2 ) = Nat.add (length l1) (length l2).
+Proof.
+  induction l1.
+  intros.
+  intuition.
+
+  induction l2.
+  intuition.
+    unfold merge;  unfold merge_func;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+  destruct (a <=? a0); simpl; f_equal.
+
+  specialize (IHl1 (a0 :: l2)). 
+  unfold merge in IHl1.
+  rewrite IHl1.
+  intuition.
+
+  unfold merge in IHl2.
+  rewrite IHl2.
+  simpl.
+  intuition.
+Qed.
+
+
 Lemma merge_Zlength : forall l1 , forall l2 , Zlength (merge l1 l2 ) = Zlength l1 + Zlength l2.
 Proof.
   induction l1.
@@ -1998,3 +2022,47 @@ rewrite skipn_O.
 
 
 Check merge_invariant_lr.
+assert (H95 := merge_invariant_lr _ _ _ _ (Z.to_nat (i + 1)) (Z.to_nat (j - Z.div2 (Zlength il)))  H9 ).
+assert (H96 :   merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Z.div2 (Zlength il))) l2) =
+        firstn (Z.to_nat i + Z.to_nat (j - Z.div2 (Zlength il)))
+               (merge (firstn (Z.to_nat (i + 1)) l1) (firstn (Z.to_nat (j - Z.div2 (Zlength il))) l2)) ).
+{
+  apply H95; try lia.
+    apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia. 
+  lia. 
+
+      apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia. 
+  lia. 
+
+    rewrite Heql1; apply sorted_mergesort.
+    rewrite Heql2; apply sorted_mergesort.
+}
+
+assert ( H97 : (firstn (Z.to_nat i) l1) = firstn (Z.to_nat i) (firstn (Z.to_nat (i + 1)) l1) ).
+{
+  rewrite firstn_firstn.
+  rewrite Nat.min_l; auto; lia.
+}
+rewrite H97 in H96.
+assert ( H98:
+         (firstn (Z.to_nat (j - Z.div2 (Zlength il))) l2) =
+       firstn (Z.to_nat (j - Z.div2 (Zlength il))) (firstn (Z.to_nat (j - Z.div2 (Zlength il))) l2)
+  ).
+{
+  rewrite firstn_firstn.
+  rewrite Nat.min_l; auto; lia.
+}
+rewrite H98 in H96 at 1.
+assert (H99 := merge_invariant _ _ _ _ H96).
+repeat rewrite firstn_firstn in H99.
+rewrite Nat.min_l in H99; try lia.
+rewrite Nat.min_l in H99; try lia.
+rewrite H99; f_equal.
+rewrite H9; f_equal.
+
+rewrite firstn_length.
+rewrite Nat.min_l; auto.
