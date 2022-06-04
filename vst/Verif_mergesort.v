@@ -563,8 +563,8 @@ Qed.
 
 Lemma merge_invariant : forall (xs ys: list Z) (i j : nat),
        merge (firstn i xs) (firstn j ys) = firstn (i + j) (merge xs ys)
-    -> Nat.lt i (length xs)
-    -> Nat.lt j (length ys)           
+    -> Nat.le i (length xs)
+    -> Nat.le j (length ys)           
     -> sorted xs
     -> sorted ys
     -> merge xs ys = merge (firstn i xs) (firstn j ys) ++ merge (skipn i xs) (skipn j ys).
@@ -599,7 +599,6 @@ destruct i. {
   simpl in *.
   rewrite merge_nil_l in *.
   apply merge_firstn_r; auto; try lia.
-  simpl; lia. 
 }
 destruct j. {
   simpl.
@@ -1979,12 +1978,12 @@ assert (
   ).
 {
   apply G.
-    apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+    apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
   rewrite <- Zlength_correct. lia. 
   lia. 
 
-      apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+      apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
   rewrite <- Zlength_correct. lia. 
   lia. 
@@ -2113,4 +2112,15 @@ lia.
   rewrite <- ZtoNat_Zlength.
    apply Nat2Z.inj_le; rewrite Z2Nat_id'.
    rewrite Z.max_r; try lia.
+   rewrite firstn_length.
+   rewrite Nat.min_l; try lia.
 
+    rewrite <- ZtoNat_Zlength.
+    rep_lia.
+
+    apply sorted_firstn; auto.
+    rewrite Heql1; apply sorted_mergesort.
+    apply sorted_firstn; auto.
+    rewrite Heql2; apply sorted_mergesort.
+
+    
