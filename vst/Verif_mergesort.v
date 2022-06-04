@@ -444,8 +444,8 @@ Qed.
 
 
 Lemma merge_append_r : forall (ys : list Z)(xs : list Z)(j : nat),
-    Nat.le j (length xs)
-    -> firstn (j + length ys) (merge ys xs) = merge ys (firstn j xs)
+       firstn (length ys + j) (merge ys xs) = merge ys (firstn j xs)
+    -> Nat.le j (length xs)
     -> sorted xs
     -> sorted ys
     -> merge ys xs = merge ys (firstn j xs) ++ skipn j xs.
@@ -462,59 +462,53 @@ rewrite firstn_nil.
 rewrite app_nil_r; auto.
 
 destruct j; simpl; intros.
-rewrite merge_nil_r in H0.
+rewrite merge_nil_r in H.
 
 unfold merge; unfold merge_func;
 rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
-unfold merge in H0; unfold merge_func in H0;
-rewrite Wf.WfExtensionality.fix_sub_eq_ext in H0; simpl in H0; fold merge_func in H0.
+unfold merge in H; unfold merge_func in H;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext in H; simpl in H; fold merge_func in H.
 remember (a <=? a0).
 destruct b.
 - f_equal.
   specialize (IHys (a0 :: xs) 0%nat).
   simpl in IHys.
   rewrite merge_nil_r in IHys.
-  apply IHys.
-  lia.
-  inv H0. rewrite H4. auto.
-  auto.
+  apply IHys; auto; try lia.
+  inv H. rewrite H4. auto.
   eapply sorted_inv; apply H2.
 
-- inv H0. 
+- inv H. 
   lia.
 
 -  unfold merge; unfold merge_func;
 rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
  unfold merge_func at 3;
 rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
-unfold merge in H0; unfold merge_func in H0;
-rewrite Wf.WfExtensionality.fix_sub_eq_ext in H0; simpl in H0; fold merge_func in H0.
- unfold merge_func in H0 at 3;
-rewrite Wf.WfExtensionality.fix_sub_eq_ext in H0; simpl in H0; fold merge_func in H0.
+unfold merge in H; unfold merge_func in H;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext in H; simpl in H; fold merge_func in H.
+ unfold merge_func in H at 3;
+rewrite Wf.WfExtensionality.fix_sub_eq_ext in H; simpl in H; fold merge_func in H.
 
  remember (a <=? a0).
 destruct b; simpl; f_equal.
 +  
-apply (IHys (a0 :: xs) (S j)).
-simpl. lia.
-inv H0.  
+apply (IHys (a0 :: xs) (S j)); auto.
+inv H.  
 simpl.
-assert ( ( Nat.add j  (S (Datatypes.length ys))) = S(j + Datatypes.length ys) ).
-{ lia. }
-rewrite H0 in H4.
-simpl in H4.
-auto.
 auto.
 eapply sorted_inv; apply H2.
 
-+ inv H0.
++ inv H.
 rewrite H4.
 unfold merge in IHxs at 3 4.
-apply IHxs.
-lia.
+apply IHxs; auto; try lia.
+simpl.
+assert ( G: ( Nat.add (Datatypes.length ys) (S j)) = S (Nat.add (Datatypes.length ys) j ) ).
+{ lia. }
+rewrite G in H4.
 auto.
 eapply sorted_inv; apply H1.
-auto.
 Qed.
 
 Lemma nat_add0 : forall (x : nat), Nat.add x 0%nat = x.
@@ -2471,6 +2465,7 @@ Intro i; Intro j; Intro k; Intros.
 
   assert (j = k). { lia. }
   subst k.
+  clear H7.
   
   forward_loop     (PROP ( )
      LOCAL (temp _k (Vint (Int.repr j)); temp _j (Vint (Int.repr j));
@@ -2484,8 +2479,7 @@ Intro i; Intro j; Intro k; Intros.
        (map Vint
           (map Int.repr
              (merge
-                (firstn (Z.to_nat (Z.div2 (Zlength il)))
-                   (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+                (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
                 (firstn (Z.to_nat (j - Zlength il / 2))
                    (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))) ++
         Zrepeat (default_val tuint) (Zlength il - j)) t;
@@ -2504,8 +2498,7 @@ Intro i; Intro j; Intro k; Intros.
        (map Vint
           (map Int.repr
              (merge
-                (firstn (Z.to_nat (Z.div2 (Zlength il)))
-                   (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+                (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
                 (firstn (Z.to_nat (j - Zlength il / 2))
                    (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))) ++
         Zrepeat (default_val tuint) (Zlength il - j)) t;
@@ -2515,13 +2508,19 @@ Intro i; Intro j; Intro k; Intros.
    
 
   entailer!.
-    
+  {
+    apply derives_refl'; f_equal; f_equal; f_equal; f_equal; f_equal.
+    apply Zfirstn_same;
+      rewrite mergesort_Zlength.    
+  rewrite Zlength_firstn;  lia.
+  }
+  
   forward_if False.
   lia.
   forward.
     entailer!.
 
-  forward_loop    (EX j , PROP ( Z.div2 (Zlength il) <= j <= Zlength il)
+  forward_loop  (EX j , PROP ( Z.div2 (Zlength il) <= j <= Zlength il)
                                LOCAL (temp _k (Vint (Int.repr j));
                                       temp _j (Vint (Int.repr j));
      temp _i (Vint (Int.repr (Z.div2 (Zlength il)))); temp _t t;
@@ -2564,12 +2563,6 @@ Intro i; Intro j; Intro k; Intros.
   Exists j.
   entailer!.
 
-    apply derives_refl'; f_equal; f_equal; f_equal; f_equal; f_equal.
-    apply Zfirstn_same;
-    rewrite mergesort_Zlength.
-
-  rewrite Zlength_firstn;  lia.
-
   Intro j0; Intros.
   forward_if (j0 < Zlength il).
   forward.
@@ -2601,4 +2594,45 @@ Exists (j0 + 1).
 entailer!.
 
 apply derives_refl'; repeat f_equal.
+rewrite upd_Znth_app2.
+repeat rewrite Zlength_map.
+rewrite merge_Zlength.
+rewrite Zlength_firstn.
+repeat rewrite mergesort_Zlength.
+rewrite Zlength_skipn.
 
+assert ( H40:   (j0 -
+     (Zlength (firstn (Z.to_nat (Z.div2 (Zlength il))) il) +
+        Z.min (Z.max 0 (j0 - Zlength il / 2)) (Z.max 0 (Zlength il - Z.max 0 (Z.div2 (Zlength il)))))) = 0). {
+rewrite Zlength_firstn.
+lia. }
+rewrite H40.
+assert ( H41 : (Zlength il - j0) = 1 +  (Zlength il - (j0 + 1)) ).
+{ lia. }
+rewrite H41.
+
+  rewrite <- (Zrepeat_app 1); try lia.
+  rewrite <- cons_Zrepeat_1_app; try lia.
+  rewrite upd_Znth0; try lia.
+
+rewrite Znth_app2; try lia.
+repeat rewrite Zlength_map.
+repeat rewrite mergesort_Zlength.
+rewrite Zlength_firstn.
+rewrite Z.max_r; try lia.
+rewrite Z.min_l; try lia.  
+
+   remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.                           
+   remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
+
+   assert ( (merge l1  (firstn (Z.to_nat (j0 - Zlength il / 2)) l2)) ++
+           ( (Znth (j0 - Z.div2 (Zlength il)) l2) :: [])
+            = merge l1 (firstn (Z.to_nat (j0 + 1 - Zlength il / 2)) l2)  ).
+
+   rewrite (firstn_same _ (Z.to_nat (Z.div2 (Zlength il)))) in H8.
+   assert ( H43 : (Z.to_nat (Z.div2 (Zlength il) + (j - Z.div2 (Zlength il)))) = Nat.add (Z.to_nat (Zlength l1)) (Z.to_nat (  j - (Zlength il / 2))) ).
+{ lia. }   
+
+rewrite H43 in H8.
+
+Check merge_append_r.
