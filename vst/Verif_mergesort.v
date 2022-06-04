@@ -2202,3 +2202,32 @@ repeat rewrite Zlength_map; lia.
 repeat rewrite Zlength_map; lia.
 
 forward; forward; forward; entailer!.
+
+apply derives_refl'; f_equal.
+{
+  rewrite upd_Znth_app2.
+  rewrite Znth_app2.
+  repeat  rewrite Zlength_map.
+  repeat rewrite merge_Zlength.
+  repeat rewrite Zlength_firstn.
+  rewrite Z.max_r.
+  rewrite Z.max_r.
+  rewrite Z.min_l.
+  rewrite Z.min_l.
+  assert ( H59: (k - (i + (j - Zlength il / 2))) = 0 ). { lia. }
+  rewrite H59.
+
+    assert ( H60 : (Zlength il - k) =  1 + (Zlength il - (k + 1)) ). { lia. }
+  rewrite H60; clear H60. 
+    rewrite <- (Zrepeat_app 1).
+ rewrite <- cons_Zrepeat_1_app.    
+ rewrite upd_Znth0.
+
+}
+
+
+
+   remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.                                                                                                                   
+   remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
+
+   
