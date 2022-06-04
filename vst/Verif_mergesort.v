@@ -2020,7 +2020,6 @@ rewrite skipn_O.
 
 
 
-Check merge_invariant_lr.
 assert (H95 := merge_invariant_lr _ _ _ _ (Z.to_nat (i + 1)) (Z.to_nat (j - Z.div2 (Zlength il)))  H9 ).
 assert (H96 :   merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Z.div2 (Zlength il))) l2) =
         firstn (Z.to_nat i + Z.to_nat (j - Z.div2 (Zlength il)))
@@ -2123,4 +2122,83 @@ lia.
     apply sorted_firstn; auto.
     rewrite Heql2; apply sorted_mergesort.
 
+    (* first branch finish *)
+
+    (* second branch start *)
+
+
     
+
+  forward_if (
+     PROP ( )
+     LOCAL (temp _k (Vint (Int.repr k));
+            temp _j (Vint (Int.repr (j + 1)));
+            temp _i (Vint (Int.repr i));
+            temp _t t;
+            temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+            temp _arr1 p;
+            temp _p (Vint (Int.repr (Zlength il / 2)));
+            gvars gv; 
+            temp _arr p;
+            temp _len (Vint (Int.repr (Zlength il)));
+            temp _t'2 (Val.of_bool ((i <? Zlength il / 2) && (j <? Zlength il)))
+           )
+     
+     SEP (mem_mgr gv;
+          malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
+                (map Vint (map Int.repr (merge
+                (firstn (Z.to_nat i) l1 )
+                (firstn (Z.to_nat (j - (Zlength il /2)) + 1) l2 )))
+                ++  Zrepeat  (default_val tuint) (Zlength il - (k + 1))) t;
+      data_at sh (tarray tuint (Zlength il))
+          ((map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))) ++
+           (map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))))
+              p
+         )
+    ).
+
+
+unfold both_int in H12.       
+unfold sem_cast_i2i in H12.    
+rewrite Znth_app1 in H12.                                                                                                                                      
+rewrite (Znth_map i) in H12. 
+rewrite Znth_app2 in H12.   
+rewrite Znth_map in H12.
+repeat rewrite Zlength_map in H12.
+simpl in H12.
+assert (G := typed_true_of_bool _ H12).
+unfold negb in G.
+remember (Int.ltu (Znth (j - Zlength l1) (map Int.repr l2)) (Znth i (map Int.repr l1))) . 
+destruct b; try inv G.
+symmetry in Heqb0.
+assert ( M := ltu_false_inv _ _ Heqb0).
+rewrite Znth_map in M.
+rewrite Znth_map in M.
+rewrite Int.unsigned_repr in M.
+rewrite Int.unsigned_repr in M.
+list_solve.
+
+apply sublist.Forall_Znth. 
+rewrite mergesort_Zlength. 
+rewrite Zlength_firstn; rep_lia.
+eapply Permutation_Forall. apply mergesort_permutation.
+apply Forall_firstn; auto.
+
+
+apply sublist.Forall_Znth. 
+rewrite mergesort_Zlength. 
+rewrite Zlength_firstn; rep_lia.
+eapply Permutation_Forall. apply mergesort_permutation.
+apply Forall_skipn; auto.
+
+rewrite mergesort_Zlength; rewrite Zlength_firstn; lia.
+rewrite mergesort_Zlength; rewrite Zlength_firstn; lia.
+
+repeat rewrite Zlength_map; lia.
+repeat rewrite Zlength_map; lia.
+repeat rewrite Zlength_map; lia.
+repeat rewrite Zlength_map; lia.
+
+forward; forward; forward; entailer!.
