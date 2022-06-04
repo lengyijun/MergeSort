@@ -2154,12 +2154,6 @@ lia.
   rewrite H50 in M.
   apply M.
 
-  rewrite firstn_length.
-  rewrite Nat.min_l; try lia.
-  rewrite <- ZtoNat_Zlength; lia.
-
-  rewrite firstn_length.
-  rewrite Nat.min_l; try lia.
 
   symmetry in H9.
   assert ( H40 : 
@@ -2172,7 +2166,11 @@ lia.
    rewrite Zdiv2_div in G.
   rewrite G; f_equal; try lia.
   
-  
+  rewrite firstn_length.
+  rewrite Nat.min_l; try lia.
+  rewrite <- ZtoNat_Zlength; lia.
+
+
   apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
   rewrite Z.max_r.
   rewrite <- Zlength_correct. lia.
@@ -2189,7 +2187,9 @@ lia.
 
   apply Nat2Z.inj_le; rewrite Z2Nat_id'.
   rewrite Z.max_r.
-  rewrite <- Zlength_correct. lia.
+  rewrite <- Zlength_correct.
+  rewrite Zlength_firstn.
+  lia.
   lia.
 
   apply sorted_firstn; rewrite Heql2; apply sorted_mergesort.
