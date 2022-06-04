@@ -1571,7 +1571,8 @@ Proof.
     break:
     (
      EX i, EX j, EX k,
-      PROP( i = Z.div2 (Zlength il) \/ j = Zlength il;
+      PROP( (i = Z.div2 (Zlength il) /\ Z.div2 (Zlength il) <= j < Zlength il) \/
+            (j = Zlength il /\ 0 <= i < Z.div2 (Zlength il));
             0 <= k < Zlength il;
             Z.add k (Z.div2 (Zlength il)) = Z.add i j;
             firstn (Z.to_nat (i + (j - Z.div2 (Zlength il)))) (merge l1 l2) =
@@ -1775,13 +1776,13 @@ destruct b.
    remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.
    remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
 
-   assert (i < Zlength l1). {
+   assert (H66 : i < Zlength l1). {
       rewrite   Heql1.
       rewrite mergesort_Zlength.
       rewrite Zlength_firstn.
       rewrite Z.max_r; lia.
    }
-   assert (Zlength l2 = Zlength il - Zlength il / 2 ). {
+   assert (H67 : Zlength l2 = Zlength il - Zlength il / 2 ). {
      rewrite Heql2.
      rewrite mergesort_Zlength.
      rewrite Zlength_skipn.
@@ -2127,6 +2128,80 @@ lia.
     (* second branch start *)
 
 
+
+   assert ( H50 :
+  (merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2)) l2)) ++
+      Znth  (j - Zlength il / 2) l2 :: []
+    =
+   merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2 + 1)) l2)
+  ).
+{
+
+  assert (H30 : [Znth  (j - Zlength il / 2)  l2] = skipn (Z.to_nat  (j - Zlength il / 2) ) (firstn (Z.to_nat ( j - Zlength il / 2 + 1)) l2)).
+  {
+    rewrite <- sublist_skip; auto; try lia.
+    rewrite Zlength_solver.Zlength_firstn_to_nat.
+    rewrite Z.max_l; try lia.
+    rewrite Z.min_l; try lia.
+    rewrite (sublist_len_1 ); auto; try lia.
+    rewrite Znth_firstn; auto; try lia.
+    rewrite Zlength_solver.Zlength_firstn_to_nat.
+    rewrite Z.max_l; try lia.
+  }
+
+  rewrite H30.
+  symmetry.
+   
+  assert (M := merge_append_r  (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2 + 1)) l2) (Z.to_nat (j - Zlength il / 2)) ).
+  assert (H50: (firstn (Z.to_nat (j - Zlength il /2)) (firstn (Z.to_nat (j - Zlength il / 2 + 1)) l2)) = firstn (Z.to_nat (j - Zlength il / 2)) l2 ).
+  { rewrite firstn_firstn.
+    rewrite Nat.min_l ; auto; try lia.
+  }
+  rewrite H50 in M.
+  apply M.
+
+  rewrite firstn_length.
+  rewrite Nat.min_l; try lia.
+  rewrite <- ZtoNat_Zlength; lia.
+
+  rewrite firstn_length.
+  rewrite Nat.min_l; try lia.
+
+  symmetry in H9.
+  assert ( H40 : 
+           Z.to_nat (i + (j - Z.div2 (Zlength il))) =
+         Nat.add   (Z.to_nat i)  (Z.to_nat (j - Z.div2 (Zlength il)))
+    ). { lia. }
+  rewrite H40 in H9.
+  assert (G := merge_invariant_lr _ _ _ _ (Z.to_nat i) (Z.to_nat (j - Zlength il / 2 + 1)) H9 ).
+  symmetry.
+   rewrite Zdiv2_div in G.
+  rewrite G; f_equal; try lia.
+  
+  
+  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia.
+  lia.
+
+  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia.
+  lia.
+
+
+  rewrite Heql1; apply sorted_mergesort.
+  rewrite Heql2; apply sorted_mergesort.   
+
+  apply Nat2Z.inj_le; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia.
+  lia.
+
+  apply sorted_firstn; rewrite Heql2; apply sorted_mergesort.
+    apply sorted_firstn; rewrite Heql1; apply sorted_mergesort.
+}
+
     
 
   forward_if (
@@ -2201,7 +2276,7 @@ repeat rewrite Zlength_map; lia.
 repeat rewrite Zlength_map; lia.
 repeat rewrite Zlength_map; lia.
 
-forward; forward; forward; entailer!.
+forward; forward; forward. entailer!.
 
 apply derives_refl'; f_equal.
 {
@@ -2223,81 +2298,7 @@ apply derives_refl'; f_equal.
  rewrite <- cons_Zrepeat_1_app.    
  rewrite upd_Znth0.
 
-    remember (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)) as l1.                                                                                                                   
-   remember (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) as l2.
 
-   assert ( H50 :
-  (merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2)) l2)) ++
-      Znth  (j - Zlength il / 2) l2 :: []
-    =
-   merge (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2 + 1)) l2)
-  ).
-{
-
-  assert (H30 : [Znth  (j - Zlength il / 2)  l2] = skipn (Z.to_nat  (j - Zlength il / 2) ) (firstn (Z.to_nat ( j - Zlength il / 2 + 1)) l2)).
-  {
-    rewrite <- sublist_skip; auto; try lia.
-    rewrite Zlength_solver.Zlength_firstn_to_nat.
-    rewrite Z.max_l; try lia.
-    rewrite Z.min_l; try lia.
-    rewrite (sublist_len_1 ); auto; try lia.
-    rewrite Znth_firstn; auto; try lia.
-    rewrite Zlength_solver.Zlength_firstn_to_nat.
-    rewrite Z.max_l; try lia.
-  }
-
-  rewrite H30.
-  symmetry.
-   
-  assert (M := merge_append_r  (firstn (Z.to_nat i) l1) (firstn (Z.to_nat (j - Zlength il / 2 + 1)) l2) (Z.to_nat (j - Zlength il / 2)) ).
-  assert (H50: (firstn (Z.to_nat (j - Zlength il /2)) (firstn (Z.to_nat (j - Zlength il / 2 + 1)) l2)) = firstn (Z.to_nat (j - Zlength il / 2)) l2 ).
-  { rewrite firstn_firstn.
-    rewrite Nat.min_l ; auto; try lia.
-  }
-  rewrite H50 in M.
-  apply M.
-
-  rewrite firstn_length.
-  rewrite Nat.min_l; try lia.
-  rewrite <- ZtoNat_Zlength; lia.
-
-  rewrite firstn_length.
-  rewrite Nat.min_l; try lia.
-
-  symmetry in H9.
-  assert ( H40 : 
-           Z.to_nat (i + (j - Z.div2 (Zlength il))) =
-         Nat.add   (Z.to_nat i)  (Z.to_nat (j - Z.div2 (Zlength il)))
-    ). { lia. }
-  rewrite H40 in H9.
-  assert (G := merge_invariant_lr _ _ _ _ (Z.to_nat i) (Z.to_nat (j - Zlength il / 2 + 1)) H9 ).
-  symmetry.
-   rewrite Zdiv2_div in G.
-  rewrite G; f_equal; try lia.
-  
-  
-  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
-  rewrite Z.max_r.
-  rewrite <- Zlength_correct. lia.
-  lia.
-
-  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
-  rewrite Z.max_r.
-  rewrite <- Zlength_correct. lia.
-  lia.
-
-
-  rewrite Heql1; apply sorted_mergesort.
-  rewrite Heql2; apply sorted_mergesort.   
-
-  apply Nat2Z.inj_le; rewrite Z2Nat_id'.
-  rewrite Z.max_r.
-  rewrite <- Zlength_correct. lia.
-  lia.
-
-  apply sorted_firstn; rewrite Heql2; apply sorted_mergesort.
-    apply sorted_firstn; rewrite Heql1; apply sorted_mergesort.
-}
 assert (H51: Nat.add (Z.to_nat (j - Zlength il / 2)) 1 = (Z.to_nat (j - Zlength il / 2 + 1))).
 { lia. }
 rewrite H51.
@@ -2311,10 +2312,8 @@ lia.
 lia.
 lia.
 
-repeat rewrite Zlength_map.
-rewrite mergesort_Zlength.
-rewrite Zlength_firstn.
-lia.
+repeat rewrite Zlength_map; lia.
+
 
 repeat rewrite Zlength_map.
 repeat rewrite merge_Zlength.
@@ -2329,8 +2328,277 @@ lia.
 
 forward.
 
+Exists i. Exists (j + 1). Exists (k + 1).
+entailer!.
+assert ( H51 : (Z.to_nat (j + 1 - Z.div2 (Zlength il))) =  (Z.to_nat (j - Zlength il / 2 + 1)) ).
+{ lia. }
+rewrite H51.
+rewrite <- H50.
+symmetry in H9.
+assert ( H52 : (Z.to_nat (i + (j - Z.div2 (Zlength il)))) = Nat.add (Z.to_nat i) (Z.to_nat (j - Z.div2 (Zlength il)))). { lia. }
+rewrite H52 in H9.
+assert (G := merge_invariant _ _ _ _ H9).
+assert (
+      merge (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
+        (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) =
+      merge (firstn (Z.to_nat i) (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+        (firstn (Z.to_nat (j - Z.div2 (Zlength il)))
+           (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))) ++
+      merge (skipn (Z.to_nat i) (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+        (skipn (Z.to_nat (j - Z.div2 (Zlength il)))
+           (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))
+  ).
+apply G.
+
+{
+rewrite mergesort_length.
+rewrite firstn_length.
+rewrite Nat.min_l; try lia.
+   rewrite Zdiv2_div.
+rewrite <- ZtoNat_Zlength.
+rep_lia.
+}
 
 
+{
+rewrite mergesort_length.
+rewrite skipn_length.
+   rewrite Zdiv2_div.
+rewrite <- ZtoNat_Zlength.
+rep_lia.
+}
+
+apply sorted_mergesort.
+apply sorted_mergesort.
+
+{
+rewrite H21.
+assert ( H53 : (Z.to_nat (i + (j + 1 - Z.div2 (Zlength il)))) = Nat.add (Z.to_nat (i + (j  - Z.div2 (Zlength il)))) 1 ). { lia. }
+rewrite H53.
+rewrite firstn_app.
+f_equal.
+   rewrite Zdiv2_div.
+apply firstn_same.
+rewrite merge_length.
+repeat rewrite <- ZtoNat_Zlength.
+repeat rewrite Zlength_firstn.
+rep_lia.
+
+rewrite merge_length.
+repeat rewrite <- ZtoNat_Zlength.
+repeat rewrite mergesort_Zlength.
+repeat rewrite Zlength_firstn.
+repeat rewrite mergesort_Zlength.
+repeat rewrite Zlength_skipn.
+repeat rewrite Zlength_firstn.
+repeat rewrite Z.max_r; try lia.
+repeat rewrite Z.min_l; try lia.
+   rewrite Zdiv2_div.
+
+   assert ( H54:  Nat.sub ( Nat.add (Z.to_nat (i + (j - Zlength il / 2)))  1%nat ) (Z.to_nat i + Z.to_nat (j - Zlength il / 2)) = 1%nat  ).
+{ lia. }
+rewrite H54.
+
+   remember (mergesort (firstn (Z.to_nat ((Zlength il) / 2)) il)) as l1.                                                                                                                   
+   remember (mergesort (skipn (Z.to_nat ((Zlength il) / 2)) il)) as l2.
+  
+
+rewrite sublist.skipn_cons.
+rewrite (sublist.skipn_cons (Z.to_nat (j - (Zlength il) /2 ))).
 
 
+unfold merge; unfold merge_func;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+remember ( Znth (Z.of_nat (Z.to_nat i)) l1 <=? Znth (Z.of_nat (Z.to_nat (j -  (Zlength il) / 2))) l2 ).
+destruct b.
+{ rewrite Znth_app1 in Heqb; try lia. 
+    rewrite Znth_app2 in Heqb; try lia.
+    rewrite Zdiv2_div in Heqb.
+    rewrite <- Heql1 in Heqb.
+rewrite <- Heql2 in Heqb.
+repeat rewrite ZifyInst.of_nat_to_nat_eq in Heqb0.
+rewrite Z.max_r in Heqb0; try lia. 
+rewrite Z.max_r in Heqb0; try lia. 
+    rewrite Zdiv2_div in H75.
+    rewrite <- Heql1 in H75.
+    rewrite H75 in Heqb.
+    lia.
+    }
+{ f_equal; f_equal; intuition. }
+
+
+   assert (H66 : i < Zlength l1). {
+      rewrite   Heql1.
+      rewrite mergesort_Zlength.
+      rewrite Zlength_firstn.
+      rewrite Z.max_r; lia.
+   }
+   assert (H67 : Zlength l2 = Zlength il - Zlength il / 2 ). {
+     rewrite Heql2.
+     rewrite mergesort_Zlength.
+     rewrite Zlength_skipn.
+     rewrite Z.max_r; lia.
+   }
+ 
+rewrite <- ZtoNat_Zlength.
+ apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+ rewrite Z.max_r; try lia.
+
+   assert (H66 : i < Zlength l1). {
+      rewrite   Heql1.
+      rewrite mergesort_Zlength.
+      rewrite Zlength_firstn.
+      rewrite Z.max_r; lia.
+   }
+   assert (H67 : Zlength l2 = Zlength il - Zlength il / 2 ). {
+     rewrite Heql2.
+     rewrite mergesort_Zlength.
+     rewrite Zlength_skipn.
+     rewrite Z.max_r; lia.
+   }
+   rewrite <- ZtoNat_Zlength.
+ apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+ rewrite Z.max_r; try lia.
+
+}
+
+apply derives_refl'; f_equal; f_equal; f_equal; f_equal; f_equal; f_equal; lia.
+
+Intro i; Intro j; Intro k; Intros.
+
+
+  destruct H5; destruct H5; subst.
+
+  assert (j = k). { lia. }
+  subst k.
+  
+  forward_loop     (PROP ( )
+     LOCAL (temp _k (Vint (Int.repr j)); temp _j (Vint (Int.repr j));
+     temp _i (Vint (Int.repr (Z.div2 (Zlength il)))); temp _t t;
+     temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+     temp _arr1 p; temp _p (Vint (Int.repr (Zlength il / 2))); gvars gv; 
+     temp _arr p; temp _len (Vint (Int.repr (Zlength il))))
+     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
+       (map Vint
+          (map Int.repr
+             (merge
+                (firstn (Z.to_nat (Z.div2 (Zlength il)))
+                   (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+                (firstn (Z.to_nat (j - Zlength il / 2))
+                   (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))) ++
+        Zrepeat (default_val tuint) (Zlength il - j)) t;
+     data_at sh (tarray tuint (Zlength il))
+       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))) ++
+            map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))) p))
+   break:     (PROP ( )
+     LOCAL (temp _k (Vint (Int.repr j)); temp _j (Vint (Int.repr j));
+     temp _i (Vint (Int.repr (Z.div2 (Zlength il)))); temp _t t;
+     temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+     temp _arr1 p; temp _p (Vint (Int.repr (Zlength il / 2))); gvars gv; 
+     temp _arr p; temp _len (Vint (Int.repr (Zlength il))))
+     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
+       (map Vint
+          (map Int.repr
+             (merge
+                (firstn (Z.to_nat (Z.div2 (Zlength il)))
+                   (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il)))
+                (firstn (Z.to_nat (j - Zlength il / 2))
+                   (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))) ++
+        Zrepeat (default_val tuint) (Zlength il - j)) t;
+     data_at sh (tarray tuint (Zlength il))
+       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))) ++
+        map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)).
    
+
+  entailer!.
+    
+  forward_if False.
+  lia.
+  forward.
+    entailer!.
+
+  forward_loop    (EX j , PROP ( Z.div2 (Zlength il) <= j <= Zlength il)
+                               LOCAL (temp _k (Vint (Int.repr j));
+                                      temp _j (Vint (Int.repr j));
+     temp _i (Vint (Int.repr (Z.div2 (Zlength il)))); temp _t t;
+     temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+     temp _arr1 p; temp _p (Vint (Int.repr (Zlength il / 2))); gvars gv; 
+     temp _arr p; temp _len (Vint (Int.repr (Zlength il))))
+     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
+       (map Vint
+          (map Int.repr
+             (merge
+                (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
+                (firstn (Z.to_nat (j - Zlength il / 2))
+                   (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))) ++
+        Zrepeat (default_val tuint) (Zlength il - j)) t;
+     data_at sh (tarray tuint (Zlength il))
+       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))) ++
+            map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))) p))
+
+    break:  ( PROP ( )
+                               LOCAL (temp _k (Vint (Int.repr (Zlength il)));
+                                      temp _j (Vint (Int.repr (Zlength il)));
+     temp _i (Vint (Int.repr (Z.div2 (Zlength il)))); temp _t t;
+     temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+     temp _arr1 p; temp _p (Vint (Int.repr (Zlength il / 2))); gvars gv; 
+     temp _arr p; temp _len (Vint (Int.repr (Zlength il))))
+     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
+       (map Vint
+          (map Int.repr
+             (merge
+                (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
+                (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il))))) t;
+     data_at sh (tarray tuint (Zlength il))
+       (map Vint (map Int.repr (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))) ++
+            map Vint (map Int.repr (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))) p)).
+  
+  Exists j.
+  entailer!.
+
+    apply derives_refl'; f_equal; f_equal; f_equal; f_equal; f_equal.
+    apply Zfirstn_same;
+    rewrite mergesort_Zlength.
+
+  rewrite Zlength_firstn;  lia.
+
+  Intro j0; Intros.
+  forward_if (j0 < Zlength il).
+  forward.
+  entailer!.
+    assert (j0 = Zlength il). { lia. }
+  subst.
+  forward.
+  entailer!.
+
+      apply derives_refl'; repeat f_equal.
+ assert ( H40 : (Zlength il - Zlength il) = 0). { lia. }
+ rewrite H40.
+rewrite Zrepeat_0.
+rewrite app_nil_r.
+repeat f_equal.
+
+apply Zfirstn_same; rewrite mergesort_Zlength.
+rewrite Zlength_skipn; rep_lia.
+
+forward.
+entailer!.
+entailer!.
+list_solve.
+
+forward.
+forward.
+forward.
+Exists (j0 + 1).
+entailer!.
+
+apply derives_refl'; repeat f_equal.
+
