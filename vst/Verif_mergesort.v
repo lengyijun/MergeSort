@@ -2066,3 +2066,51 @@ rewrite H9; f_equal.
 
 rewrite firstn_length.
 rewrite Nat.min_l; auto.
+
+rewrite merge_length.
+repeat rewrite <- ZtoNat_Zlength.
+rep_lia.
+
+repeat rewrite skipn_firstn.
+assert ( H60 :  Nat.sub (Z.to_nat (j - Z.div2 (Zlength il))) (Z.to_nat (j - Z.div2 (Zlength il))) = 0%nat ).
+{ lia. }
+rewrite H60.
+rewrite firstn_O.
+rewrite merge_nil_r.
+assert (H61 :  Nat.sub (Z.to_nat (i + 1)) (Z.to_nat i) = 1%nat ).
+{ lia. }
+rewrite H61.
+
+rewrite sublist.skipn_cons.
+rewrite (sublist.skipn_cons (Z.to_nat (j - Z.div2 (Zlength il)))).
+unfold merge; unfold merge_func;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+remember ( Znth (Z.of_nat (Z.to_nat i)) l1 <=? Znth (Z.of_nat (Z.to_nat (j - Z.div2 (Zlength il)))) l2 ).
+destruct b; auto.
+rewrite Znth_app1 in Heqb; try lia.
+rewrite Znth_app2 in Heqb; try lia.
+repeat rewrite ZifyInst.of_nat_to_nat_eq in Heqb0.
+rewrite Z.max_r in Heqb0; try lia.
+rewrite Z.max_r in Heqb0; try lia.
+rewrite H75 in Heqb.
+rewrite Zdiv2_div in Heqb0.
+lia.
+
+
+  apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia. 
+  lia. 
+
+      apply Nat2Z.inj_lt; rewrite Z2Nat_id'.
+  rewrite Z.max_r.
+  rewrite <- Zlength_correct. lia. 
+  lia. 
+
+  rewrite firstn_length.
+  rewrite Nat.min_l; try lia.
+
+  rewrite <- ZtoNat_Zlength.
+   apply Nat2Z.inj_le; rewrite Z2Nat_id'.
+   rewrite Z.max_r; try lia.
+
