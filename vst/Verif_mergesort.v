@@ -1160,6 +1160,31 @@ Next Obligation.
   apply le_plus_l.
 Qed.
 
+Lemma mergesort_1 : forall x, mergesort [x] = [x].
+Proof.
+intros.
+ unfold mergesort;   unfold merge;  unfold merge_func;                                                                                                             
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl.
+auto.
+Qed. 
+
+Lemma mergesort_merge : forall il ,  merge (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
+    (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) = mergesort il.
+Proof.
+destruct il.
+admit.
+destruct il.
+admit.
+destruct il.
+simpl.
+repeat rewrite mergesort_1.
+unfold mergesort.
+unfold merge at 1; unfold merge_func.
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl.
+remember ( z <=? z0 ).
+destruct b; simpl; fold merge_func.
+Admitted.
+
 
 Lemma merge_length : forall l1 , forall l2 , length (merge l1 l2 ) = Nat.add (length l1) (length l2).
 Proof.
@@ -1252,7 +1277,7 @@ Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
  WITH p: val,  sh : share, il: list Z, gv: globals
  PRE [ tptr tuint , tint ] 
-    PROP (readable_share sh;
+    PROP ( writable_share sh;
           0 < Zlength il <= Int.max_signed;
           Forall (fun x => 0 <= x <= Int.max_unsigned) il) 
     PARAMS (p; Vint (Int.repr (Zlength il)) )
@@ -1264,10 +1289,22 @@ Definition my_mergesort_spec : ident * funspec :=
     SEP (data_at sh (tarray tuint (Zlength (mergesort il))) (map Vint (map Int.repr (mergesort il))) p;
          mem_mgr gv).
 
+Definition memcpy_spec :=
+  DECLARE _memcpy
+  WITH qsh : share, psh: share, p: val, q: val,  contents: list Z
+  PRE [ tptr tvoid, tptr tvoid, tulong ]
+    PROP (readable_share qsh; writable_share psh; Zlength contents <= Int.max_unsigned)
+    PARAMS ( p ; q ; Vlong (Int64.repr (4 * Zlength contents)))
+    SEP (data_at qsh (tarray tuint (Zlength contents)) (map Vint (map Int.repr contents)) q;
+         memory_block psh (4 * Zlength contents) p)
+  POST [ tptr tvoid ]
+     PROP() LOCAL(temp ret_temp p)
+     SEP(data_at qsh (tarray tuint (Zlength contents)) (map Vint (map Int.repr contents)) q;
+         data_at psh (tarray tuint (Zlength contents)) (map Vint (map Int.repr contents)) p).
 
 Definition Gprog : funspecs :=
   ltac:(with_library prog [
-             my_mergesort_spec                                    
+             my_mergesort_spec ; memcpy_spec
  ]). 
 
 Lemma div2_le : forall z, z >= 0 -> Z.div2 z <= z .
@@ -2773,4 +2810,69 @@ repeat rewrite Zlength_map; rewrite merge_Zlength; repeat rewrite mergesort_Zlen
 rep_lia.
 lia.
 rewrite <- ZtoNat_Zlength; rep_lia.
+
+
+forward_call (Ews , sh , p, t,
+ (merge (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
+                (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))
+             ).
+
+entailer!.
+
+{
+simpl; do 5 f_equal.
+rewrite merge_Zlength.
+repeat rewrite mergesort_Zlength.
+rewrite Zlength_firstn.
+rewrite Zlength_skipn.
+rep_lia.
+}
+
+entailer!.
+rewrite merge_Zlength.
+repeat rewrite mergesort_Zlength.
+rewrite Zlength_firstn.
+rewrite Zlength_skipn.
+assert ( H88 :  (Z.min (Z.max 0 (Z.div2 (Zlength il))) (Zlength il) +
+            Z.max 0 (Zlength il - Z.max 0 (Z.div2 (Zlength il))))
+               = Zlength il ). { lia. } 
+rewrite H88.
+entailer!.
+sep_apply data_at_memory_block.
+simpl.
+rewrite Z.max_r.
+entailer!.
+lia.
+
+rewrite merge_Zlength.
+repeat rewrite mergesort_Zlength.
+rewrite Zlength_firstn.
+rewrite Zlength_skipn.
+rep_lia.
+
+forward_call (tarray tuint (Zlength il), t , gv).
+destruct ( eq_dec t nullval ); try contradiction; try entailer!.
+
+sep_apply data_at_data_at_.
+entailer!.
+assert ( H77 : (Zlength
+          (merge (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
+             (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)))) = Zlength il ).
+{
+rewrite merge_Zlength.
+repeat rewrite mergesort_Zlength.
+rewrite Zlength_firstn.
+rewrite Zlength_skipn.
+rep_lia.
+}
+
+rewrite H77; entailer!.
+entailer!.
+
+apply derives_refl'.
+rewrite mergesort_Zlength.
+rewrite mergesort_merge; auto.
+
+(* another branch *)
+
 
