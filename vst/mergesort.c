@@ -39,7 +39,7 @@ void my_mergesort(unsigned *arr, int len) {
   }
 
 
-  memcpy(arr, t, sizeof(int)*len);
+  memcpy(arr, t, sizeof(unsigned)*len);
   free(t);
 }
 

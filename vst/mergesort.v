@@ -300,7 +300,7 @@ Definition f_my_mergesort := {|
                                                 (tptr tvoid) cc_default))
                                 ((Etempvar _arr (tptr tuint)) ::
                                  (Etempvar _t (tptr tuint)) ::
-                                 (Ebinop Omul (Esizeof tint tulong)
+                                 (Ebinop Omul (Esizeof tuint tulong)
                                    (Etempvar _len tint) tulong) :: nil))
                               (Scall None
                                 (Evar _free (Tfunction
