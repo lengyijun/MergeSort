@@ -2874,5 +2874,256 @@ rewrite mergesort_Zlength.
 rewrite mergesort_merge; auto.
 
 (* another branch *)
+rewrite Zdiv2_div in *.
+assert ( k = i + Zlength il - Zlength il / 2 ). { lia. }
+subst k.
+clear H7.
 
+assert ( H72 : (Z.to_nat (Zlength il - Zlength il / 2) >=
+  Datatypes.length (mergesort (skipn (Z.to_nat (Zlength il / 2)) il)))%nat ).
+{
+  rewrite <- ZtoNat_Zlength; rep_lia.
+}
+
+rewrite (firstn_same  _ (Z.to_nat (Zlength il - Zlength il / 2))) in *; auto.
+assert ( H37: (Zlength il - (i + Zlength il - Zlength il / 2)) = Zlength il / 2 - i ).
+{ lia. }
+rewrite H37.
+
+   remember (mergesort (firstn (Z.to_nat ((Zlength il) / 2)) il)) as l1.
+   remember (mergesort (skipn (Z.to_nat ((Zlength il) / 2)) il)) as l2.
+
+
+   forward_loop  (EX i , PROP (0 <= i <= Zlength il /2;
+       firstn (Z.to_nat (i + Zlength il - Zlength il / 2)) (merge l1 l2) = merge (firstn (Z.to_nat i) l1) l2
+                              )
+     LOCAL (temp _k (Vint (Int.repr (i + Zlength il - Zlength il / 2)));
+            temp _j (Vint (Int.repr (Zlength il)));
+            temp _i (Vint (Int.repr i)); 
+            temp _t t;
+            temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+     temp _arr1 p; temp _p (Vint (Int.repr (Zlength il / 2))); gvars gv; 
+     temp _arr p; temp _len (Vint (Int.repr (Zlength il))))
+     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il))
+       (map Vint (map Int.repr (merge (firstn (Z.to_nat i) l1) l2) ) ++
+        Zrepeat (default_val tuint) (Zlength il / 2 - i)) t;
+     data_at sh (tarray tuint (Zlength il))
+             (map Vint (map Int.repr l1) ++ map Vint (map Int.repr l2)) p))
+
+   break:  (PROP ( )
+     LOCAL (temp _k (Vint (Int.repr (Zlength il)));
+     temp _j (Vint (Int.repr (Zlength il))); temp _i (Vint (Int.repr (Zlength il / 2))); 
+     temp _t t;
+     temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+     temp _arr1 p; temp _p (Vint (Int.repr (Zlength il / 2))); gvars gv; 
+     temp _arr p; temp _len (Vint (Int.repr (Zlength il))))
+     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il)) (map Vint (map Int.repr (mergesort il))) t;
+     data_at sh (tarray tuint (Zlength il))
+       (map Vint (map Int.repr l1) ++ map Vint (map Int.repr l2)) p)).
+
+   Exists i; entailer!.
+
+  rewrite <- H8; f_equal; lia.
+  clear H8.
+
+  Intro i0.
+  forward_if (i0 < Zlength il / 2).
+  forward.
+  entailer!.
+  forward.
+  assert (i0 = Zlength il /2). { lia. }
+  subst.
+  entailer!.
+  f_equal; f_equal; lia.
+  entailer!.
+  apply derives_refl'; f_equal.
+  assert ( H46 : (Zlength il / 2 - Zlength il / 2) = 0 ). { lia. }
+  rewrite H46; rewrite Zrepeat_0; rewrite app_nil_r; f_equal; f_equal.
+  rewrite firstn_same; auto.
+  rewrite <- Zdiv2_div; rewrite mergesort_merge;  auto.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+
+   abbreviate_semax.
+   Intros.
+   forward.
+   entailer!.
+   list_solve.
+   forward; forward; forward.
+
+       
+  assert (H49 : merge l1 l2 = merge (firstn (Z.to_nat i0) l1) l2 ++ skipn (Z.to_nat i0) l1 ).
+{
+  assert (H45 :=  merge_invariant l1 l2 (Z.to_nat i0) (Z.to_nat (Zlength il - Zlength il / 2)) ).
+  rewrite (firstn_same _  (Z.to_nat (Zlength il - Zlength il / 2))) in H45.
+  rewrite (skipn_short (Z.to_nat (Zlength il - Zlength il / 2))) in H45.
+  rewrite merge_nil_r in H45.
+  apply H45; try lia.
+  rewrite <- H8; f_equal; lia.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+  rewrite Heql1 ; apply sorted_mergesort.
+  rewrite Heql2 ; apply sorted_mergesort.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+}
+
+
+       
+assert (  H48 :  merge (firstn (Z.to_nat i0) l1) l2 =
+firstn (Z.to_nat i0 + Z.to_nat (Zlength il - Zlength il / 2))
+       (merge (firstn (Z.to_nat (i0 + 1)) l1) l2) ).
+{
+  symmetry in H8.
+  assert (H30 := merge_invariant_lr l1 l2 (Z.to_nat i0) (Z.to_nat (Zlength il - Zlength il / 2))  (Z.to_nat (i0 + 1))  (Z.to_nat (Zlength il - Zlength il / 2)) ).
+  rewrite (firstn_same _  (Z.to_nat (Zlength il - Zlength il / 2)) ) in H30.
+
+  apply H30; try lia.
+  rewrite H8; f_equal; lia.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+  rewrite Heql1 ; apply sorted_mergesort.
+  rewrite Heql2 ; apply sorted_mergesort.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+}
+
+
+assert ( H46: 
+   merge (firstn (Z.to_nat (i0 + 1)) l1) l2 =
+    merge (firstn (Z.to_nat i0) l1) l2 ++
+    skipn (Z.to_nat i0) (firstn (Z.to_nat (i0 + 1)) l1)).
+{
+  assert (H47 := merge_invariant  (firstn (Z.to_nat (i0 + 1)) l1) l2  (Z.to_nat i0) (Z.to_nat (Zlength il - Zlength il / 2)) ).
+
+  repeat rewrite firstn_firstn in H47.
+  rewrite Nat.min_l in H47; try lia.
+  rewrite (skipn_short (Z.to_nat (Zlength il - Zlength il / 2))) in H47.
+  rewrite merge_nil_r in H47.
+  rewrite (firstn_same _ (Z.to_nat (Zlength il - Zlength il / 2))) in H47.
+
+
+  apply H47; auto; try lia.
+  rewrite <- ZtoNat_Zlength;
+  rewrite Zlength_firstn;
+  rep_lia.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+  apply sorted_firstn; 
+  rewrite Heql1 ; apply sorted_mergesort.
+  rewrite Heql2 ; apply sorted_mergesort.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+  rewrite <- ZtoNat_Zlength; rep_lia.
+}
+rewrite skipn_firstn_comm in H46.
+assert ( H94 : Nat.sub (Z.to_nat (i0 + 1))  (Z.to_nat i0) = 1%nat ).
+{ lia. }
+rewrite H94 in H46.
+
+
+Exists (i0 +1); entailer!.
+split.
+rewrite H46.
+rewrite H49.
+
+
+rewrite firstn_app2.
+f_equal; f_equal;
+rewrite <- ZtoNat_Zlength; rewrite merge_Zlength; rewrite Zlength_firstn; 
+  rep_lia.
+
+rewrite <- ZtoNat_Zlength; rewrite merge_Zlength; rewrite Zlength_firstn; 
+  rep_lia.
+
+f_equal; f_equal; lia.
+
+apply derives_refl'; f_equal.
+
+rewrite upd_Znth_app2.
+rewrite Znth_app1.
+repeat rewrite Zlength_map;  rewrite merge_Zlength; rewrite Zlength_firstn;
+  repeat rewrite mergesort_Zlength;  rewrite Zlength_firstn; rewrite Zlength_skipn.
+
+assert ( H93 :    (i0 + Zlength il - Zlength il / 2 -
+     (Z.min (Z.max 0 i0) (Z.min (Z.max 0 (Zlength il / 2)) (Zlength il)) +
+      Z.max 0 (Zlength il - Z.max 0 (Zlength il / 2)))) = 0     ).
+{ lia. }
+rewrite H93.
+assert ( H92 : Zlength il / 2 - i0 = 1 +  (Zlength il / 2 - (i0 + 1))  ).
+{ lia. }
+rewrite H92.
+
+rewrite <- Zrepeat_app.
+rewrite upd_Znth_app1; try lia.
+simpl.
+
+rewrite H46.
+repeat rewrite map_app.
+
+rewrite (sublist.skipn_cons (Z.to_nat i0)).
+simpl.
+rewrite <- app_assoc.     
+list_solve.
+
+rewrite <- ZtoNat_Zlength;   repeat rewrite mergesort_Zlength;  rewrite Zlength_firstn; rep_lia.
+rewrite Zlength_Zrepeat; lia.
+lia.
+rep_lia.
+repeat rewrite Zlength_map; rewrite mergesort_Zlength; rewrite Zlength_firstn; rep_lia.
+repeat rewrite Zlength_map; rewrite merge_Zlength; rewrite Zlength_firstn; rep_lia.
+
+forward_loop     (PROP ( )
+     LOCAL (temp _k (Vint (Int.repr (Zlength il))); temp _j (Vint (Int.repr (Zlength il)));
+     temp _i (Vint (Int.repr (Zlength il / 2))); temp _t t;
+     temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+     temp _arr1 p; temp _p (Vint (Int.repr (Zlength il / 2))); gvars gv; 
+     temp _arr p; temp _len (Vint (Int.repr (Zlength il))))
+     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il)) (map Vint (map Int.repr (mergesort il))) t;
+     data_at sh (tarray tuint (Zlength il))
+             (map Vint (map Int.repr l1) ++ map Vint (map Int.repr l2)) p))
+                 break:     (PROP ( )
+     LOCAL (temp _k (Vint (Int.repr (Zlength il))); temp _j (Vint (Int.repr (Zlength il)));
+     temp _i (Vint (Int.repr (Zlength il / 2))); temp _t t;
+     temp _arr2
+       (force_val (sem_binary_operation' Oadd (tptr tuint) tint p (Vint (Int.repr (Zlength il / 2)))));
+     temp _arr1 p; temp _p (Vint (Int.repr (Zlength il / 2))); gvars gv; 
+     temp _arr p; temp _len (Vint (Int.repr (Zlength il))))
+     SEP (mem_mgr gv; malloc_token Ews (tarray tuint (Zlength il)) t;
+     data_at Ews (tarray tuint (Zlength il)) (map Vint (map Int.repr (mergesort il))) t;
+     data_at sh (tarray tuint (Zlength il))
+             (map Vint (map Int.repr l1) ++ map Vint (map Int.repr l2)) p)).
+
+entailer!.
+forward_if False.
+forward.
+entailer!.
+forward.
+entailer!.
+
+forward_call (Ews , sh , p, t,   mergesort il).
+repeat rewrite mergesort_Zlength.
+entailer!.
+repeat rewrite mergesort_Zlength.
+entailer!.
+sep_apply data_at_memory_block.
+simpl.
+rewrite Z.max_r; try rep_lia.
+entailer!.
+
+rewrite mergesort_Zlength; rep_lia.
+
+forward_call (tarray tuint (Zlength il), t , gv).
+destruct ( eq_dec t nullval ); try contradiction; try entailer!.
+
+repeat rewrite mergesort_Zlength; entailer!.
+
+entailer!.
+rewrite mergesort_Zlength; entailer!.
+
+repeat rewrite Zlength_map; rewrite Zlength_firstn; rep_lia.
+repeat rewrite Zlength_map; rewrite Zlength_skipn; rep_lia.
+Qed.
 
