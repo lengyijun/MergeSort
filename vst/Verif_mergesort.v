@@ -1387,9 +1387,49 @@ f_equal.
 apply mergesort_length.
 Qed.
 
-Lemma mergesort_permutation : forall l , Permutation l (mergesort l).
-Proof. Admitted.
 
+Lemma merge_perm: forall (l1 l2: list Z),
+    Permutation (l1 ++ l2) (merge l1 l2).
+Proof.
+    (* Hint: A nested induction on [l2] is required. *)
+  induction l1. 
+  intros. rewrite (merge_nil_l l2).
+  simpl in *; auto.
+  
+  induction l2. 
+  simpl.
+  rewrite app_nil_r.
+  rewrite merge_nil_r.
+  auto.
+
+unfold merge; unfold merge_func; rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+  destruct (a <=? a0). 
+  constructor.
+  apply IHl1.
+
+  assert  (H49 : Permutation ((a :: l1) ++ a0 :: l2) ((a0 :: l2) ++ a :: l1)).
+  apply Permutation_app_comm.
+  assert (H50 : (a :: l1 ++ a0 :: l2) = ((a :: l1) ++ a0 :: l2)).
+  auto.
+  rewrite H50. 
+  econstructor.
+  apply H49. 
+  simpl.
+  constructor.                                                                                                                                                                               
+  econstructor.
+  apply Permutation_app_comm.
+  exact IHl2.
+Qed.
+
+
+Lemma mergesort_permutation : forall l , Permutation l (mergesort l).
+Proof.
+  intros.
+  rewrite <- mergesort_merge.
+  econstructor.
+Admitted.
+  
+  
 Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
  WITH p: val,  sh : share, il: list Z, gv: globals
