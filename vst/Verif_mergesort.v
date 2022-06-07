@@ -1121,7 +1121,7 @@ Program Fixpoint mergesort (x : list Z) {measure (length x)}: list Z :=
   match x with
   | nil => nil
   | x :: nil => x :: nil
-  | x :: y :: nil => if x <? y
+  | x :: y :: nil => if x <=? y
     then (x :: y :: nil)
     else (y :: x :: nil)
   | x :: y :: z :: rest => 
@@ -1160,6 +1160,42 @@ Next Obligation.
   apply le_plus_l.
 Qed.
 
+Lemma mergesort_refl : forall (x : list Z) , mergesort x =
+  match x with
+  | nil => nil
+  | x :: nil => x :: nil
+  | x :: y :: nil => if x <=? y
+    then (x :: y :: nil)
+    else (y :: x :: nil)
+  | x :: y :: z :: rest => 
+    let a := (x :: y :: z :: rest) in 
+    let p := (Nat.div2 (length a)) in
+    merge (mergesort (firstn p a)) (mergesort (skipn p a))
+  end.
+Proof.
+intros.
+destruct x.
+- intuition.
+- destruct x.
+  intuition.
+destruct x.
+intuition.
+simpl.
+unfold mergesort at 1.
+rewrite fix_sub_eq. repeat fold mergesort.
+repeat f_equal.
+intuition.
+repeat f_equal.
+intros.
+destruct x0.
+auto.
+destruct x0.
+auto.
+destruct x0.
+auto.
+intuition.
+Qed.
+
 Lemma mergesort_1 : forall x, mergesort [x] = [x].
 Proof.
 intros.
@@ -1168,22 +1204,39 @@ intros.
 auto.
 Qed. 
 
-Lemma mergesort_merge : forall il ,  merge (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
+Lemma Zdiv2_Natdiv2 : forall x : Z , x > 0 -> Z.to_nat (Z.div2 x) = Nat.div2 (Z.to_nat x).
+Proof.
+  intros.
+rewrite Nat.div2_div.  
+rewrite  Zdiv2_div.
+rewrite Z2Nat.inj_div; auto; lia.
+Qed.
+
+Lemma mergesort_merge : forall il ,  merge
+    (mergesort (firstn (Z.to_nat (Z.div2 (Zlength il))) il))
     (mergesort (skipn (Z.to_nat (Z.div2 (Zlength il))) il)) = mergesort il.
 Proof.
+intros.
+rewrite  (mergesort_refl il).
+destruct il; auto.
+destruct il; auto.
 destruct il.
-admit.
-destruct il.
-admit.
-destruct il.
-simpl.
+
 repeat rewrite mergesort_1.
-unfold mergesort.
-unfold merge at 1; unfold merge_func.
-  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl.
-remember ( z <=? z0 ).
-destruct b; simpl; fold merge_func.
-Admitted.
+unfold merge; unfold merge_func;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func; intuition.
+
+simpl; f_equal; f_equal; rewrite Zdiv2_Natdiv2.
+rewrite ZtoNat_Zlength.
+simpl; auto.
+
+rewrite Zlength_cons; rep_lia.
+
+rewrite ZtoNat_Zlength.
+simpl; auto.
+
+rewrite Zlength_cons; rep_lia.
+Qed.
 
 
 Lemma merge_length : forall l1 , forall l2 , length (merge l1 l2 ) = Nat.add (length l1) (length l2).
@@ -1255,7 +1308,7 @@ simpl; auto.
 destruct l.
 unfold mergesort.
 rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold mergesort.
-destruct (z <? z0); simpl; auto.
+destruct (z <=? z0); simpl; auto.
 
 unfold mergesort.
 rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold mergesort.
