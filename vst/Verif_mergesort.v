@@ -1298,22 +1298,86 @@ remember (S (length l)).
 clear Heqn.
 generalize l. clear l.
 induction n; intros.
-destruct l; simpl in *; auto.
-inv H.
+destruct l; lia.
 
+rewrite <- mergesort_merge.
 destruct l.
 simpl; auto.
 destruct l.
 simpl; auto.
-destruct l.
-unfold mergesort.
-rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold mergesort.
-destruct (z <=? z0); simpl; auto.
+destruct l; simpl.
+repeat rewrite mergesort_1.
+rewrite merge_length; intuition.
 
-unfold mergesort.
-rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold mergesort.
-Admitted.
 
+simpl in H.
+rewrite merge_length.
+rewrite IHn.
+rewrite IHn.
+rewrite firstn_length.
+rewrite skipn_length.
+assert ( (Z.to_nat (Z.div2 (Zlength (z :: z0 :: z1 :: l))) <= Datatypes.length (z :: z0 :: z1 :: l))%nat ).
+{ simpl.
+rewrite  Zdiv2_Natdiv2.
+rewrite ZtoNat_Zlength; simpl.
+destruct (Datatypes.length l); try lia.
+destruct n0.
+simpl; try lia.
+assert (G := Nat.le_div2 n0); rep_lia.
+rewrite Zlength_cons; rep_lia.
+}
+{
+  repeat  rewrite  Zdiv2_Natdiv2.
+  rewrite ZtoNat_Zlength; simpl; f_equal.
+  rewrite Nat.min_l.
+  destruct  (Datatypes.length l); try lia.
+  simpl; f_equal.
+  remember (Nat.div2 n0 ).
+destruct n1; try lia.
+destruct n1; try lia.
+simpl; repeat f_equal.
+
+
+assert (Nat.lt n1 n0).
+destruct n0.
+simpl in *; lia.
+assert (G := Nat.le_div2 n0); rep_lia.
+rep_lia.
+
+destruct (Datatypes.length l); try lia.
+destruct n0.
+simpl; lia.
+assert (G := Nat.le_div2 n0); rep_lia.
+
+rewrite Zlength_cons; rep_lia.
+}
+
+
+rewrite skipn_length; rewrite  Zdiv2_Natdiv2.
+rewrite ZtoNat_Zlength; simpl.
+destruct (length l); try lia.
+remember (Nat.div2 n0).
+destruct n1; lia.
+
+rewrite Zlength_cons; rep_lia.
+
+rewrite firstn_length; repeat rewrite  Zdiv2_Natdiv2.
+repeat rewrite ZtoNat_Zlength.
+rewrite Nat.min_l.
+simpl.
+destruct  (Datatypes.length l); try lia.
+destruct n0.
+simpl; lia.
+assert (G := Nat.le_div2 n0); rep_lia.
+
+simpl.
+destruct  (Datatypes.length l); try lia.
+destruct n0.
+simpl; lia.
+assert (G := Nat.le_div2 n0); rep_lia.
+
+rewrite Zlength_cons; rep_lia.
+Qed.
 
 Lemma mergesort_Zlength : forall l,  Zlength (mergesort l ) = Zlength l.
 Proof.
