@@ -1286,9 +1286,99 @@ Proof.
   intuition.
 Qed.
 
+Lemma sorted_merge1 : forall x x1 l1 x2 l2, 
+    x <= x1 -> x <= x2 ->  
+    sorted (merge (x1::l1) (x2::l2)) ->
+    sorted (x :: merge (x1::l1) (x2::l2)).
+Proof.
+  intros.
+  unfold merge; unfold merge_func;                                               
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+
+  unfold merge in H1; unfold merge_func in H1;      
+    rewrite Wf.WfExtensionality.fix_sub_eq_ext in H1; simpl in H1; fold merge_func in H1.
+remember (x1 <=? x2).
+destruct b; constructor; auto.
+Qed.  
+
+Lemma sorted_merge : forall l1, sorted l1 ->
+                     forall l2, sorted l2 ->
+                                sorted (merge l1 l2).
+Proof.
+induction l1; intro.  
+intros; rewrite merge_nil_l; auto.
+induction l2; intros.
+rewrite merge_nil_r; auto.
+
+  unfold merge; unfold merge_func;                                               
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl; fold merge_func.
+remember (a <=? a0).
+destruct b.
+destruct l1.
+assert (G := merge_nil_l (a0 :: l2)).
+unfold merge in G.
+rewrite G.
+constructor; auto; lia.
+
+inv H.
+apply sorted_merge1; auto; lia.
+
+destruct l2.
+assert (G := merge_nil_r (a :: l1)).
+unfold merge in G.
+rewrite G.
+constructor; auto; lia.
+
+inv H0.
+apply sorted_merge1; auto; lia.
+Qed.
+  
 Lemma sorted_mergesort : forall l, sorted (mergesort l).
 Proof.
-Admitted.
+  intro. 
+ generalize (lt_n_Sn (length l)).
+remember ( S (Datatypes.length l)%nat ).
+clear Heqn.
+generalize l; clear l.
+induction n; intros.
+destruct l; lia.
+  
+
+rewrite mergesort_refl; destruct l; try  constructor.
+destruct l; try constructor.
+destruct l.
+remember (z <=? z0).
+destruct b; constructor; intuition; constructor.
+
+simpl.
+apply  sorted_merge; apply IHn; simpl.
+{
+  rewrite firstn_length.
+  rewrite Nat.min_l.
+  simpl in H.
+  remember ( Datatypes.length l ).
+  destruct n0; try lia.
+  destruct n0.
+  simpl; lia.
+  assert (G := Nat.le_div2 n0); rep_lia.
+
+  simpl in *.
+  remember (Datatypes.length l).
+  destruct n0; try lia.
+  destruct n0.
+  simpl; lia.
+  assert (G := Nat.le_div2 n0); rep_lia.
+}
+{
+rewrite skipn_length.
+simpl in *.
+remember ( Datatypes.length l ).
+destruct n0; try lia.
+remember (Nat.div2 n0 ).
+destruct n1; lia.
+}
+Qed.
+
 
 Lemma mergesort_length : forall l,  length (mergesort l ) = length l.
 Proof.
