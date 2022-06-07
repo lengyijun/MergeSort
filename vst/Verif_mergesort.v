@@ -1424,12 +1424,65 @@ Qed.
 
 Lemma mergesort_permutation : forall l , Permutation l (mergesort l).
 Proof.
-  intros.
-  rewrite <- mergesort_merge.
-  econstructor.
-Admitted.
-  
-  
+  intro. 
+ generalize (lt_n_Sn (length l)).
+remember ( S (Datatypes.length l)%nat ).
+clear Heqn.
+generalize l; clear l.
+induction n; intros.
+destruct l; lia.
+
+destruct l; auto.  
+destruct l; auto.
+destruct l.
+
+ unfold mergesort;   unfold merge;  unfold merge_func;
+  rewrite Wf.WfExtensionality.fix_sub_eq_ext; simpl.
+destruct (z <=? z0); auto; constructor.
+
+rewrite <- mergesort_merge.
+econstructor.
+2: apply merge_perm.
+econstructor.
+2: apply Permutation_app_tail.
+2: apply IHn.
+econstructor.
+2: apply Permutation_app_head.
+2: apply IHn.
+rewrite firstn_skipn; auto.
+
+{
+rewrite skipn_length.
+rewrite Zdiv2_Natdiv2.
+rewrite ZtoNat_Zlength.
+simpl in *.
+remember (Datatypes.length l).
+destruct n0; try lia.
+remember ( Nat.div2 n0 ).
+destruct n1; try lia.
+rewrite Zlength_cons; rep_lia.
+}
+{
+rewrite firstn_length.
+rewrite Zdiv2_Natdiv2.
+rewrite ZtoNat_Zlength.
+simpl in *.
+remember (Datatypes.length l).
+2: rewrite Zlength_cons; rep_lia.
+rewrite Nat.min_l.
+destruct n0; try lia.
+destruct n0.
+simpl; try lia.
+assert (G := Nat.le_div2 n0); rep_lia.
+
+destruct n0; try lia.
+destruct n0.
+simpl; try lia.
+assert (G := Nat.le_div2 n0); rep_lia.
+}
+Qed.
+
+
 Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
  WITH p: val,  sh : share, il: list Z, gv: globals
