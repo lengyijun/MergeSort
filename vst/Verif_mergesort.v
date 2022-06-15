@@ -1273,6 +1273,8 @@ Proof.
 
   (* mergesort 2 *)
   forward_call ( (field_address0 (tarray tuint (Zlength il)) (SUB Z.div2 (Zlength il)) p) , sh , skipn (Z.to_nat (Z.div2 (Zlength il))) il, gv).
+6: repeat rewrite Zlength_map; rewrite Zlength_firstn; rep_lia.
+6: repeat rewrite Zlength_map; rewrite Zlength_skipn; rep_lia.
   {
     unfold Int.divs.
     rewrite Int.signed_repr; try rep_lia.
@@ -1286,8 +1288,7 @@ Proof.
   }
   { 
     entailer!.
-    simpl.
-    f_equal.
+    simpl; f_equal.
 
     unfold Int.divs.
     rewrite sem_add_pi'; auto.
@@ -2960,7 +2961,6 @@ repeat rewrite mergesort_Zlength; entailer!.
 
 entailer!.
 
-repeat rewrite Zlength_map; rewrite Zlength_firstn; rep_lia.
-repeat rewrite Zlength_map; rewrite Zlength_skipn; rep_lia.
+
 Qed.
 
