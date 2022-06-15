@@ -232,7 +232,7 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 
 ```
 // loop invariant
-firstn (i + j - (Zlength il /2)) (merge l1 l2) = 
+firstn (i + j - p) (merge l1 l2) = 
   merge (firstn i l1) (firstn (j - p) l2)
 
 SEP (data_at sh (tarray tuint (Zlength il)) 
@@ -281,6 +281,215 @@ i = p \/ j = len
 .sep4{
   position: absolute;
   bottom: 15px;
+  right: 90px;
+  border: double;
+  width : 470px;
+}
+</style>
+
+---
+
+## (1) i = p
+
+<div class="half" >
+
+```c
+  for(;i<p ; i++, k++){
+    t[k]=arr[i];
+  }
+
+  for(;j<len ; j++, k++){
+    t[k]=arr[j];
+  }
+
+
+
+
+
+
+
+
+
+
+  memcpy(arr, t, sizeof(unsigned)*len);
+  
+
+
+
+  free(t);
+}
+```
+
+</div>
+<div class="sep1" >  
+Nothing happens
+</div>
+
+<div class="sep2">
+
+```
+// loop invariant
+firstn j (merge l1 l2) = 
+  merge l1 (firstn (j - p) l2)
+
+SEP (data_at sh (tarray tuint (Zlength il)) 
+    (firstn j (merge l1 l2)) t )
+```
+
+</div>
+
+<div class="sep3">
+
+```
+// after loop
+j = len
+SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t )
+```
+
+</div>
+
+<div class="sep4">
+
+```
+// after memcpy
+SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
+```
+
+</div>
+
+<style>
+.half{
+  width: 40%
+}
+.sep1{
+  position: absolute;
+  top: 120px;
+  right:90px;
+  border: double;
+  width : 470px;
+}
+.sep2{
+  position: absolute;
+  bottom: 250px;
+  right: 90px;
+  border: double;
+  width : 470px;
+}
+.sep3{
+  position: absolute;
+  bottom: 165px;
+  right: 90px;
+  border: double;
+  width : 470px;
+}
+.sep4{
+  position: absolute;
+  bottom: 65px;
+  right: 90px;
+  border: double;
+  width : 470px;
+}
+</style>
+
+---
+
+## (2) j = len
+
+<div class="half" >
+
+```c
+  for(;i<p ; i++, k++){
+    t[k]=arr[i];
+  }
+
+
+
+
+
+
+
+
+
+
+  for(;j<len ; j++, k++){
+    t[k]=arr[j];
+  }
+
+  memcpy(arr, t, sizeof(unsigned)*len);
+  
+
+
+
+  free(t);
+}
+```
+
+<div class="sep1">
+
+```
+// loop invariant
+firstn (i + len - p) (merge l1 l2) = 
+  merge (firstn i l1) l2
+
+SEP (data_at sh (tarray tuint (Zlength il)) 
+    firstn (i + len - p) (merge l1 l2) t )
+```
+
+</div>
+
+<div class="sep2">
+
+```
+// after loop
+j = len
+SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t )
+```
+
+</div>
+
+</div>
+<div class="sep3" >  
+Nothing happens
+</div>
+
+
+<div class="sep4">
+
+```
+// after memcpy
+SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
+```
+
+</div>
+
+<style>
+.half{
+  width: 40%
+}
+.sep1{
+  position: absolute;
+  top: 60px;
+  right:90px;
+  border: double;
+  width : 470px;
+}
+.sep2{
+  position: absolute;
+  bottom: 270px;
+  right: 90px;
+  border: double;
+  width : 470px;
+}
+.sep3{
+  position: absolute;
+  bottom: 185px;
+  right: 90px;
+  border: double;
+  width : 470px;
+}
+.sep4{
+  position: absolute;
+  bottom: 60px;
   right: 90px;
   border: double;
   width : 470px;
