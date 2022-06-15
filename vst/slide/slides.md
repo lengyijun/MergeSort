@@ -518,3 +518,7 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 ---
 
 
+# Q&A
+
+1. 相同的逻辑，证明的难度会不同？
+
