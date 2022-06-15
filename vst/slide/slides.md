@@ -520,7 +520,7 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 <div class="half">
 
 ```c
-void my_mergesort(unsigned *arr, int len) {
+void c-mergesort(unsigned *arr, int len) {
   if (len == 1) { return; }
 
   int p = len/2;
@@ -551,7 +551,7 @@ void my_mergesort(unsigned *arr, int len) {
 <div class="coq">
 
 ```
-Program Fixpoint mergesort (x : list Z) {measure (length x)}: list Z :=
+Program Fixpoint coq-mergesort (x : list Z) {measure (length x)}: list Z :=
   match x with
   | nil => nil
   | x :: nil => x :: nil
@@ -568,9 +568,9 @@ Program Fixpoint mergesort (x : list Z) {measure (length x)}: list Z :=
 </div>
 
 <div class="explan">
-如果arr里的数组是il，<br>
-那么my-mergesort 返回时，arr里的数组是mergesort il <br>
-所以my-mergesort 的返回结果满足Permutation 和 Sorted
+如果arr里的数组是 il，<br>
+那么 c-mergesort 返回时，arr里的数组是 coq-mergesort il <br>
+所以 c-mergesort 的返回结果满足 Permutation 和 Sorted
 </div>
 
 <style>
@@ -580,7 +580,7 @@ Program Fixpoint mergesort (x : list Z) {measure (length x)}: list Z :=
   left: 10px;
 }
 .coq{
-  width: 540px;
+  width: 560px;
   position: absolute;
   top: 40px;
   right: 10px
