@@ -133,7 +133,7 @@ SEP (
 
 <arrow v-click="0" x1="400" y1="100" x2="230" y2="170" color="#564" width="3" arrowSize="5" />
 
-<arrow v-click="0" x1="350" y1="330" x2="230" y2="270" color="#564" width="3" arrowSize="5" />
+<arrow v-click="0" x1="400" y1="330" x2="230" y2="270" color="#564" width="3" arrowSize="5" />
 
 <div class="post">
 
@@ -156,14 +156,14 @@ SEP (
 .pre{
   position: absolute;
   top: 20px;
-  right:5px;
+  right:100px;
   border: double;
   width : 470px;
 }
 .post{
   position: absolute;
   bottom: 170px;
-  right:5px;
+  right:100px;
   border: double;
   width : 470px;
 }
