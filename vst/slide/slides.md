@@ -58,7 +58,6 @@ void my_mergesort(unsigned *arr, int len) {
       j++;
     }
   }
-
 ```
 
 </div>
@@ -172,39 +171,89 @@ SEP (
 
 <div class="half" >
 
-```c
-if (len == 1) { return; }
+```c {all|8-9}
+void my_mergesort(unsigned *arr, int len) {
+  if (len == 1) { return; }
 
-int p = len/2;
-unsigned *arr1 = arr;
-unsigned *arr2 = arr+p;
+  int p = len/2;
+  unsigned *arr1 = arr;
+  unsigned *arr2 = arr+p;
 
-my_mergesort(arr1, p);
-my_mergesort(arr2, len-p);
+  my_mergesort(arr1, p);
+  my_mergesort(arr2, len-p);
+
+  unsigned *t = malloc(sizeof(unsigned)*len);
+  if(!t){exit(1);}
+
+  int i=0; int j=p; int k=0;
+
+  for(; i< p && j < len ; k++){
+    if(arr[i]<=arr[j]){
+      t[k]=arr[i];
+      i++;
+    }else{
+      t[k]=arr[j];
+      j++;
+    }
+  }
+```
+
+</div>
+
+<div class="sep1">
+
+```
+SEP ( data_at sh (tarray tuint (Zlength il)) il arr )
+```
+
+</div>
+
+<div class="sep2">
+
+```
+SEP ( data_at sh (tarray tuint (Zlength il)) (l1 ++ l2) arr)
+// l1 = mergesort (firstn p il)
+// l2 = mergesort (skipn p il)
+```
+
+</div>
+
+<div class="sep3">
+
+```
+firstn (i + j - (Zlength il /2)) (merge l1 l2) = 
+  merge (firstn i l1) (firstn (j - p) l2)
+
+SEP ( data_at sh (tarray tuint (Zlength il)) 
+    firstn (i + j - p) (merge l1 l2)
+    t )
 ```
 
 </div>
 
 <style>
 .half{
-  position: absolute;
-  top: 180px;
-  width: 35%
+  width: 40%
 }
-.pre{
+.sep1{
   position: absolute;
-  top: 20px;
-  right:5px;
+  top: 120px;
+  right:150px;
   border: double;
 }
-.post{
+.sep2{
   position: absolute;
-  bottom: 170px;
-  right:5px;
+  bottom: 250px;
+  right: 100px;
+  border: double;
+}
+.sep3{
+  position: absolute;
+  bottom: 20px;
+  right: 180px;
   border: double;
 }
 </style>
-
 
 ---
 
