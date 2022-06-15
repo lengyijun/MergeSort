@@ -124,8 +124,9 @@ PROP ( writable_share sh;
        Forall (fun x => 0 <= x <= Int.max_unsigned) il)
 PARAMS (arr; Vint (Int.repr (Zlength il)) )
 GLOBALS(gv)
-SEP (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr il)) arr;
-      mem_mgr gv)
+SEP (
+   data_at sh (tarray tuint (Zlength il)) il arr;
+   mem_mgr gv)
 ```
 
 </div>
@@ -140,7 +141,7 @@ SEP (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr il)) arr;
 ```
 PROP ( ) RETURN ()
 SEP (
-  data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr (mergesort il))) arr;
+  data_at sh (tarray tuint (Zlength il)) (mergesort il) arr;
   mem_mgr gv).
 ```
 
