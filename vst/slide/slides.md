@@ -158,12 +158,14 @@ SEP (
   top: 20px;
   right:5px;
   border: double;
+  width : 470px;
 }
 .post{
   position: absolute;
   bottom: 170px;
   right:5px;
   border: double;
+  width : 470px;
 }
 </style>
 
