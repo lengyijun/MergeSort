@@ -173,7 +173,7 @@ SEP (
 
 <div class="half" >
 
-```c {all|8-9}
+```c {all|8-9|16-30}
 void my_mergesort(unsigned *arr, int len) {
   if (len == 1) { return; }
 
@@ -204,11 +204,11 @@ void my_mergesort(unsigned *arr, int len) {
 
 ```
 
-<arrow v-click="0" x1="430" y1="135" x2="230" y2="170" color="#564" width="2" arrowSize="5" />
+<arrow v-click="1" x1="430" y1="135" x2="230" y2="170" color="#564" width="2" arrowSize="5" />
 
 </div>
 
-<div class="sep1">
+<div v-click="1" class="sep1">
 
 ```
 SEP (data_at sh (tarray tuint (Zlength il)) il arr )
@@ -216,9 +216,9 @@ SEP (data_at sh (tarray tuint (Zlength il)) il arr )
 
 </div>
 
-<arrow v-click="0" x1="430" y1="255" x2="230" y2="220" color="#564" width="2" arrowSize="5" />
+<arrow v-click="1" x1="430" y1="255" x2="230" y2="220" color="#564" width="2" arrowSize="5" />
 
-<div class="sep2">
+<div v-click="1" class="sep2" >
 
 ```
 SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
@@ -228,9 +228,9 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 
 </div>
 
-<arrow v-click="0" x1="430" y1="400" x2="230" y2="400" color="#564" width="2" arrowSize="5" />
+<arrow v-click="2" x1="430" y1="400" x2="230" y2="400" color="#564" width="2" arrowSize="5" />
 
-<div class="sep3">
+<div v-click="2" class="sep3">
 
 ```
 // loop invariant
@@ -244,9 +244,9 @@ SEP (data_at sh (tarray tuint (Zlength il))
 
 </div>
 
-<arrow v-click="0" x1="430" y1="490" x2="230" y2="490" color="#564" width="2" arrowSize="5" />
+<arrow v-click="2" x1="430" y1="490" x2="230" y2="490" color="#564" width="2" arrowSize="5" />
 
-<div class="sep4">
+<div v-click="2" class="sep4">
 
 ```
 // after loop
