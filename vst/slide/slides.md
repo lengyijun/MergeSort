@@ -434,6 +434,9 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
   free(t);
 }
 ```
+</div>
+
+<arrow v-click="1" x1="420" y1="120" x2="230" y2="120" color="#564" width="2" arrowSize="5" />
 
 <div v-click="1" class="sep1">
 
@@ -448,6 +451,8 @@ SEP (data_at sh (tarray tuint (Zlength il))
 
 </div>
 
+<arrow v-click="2" x1="430" y1="220" x2="230" y2="220" color="#564" width="2" arrowSize="5" />
+
 <div v-click="2" class="sep2">
 
 ```
@@ -458,11 +463,14 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t )
 
 </div>
 
-</div>
+<arrow v-click="3" x1="420" y1="355" x2="230" y2="355" color="#564" width="2" arrowSize="5" />
+
 <div v-click="3" class="sep3" >  
 Nothing happens
 </div>
 
+
+<arrow v-click="4" x1="430" y1="450" x2="230" y2="450" color="#564" width="2" arrowSize="5" />
 
 <div v-click="4" class="sep4">
 
