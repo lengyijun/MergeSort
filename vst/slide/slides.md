@@ -196,7 +196,13 @@ void my_mergesort(unsigned *arr, int len) {
       j++;
     }
   }
+ ... 
+
+
+
 ```
+
+<arrow v-click="0" x1="430" y1="135" x2="230" y2="170" color="#564" width="2" arrowSize="5" />
 
 </div>
 
@@ -208,15 +214,19 @@ SEP (data_at sh (tarray tuint (Zlength il)) il arr )
 
 </div>
 
+<arrow v-click="0" x1="430" y1="255" x2="230" y2="220" color="#564" width="2" arrowSize="5" />
+
 <div class="sep2">
 
 ```
-SEP (data_at sh (tarray tuint (Zlength il)) (l1 ++ l2) arr)
+SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 // l1 = mergesort (firstn p il)
 // l2 = mergesort (skipn p il)
 ```
 
 </div>
+
+<arrow v-click="0" x1="430" y1="400" x2="230" y2="400" color="#564" width="2" arrowSize="5" />
 
 <div class="sep3">
 
@@ -231,6 +241,8 @@ SEP (data_at sh (tarray tuint (Zlength il))
 ```
 
 </div>
+
+<arrow v-click="0" x1="430" y1="490" x2="230" y2="490" color="#564" width="2" arrowSize="5" />
 
 <div class="sep4">
 
@@ -248,30 +260,30 @@ i = p \/ j = len
 .sep1{
   position: absolute;
   top: 120px;
-  right:100px;
+  right:90px;
   border: double;
-  width : 450px;
+  width : 470px;
 }
 .sep2{
   position: absolute;
   bottom: 250px;
-  right: 100px;
+  right: 90px;
   border: double;
-  width : 450px;
+  width : 470px;
 }
 .sep3{
   position: absolute;
   bottom: 80px;
-  right: 100px;
+  right: 90px;
   border: double;
-  width : 450px;
+  width : 470px;
 }
 .sep4{
   position: absolute;
   bottom: 15px;
-  right: 100px;
+  right: 90px;
   border: double;
-  width : 450px;
+  width : 470px;
 }
 </style>
 
