@@ -323,9 +323,14 @@ i = p \/ j = len
 ```
 
 </div>
+
+<arrow v-click="1" x1="420" y1="120" x2="230" y2="120" color="#564" width="2" arrowSize="5" />
+
 <div class="sep1" >  
 Nothing happens
 </div>
+
+<arrow v-click="1" x1="430" y1="220" x2="230" y2="190" color="#564" width="2" arrowSize="5" />
 
 <div class="sep2">
 
@@ -335,10 +340,12 @@ firstn j (merge l1 l2) =
   merge l1 (firstn (j - p) l2)
 
 SEP (data_at sh (tarray tuint (Zlength il)) 
-    (firstn j (merge l1 l2)) t )
+    (firstn j (merge l1 l2)) t)
 ```
 
 </div>
+
+<arrow v-click="2" x1="430" y1="340" x2="230" y2="340" color="#564" width="2" arrowSize="5" />
 
 <div class="sep3">
 
@@ -349,6 +356,8 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t )
 ```
 
 </div>
+
+<arrow v-click="2" x1="430" y1="450" x2="230" y2="450" color="#564" width="2" arrowSize="5" />
 
 <div class="sep4">
 
@@ -365,14 +374,14 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 }
 .sep1{
   position: absolute;
-  top: 120px;
+  top: 110px;
   right:90px;
   border: double;
   width : 470px;
 }
 .sep2{
   position: absolute;
-  bottom: 250px;
+  bottom: 260px;
   right: 90px;
   border: double;
   width : 470px;
