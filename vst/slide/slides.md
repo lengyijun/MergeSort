@@ -599,3 +599,5 @@ Program Fixpoint coq-mergesort (x : list Z) {measure (length x)}: list Z :=
 
 1. 相同的逻辑，证明的难度会不同？
 
+比如使用指针比较越界？
+
