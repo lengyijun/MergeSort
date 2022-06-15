@@ -122,9 +122,9 @@ void my_mergesort(unsigned *arr, int len) {
 PROP ( writable_share sh;
        0 < Zlength il <= Int.max_signed;
        Forall (fun x => 0 <= x <= Int.max_unsigned) il)
-PARAMS (p; Vint (Int.repr (Zlength il)) )
+PARAMS (arr; Vint (Int.repr (Zlength il)) )
 GLOBALS(gv)
-SEP (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr il)) p;
+SEP (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr il)) arr;
       mem_mgr gv)
 ```
 
@@ -133,18 +133,19 @@ SEP (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr il)) p;
 
 <arrow v-click="0" x1="400" y1="100" x2="230" y2="170" color="#564" width="3" arrowSize="5" />
 
+<arrow v-click="0" x1="350" y1="330" x2="230" y2="270" color="#564" width="3" arrowSize="5" />
+
 <div class="post">
 
 ```
 PROP ( ) RETURN ()
 SEP (
-  data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr (mergesort il))) p;
+  data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr (mergesort il))) arr;
   mem_mgr gv).
 ```
 
 </div>
 
-<arrow v-click="0" x1="350" y1="330" x2="230" y2="270" color="#564" width="3" arrowSize="5" />
 
 <style>
 .half{
@@ -165,5 +166,19 @@ SEP (
   border: double;
 }
 </style>
+
+---
+
+```
+if (len == 1) { return; }
+
+int p = len/2;
+unsigned *arr1 = arr;
+unsigned *arr2 = arr+p;
+
+my_mergesort(arr1, p);
+```
+
+---
 
 
