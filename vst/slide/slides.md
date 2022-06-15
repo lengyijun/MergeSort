@@ -33,7 +33,7 @@ The last comment block of each slide will be treated as slide notes. It will be 
 <div grid="~ cols-2 gap-4">
 <div>
 
-```
+```c
 void my_mergesort(unsigned *arr, int len) {
   if (len == 1) { return; }
 
@@ -64,7 +64,7 @@ void my_mergesort(unsigned *arr, int len) {
 </div>
 <div>
 
-```
+```c
   for(;i<p ; i++, k++){
     t[k]=arr[i];
   }
@@ -106,7 +106,7 @@ Definition my_mergesort_spec : ident * funspec :=
 
 <div class="half">
 
-```
+```c
 void my_mergesort(unsigned *arr, int len) {
   ...
 }
@@ -170,7 +170,9 @@ SEP (
 
 ---
 
-```
+<div class="half" >
+
+```c
 if (len == 1) { return; }
 
 int p = len/2;
@@ -178,7 +180,31 @@ unsigned *arr1 = arr;
 unsigned *arr2 = arr+p;
 
 my_mergesort(arr1, p);
+my_mergesort(arr2, len-p);
 ```
+
+</div>
+
+<style>
+.half{
+  position: absolute;
+  top: 180px;
+  width: 35%
+}
+.pre{
+  position: absolute;
+  top: 20px;
+  right:5px;
+  border: double;
+}
+.post{
+  position: absolute;
+  bottom: 170px;
+  right:5px;
+  border: double;
+}
+</style>
+
 
 ---
 
