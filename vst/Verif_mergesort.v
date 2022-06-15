@@ -1219,11 +1219,13 @@ Proof.
     apply div2_le. lia. }
 
   assert (H80 : (Z.max (Z.div2 (Zlength il)) 0) = Z.div2 (Zlength il) ).
+  {
   apply Zmax_left.
   assert (H81 : 0 <= Z.div2 (Zlength il)). {
     apply Z.div2_nonneg. lia. }
   lia.
-
+  }
+  
   rewrite <- (firstn_skipn (Z.to_nat (Z.div2 (Zlength il))) il ) at 5.
   rewrite map_app.
   rewrite map_app.
