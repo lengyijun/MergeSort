@@ -517,6 +517,83 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 
 ---
 
+<div class="half">
+
+```c
+void my_mergesort(unsigned *arr, int len) {
+  if (len == 1) { return; }
+
+  int p = len/2;
+  unsigned *arr1 = arr;
+  unsigned *arr2 = arr+p;
+
+  my_mergesort(arr1, p);
+  my_mergesort(arr2, len-p);
+
+  unsigned *t = malloc(sizeof(unsigned)*len);
+  if(!t){exit(1);}
+
+  int i=0; int j=p; int k=0;
+
+  for(; i< p && j < len ; k++){
+    if(arr[i]<=arr[j]){
+      t[k]=arr[i];
+      i++;
+    }else{
+      t[k]=arr[j];
+      j++;
+    }
+  }
+```
+
+</div>
+
+<div class="coq">
+
+```
+Program Fixpoint mergesort (x : list Z) {measure (length x)}: list Z :=
+  match x with
+  | nil => nil
+  | x :: nil => x :: nil
+  | x :: y :: nil => if x <=? y
+    then (x :: y :: nil)
+    else (y :: x :: nil)
+  | x :: y :: z :: rest =>
+    let a := (x :: y :: z :: rest) in
+    let p := (Nat.div2 (length a)) in
+    merge (mergesort (firstn p a)) (mergesort (skipn p a))
+  end.
+```
+
+</div>
+
+<div class="explan">
+如果arr里的数组是il，<br>
+那么my-mergesort 返回时，arr里的数组是mergesort il <br>
+所以my-mergesort 的返回结果满足Permutation 和 Sorted
+</div>
+
+<style>
+.half{
+  width: 35%;
+  position: absolute;
+  left: 10px;
+}
+.coq{
+  width: 540px;
+  position: absolute;
+  top: 40px;
+  right: 10px
+}
+.explan{
+  width: 540px;
+  position: absolute;
+  bottom: 40px;
+  right: 10px
+}
+</style>
+
+---
 
 # Q&A
 
