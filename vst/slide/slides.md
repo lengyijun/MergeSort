@@ -221,12 +221,22 @@ SEP ( data_at sh (tarray tuint (Zlength il)) (l1 ++ l2) arr)
 <div class="sep3">
 
 ```
+// loop invariant
 firstn (i + j - (Zlength il /2)) (merge l1 l2) = 
   merge (firstn i l1) (firstn (j - p) l2)
 
 SEP ( data_at sh (tarray tuint (Zlength il)) 
     firstn (i + j - p) (merge l1 l2)
     t )
+```
+
+</div>
+
+<div class="sep4">
+
+```
+// after loop
+i = p \/ j = len
 ```
 
 </div>
@@ -249,8 +259,14 @@ SEP ( data_at sh (tarray tuint (Zlength il))
 }
 .sep3{
   position: absolute;
-  bottom: 20px;
+  bottom: 80px;
   right: 180px;
+  border: double;
+}
+.sep4{
+  position: absolute;
+  bottom: 15px;
+  right: 418px;
   border: double;
 }
 </style>
