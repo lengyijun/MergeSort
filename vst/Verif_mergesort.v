@@ -1125,7 +1125,7 @@ Definition my_mergesort_spec : ident * funspec :=
           mem_mgr gv)
  POST [ tvoid ] 
     PROP ( ) RETURN ()
-    SEP (data_at sh (tarray tuint (Zlength (mergesort il))) (map Vint (map Int.repr (mergesort il))) p;
+    SEP (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr (mergesort il))) p;
          mem_mgr gv).
 
 Definition memcpy_spec :=
@@ -1187,7 +1187,6 @@ Proof.
     destruct il.
     rewrite Zlength_nil in H1. inv H1. 
     destruct il. {
-      rewrite mergesort_Zlength.
       unfold mergesort.
       simpl.
       entailer!.
@@ -1356,7 +1355,6 @@ Proof.
   forward.
   forward.
 
-  do 2 rewrite mergesort_Zlength.
   rewrite Zlength_solver.Zlength_firstn_to_nat. 
   rewrite Zmax_left; try rep_lia.
   rewrite Z.min_l; try rep_lia.
@@ -2709,7 +2707,6 @@ rewrite H77; entailer!.
 entailer!.
 
 apply derives_refl'.
-rewrite mergesort_Zlength.
 rewrite mergesort_merge; auto.
 
 (* another branch *)
@@ -2960,7 +2957,6 @@ destruct ( eq_dec t nullval ); try contradiction; try entailer!.
 repeat rewrite mergesort_Zlength; entailer!.
 
 entailer!.
-rewrite mergesort_Zlength; entailer!.
 
 repeat rewrite Zlength_map; rewrite Zlength_firstn; rep_lia.
 repeat rewrite Zlength_map; rewrite Zlength_skipn; rep_lia.
