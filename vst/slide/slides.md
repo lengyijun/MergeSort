@@ -203,7 +203,7 @@ void my_mergesort(unsigned *arr, int len) {
 <div class="sep1">
 
 ```
-SEP ( data_at sh (tarray tuint (Zlength il)) il arr )
+SEP (data_at sh (tarray tuint (Zlength il)) il arr )
 ```
 
 </div>
@@ -211,7 +211,7 @@ SEP ( data_at sh (tarray tuint (Zlength il)) il arr )
 <div class="sep2">
 
 ```
-SEP ( data_at sh (tarray tuint (Zlength il)) (l1 ++ l2) arr)
+SEP (data_at sh (tarray tuint (Zlength il)) (l1 ++ l2) arr)
 // l1 = mergesort (firstn p il)
 // l2 = mergesort (skipn p il)
 ```
@@ -225,7 +225,7 @@ SEP ( data_at sh (tarray tuint (Zlength il)) (l1 ++ l2) arr)
 firstn (i + j - (Zlength il /2)) (merge l1 l2) = 
   merge (firstn i l1) (firstn (j - p) l2)
 
-SEP ( data_at sh (tarray tuint (Zlength il)) 
+SEP (data_at sh (tarray tuint (Zlength il)) 
     firstn (i + j - p) (merge l1 l2)
     t )
 ```
@@ -257,6 +257,7 @@ i = p \/ j = len
   bottom: 250px;
   right: 100px;
   border: double;
+  width : 450px;
 }
 .sep3{
   position: absolute;
