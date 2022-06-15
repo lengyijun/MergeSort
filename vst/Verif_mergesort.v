@@ -1237,7 +1237,7 @@ Proof.
   forward_call (p , sh , firstn (Z.to_nat (Z.div2 (Zlength il))) il, gv).
 
   { 
-    entailer!; simpl.
+    entailer!; simpl; repeat f_equal.
     rewrite Zlength_solver.Zlength_firstn_to_nat.
     rewrite H80.
     rewrite H71.
