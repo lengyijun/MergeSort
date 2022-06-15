@@ -248,8 +248,9 @@ i = p \/ j = len
 .sep1{
   position: absolute;
   top: 120px;
-  right:150px;
+  right:100px;
   border: double;
+  width : 450px;
 }
 .sep2{
   position: absolute;
@@ -260,14 +261,16 @@ i = p \/ j = len
 .sep3{
   position: absolute;
   bottom: 80px;
-  right: 180px;
+  right: 100px;
   border: double;
+  width : 450px;
 }
 .sep4{
   position: absolute;
   bottom: 15px;
-  right: 418px;
+  right: 100px;
   border: double;
+  width : 450px;
 }
 </style>
 
