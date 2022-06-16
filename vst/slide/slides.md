@@ -601,3 +601,9 @@ Program Fixpoint coq-mergesort (x : list Z) {measure (length x)}: list Z :=
 
 比如使用指针比较越界？
 
+---
+
+# Conclusion
+
+1. 所有关于merge的lemma，都用总长度做induction
+
