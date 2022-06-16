@@ -353,7 +353,7 @@ SEP (data_at sh (tarray tuint (Zlength il))
 ```
 // after loop
 j = len
-SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t )
+SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t)
 ```
 
 </div>
@@ -459,7 +459,7 @@ SEP (data_at sh (tarray tuint (Zlength il))
 ```
 // after loop
 j = len
-SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t )
+SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t)
 ```
 
 </div>
