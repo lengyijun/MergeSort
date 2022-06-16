@@ -569,7 +569,7 @@ Program Fixpoint coq-mergesort (x : list Z) {measure (length x)}: list Z :=
 </div>
 
 <div class="explan">
-如果arr里的数组是 il，<br>
+如果 arr 地址的数组是 il，<br>
 那么 c-mergesort 返回时，arr里的数组是 coq-mergesort il <br>
 所以 c-mergesort 的返回结果满足 Permutation 和 Sorted
 </div>
