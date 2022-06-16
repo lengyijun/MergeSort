@@ -221,7 +221,7 @@ SEP (data_at sh (tarray tuint (Zlength il)) il arr )
 <div v-click="1" class="sep2" >
 
 ```
-SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
+SEP (data_at sh (tarray tuint (Zlength il)) (l1 ++ l2) arr)
 // l1 = mergesort (firstn p il)
 // l2 = mergesort (skipn p il)
 ```
