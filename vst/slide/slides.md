@@ -93,7 +93,7 @@ Definition my_mergesort_spec : ident * funspec :=
     PARAMS (p; Vint (Int.repr (Zlength il)) )
     GLOBALS(gv)
     SEP (data_at sh (tarray tuint (Zlength il)) (map Vint (map Int.repr il)) p;
-          mem_mgr gv)
+         mem_mgr gv)
 
  POST [ tvoid ]
     PROP ( ) RETURN ()
@@ -239,8 +239,7 @@ firstn (i + j - p) (merge l1 l2) =
   merge (firstn i l1) (firstn (j - p) l2)
 
 SEP (data_at sh (tarray tuint (Zlength il)) 
-    firstn (i + j - p) (merge l1 l2)
-    t )
+      firstn (i + j - p) (merge l1 l2) t)
 ```
 
 </div>
@@ -341,7 +340,7 @@ firstn j (merge l1 l2) =
   merge l1 (firstn (j - p) l2)
 
 SEP (data_at sh (tarray tuint (Zlength il)) 
-    (firstn j (merge l1 l2)) t)
+      (firstn j (merge l1 l2)) t)
 ```
 
 </div>
@@ -447,7 +446,7 @@ firstn (i + len - p) (merge l1 l2) =
   merge (firstn i l1) l2
 
 SEP (data_at sh (tarray tuint (Zlength il)) 
-    firstn (i + len - p) (merge l1 l2) t )
+      firstn (i + len - p) (merge l1 l2) t )
 ```
 
 </div>
