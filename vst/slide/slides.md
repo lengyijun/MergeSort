@@ -549,7 +549,7 @@ merge (firstn i l1) (firstn j l2) + l1[i]                            merge (firs
 // Lemma1
 merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge l1 l2)
 ----------------------------------------------------------------------------------
-merge l1 l2 = merge (firstn i l1) (firstn j l2) ++ merge (skipn i l1) (skipn j l2)
+merge (firstn i l1) (firstn j l2) ++ merge (skipn i l1) (skipn j l2) = merge l1 l2 
 ```
 
 </div>
