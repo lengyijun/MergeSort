@@ -1112,8 +1112,8 @@ assert (G := Nat.le_div2 n0); rep_lia.
 Qed.
 
 
-Definition my_mergesort_spec : ident * funspec :=
- DECLARE _my_mergesort
+Definition c_mergesort_spec : ident * funspec :=
+ DECLARE _c_mergesort
  WITH p: val,  sh : share, il: list Z, gv: globals
  PRE [ tptr tuint , tint ] 
     PROP ( writable_share sh;
@@ -1143,7 +1143,7 @@ Definition memcpy_spec :=
 
 Definition Gprog : funspecs :=
   ltac:(with_library prog [
-             my_mergesort_spec ; memcpy_spec
+             c_mergesort_spec ; memcpy_spec
  ]). 
 
 Lemma div2_le : forall z, z >= 0 -> Z.div2 z <= z .
@@ -1178,7 +1178,7 @@ Proof.
 Qed.
 
 
-Lemma body_my_mergesort: semax_body Vprog Gprog f_my_mergesort my_mergesort_spec.
+Lemma body_c_mergesort: semax_body Vprog Gprog f_c_mergesort c_mergesort_spec.
 Proof.
   start_function.
   forward_if (Zlength il > 1).

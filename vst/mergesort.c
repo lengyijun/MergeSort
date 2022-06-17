@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void my_mergesort(unsigned *arr, int len) {
+void c_mergesort(unsigned *arr, int len) {
   //printf("%p %d\n", arr, len);
   if (len == 1) { return; }
 
@@ -10,8 +10,8 @@ void my_mergesort(unsigned *arr, int len) {
   unsigned *arr1 = arr;
   unsigned *arr2 = arr+p;
 
-  my_mergesort(arr1, p);
-  my_mergesort(arr2, len-p);
+  c_mergesort(arr1, p);
+  c_mergesort(arr2, len-p);
 
   unsigned *t = malloc(sizeof(unsigned)*len);
   if(!t){exit(1);}
@@ -46,7 +46,7 @@ void my_mergesort(unsigned *arr, int len) {
 int main() {
   unsigned a[] = {5,9,1,3,4,6,6,3,2};
   int len = sizeof(a)/sizeof(unsigned);
-  my_mergesort(a, sizeof(a)/sizeof(unsigned));
+  c_mergesort(a, sizeof(a)/sizeof(unsigned));
   for (int i = 0; i < len; i++) {
     printf("%d ", a[i]);
   }

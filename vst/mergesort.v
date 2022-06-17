@@ -81,6 +81,7 @@ Definition _a : ident := $"a".
 Definition _arr : ident := $"arr".
 Definition _arr1 : ident := $"arr1".
 Definition _arr2 : ident := $"arr2".
+Definition _c_mergesort : ident := $"c_mergesort".
 Definition _exit : ident := $"exit".
 Definition _free : ident := $"free".
 Definition _i : ident := $"i".
@@ -90,7 +91,6 @@ Definition _len : ident := $"len".
 Definition _main : ident := $"main".
 Definition _malloc : ident := $"malloc".
 Definition _memcpy : ident := $"memcpy".
-Definition _my_mergesort : ident := $"my_mergesort".
 Definition _p : ident := $"p".
 Definition _printf : ident := $"printf".
 Definition _t : ident := $"t".
@@ -118,7 +118,7 @@ Definition v___stringlit_1 := {|
   gvar_volatile := false
 |}.
 
-Definition f_my_mergesort := {|
+Definition f_c_mergesort := {|
   fn_return := tvoid;
   fn_callconv := cc_default;
   fn_params := ((_arr, (tptr tuint)) :: (_len, tint) :: nil);
@@ -146,15 +146,15 @@ Definition f_my_mergesort := {|
             (tptr tuint)))
         (Ssequence
           (Scall None
-            (Evar _my_mergesort (Tfunction
-                                  (Tcons (tptr tuint) (Tcons tint Tnil))
-                                  tvoid cc_default))
+            (Evar _c_mergesort (Tfunction
+                                 (Tcons (tptr tuint) (Tcons tint Tnil)) tvoid
+                                 cc_default))
             ((Etempvar _arr1 (tptr tuint)) :: (Etempvar _p tint) :: nil))
           (Ssequence
             (Scall None
-              (Evar _my_mergesort (Tfunction
-                                    (Tcons (tptr tuint) (Tcons tint Tnil))
-                                    tvoid cc_default))
+              (Evar _c_mergesort (Tfunction
+                                   (Tcons (tptr tuint) (Tcons tint Tnil))
+                                   tvoid cc_default))
               ((Etempvar _arr2 (tptr tuint)) ::
                (Ebinop Osub (Etempvar _len tint) (Etempvar _p tint) tint) ::
                nil))
@@ -378,10 +378,10 @@ Definition f_main := {|
                             (Esizeof tuint tulong) tulong) tint))
                       (Ssequence
                         (Scall None
-                          (Evar _my_mergesort (Tfunction
-                                                (Tcons (tptr tuint)
-                                                  (Tcons tint Tnil)) tvoid
-                                                cc_default))
+                          (Evar _c_mergesort (Tfunction
+                                               (Tcons (tptr tuint)
+                                                 (Tcons tint Tnil)) tvoid
+                                               cc_default))
                           ((Evar _a (tarray tuint 9)) ::
                            (Ebinop Odiv (Esizeof (tarray tuint 9) tulong)
                              (Esizeof tuint tulong) tulong) :: nil))
@@ -710,11 +710,11 @@ Definition global_definitions : list (ident * globdef fundef type) :=
                      AST.Tlong cc_default))
      (Tcons (tptr tvoid) (Tcons (tptr tvoid) (Tcons tulong Tnil)))
      (tptr tvoid) cc_default)) ::
- (_my_mergesort, Gfun(Internal f_my_mergesort)) ::
+ (_c_mergesort, Gfun(Internal f_c_mergesort)) ::
  (_main, Gfun(Internal f_main)) :: nil).
 
 Definition public_idents : list ident :=
-(_main :: _my_mergesort :: _memcpy :: _exit :: _free :: _malloc :: _printf ::
+(_main :: _c_mergesort :: _memcpy :: _exit :: _free :: _malloc :: _printf ::
  ___builtin_debug :: ___builtin_write32_reversed ::
  ___builtin_write16_reversed :: ___builtin_read32_reversed ::
  ___builtin_read16_reversed :: ___builtin_fnmsub :: ___builtin_fnmadd ::

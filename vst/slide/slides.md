@@ -31,15 +31,15 @@ drawings:
 <div>
 
 ```c
-void my_mergesort(unsigned *arr, int len) {
+void c_mergesort(unsigned *arr, int len) {
   if (len == 1) { return; }
 
   int p = len/2;
   unsigned *arr1 = arr;
   unsigned *arr2 = arr+p;
 
-  my_mergesort(arr1, p);
-  my_mergesort(arr2, len-p);
+  c_mergesort(arr1, p);
+  c_mergesort(arr2, len-p);
 
   unsigned *t = malloc(sizeof(unsigned)*len);
   if(!t){exit(1);}
@@ -89,8 +89,8 @@ void my_mergesort(unsigned *arr, int len) {
 ---
 
 ```
-Definition my_mergesort_spec : ident * funspec :=
- DECLARE _my_mergesort
+Definition c_mergesort_spec : ident * funspec :=
+ DECLARE _c_mergesort
  WITH p: val,  sh : share, il: list Z, gv: globals
  PRE [ tptr tuint , tint ]
     PROP ( writable_share sh;
@@ -112,7 +112,7 @@ Definition my_mergesort_spec : ident * funspec :=
 <div class="half">
 
 ```c
-void my_mergesort(unsigned *arr, int len) {
+void c_mergesort(unsigned *arr, int len) {
   ...
 }
 ```
@@ -180,15 +180,15 @@ SEP (
 <div class="half" >
 
 ```c {all|8-9|16-30}
-void my_mergesort(unsigned *arr, int len) {
+void c_mergesort(unsigned *arr, int len) {
   if (len == 1) { return; }
 
   int p = len/2;
   unsigned *arr1 = arr;
   unsigned *arr2 = arr+p;
 
-  my_mergesort(arr1, p);
-  my_mergesort(arr2, len-p);
+  c_mergesort(arr1, p);
+  c_mergesort(arr2, len-p);
 
   unsigned *t = malloc(sizeof(unsigned)*len);
   if(!t){exit(1);}
