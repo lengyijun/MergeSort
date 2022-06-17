@@ -123,7 +123,7 @@ void c_mergesort(unsigned *arr, int len) {
 
 <div class="pre">
 
-```
+```c {all|7}
 PROP ( writable_share sh;
        0 < Zlength il <= Int.max_signed;
        Forall (fun x => 0 <= x <= Int.max_unsigned) il)
@@ -137,13 +137,9 @@ SEP (
 </div>
 
 
-<arrow v-click="0" x1="400" y1="100" x2="230" y2="170" color="#564" width="3" arrowSize="5" />
-
-<arrow v-click="0" x1="400" y1="330" x2="230" y2="270" color="#564" width="3" arrowSize="5" />
-
 <div class="post">
 
-```
+```c {all|3}
 PROP ( ) RETURN ()
 SEP (
   data_at sh (tarray tuint (Zlength il)) (mergesort il) arr;
@@ -156,7 +152,7 @@ SEP (
 <style>
 .half{
   position: absolute;
-  top: 180px;
+  top: 190px;
   width: 35%
 }
 .pre{
