@@ -438,7 +438,7 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 ```
 </div>
 
-<arrow v-click="1" x1="420" y1="120" x2="230" y2="120" color="#564" width="2" arrowSize="5" />
+<arrow v-click="1" x1="420" y1="115" x2="200" y2="115" color="#564" width="2" arrowSize="5" />
 
 <div v-click="1" class="sep1">
 
@@ -453,7 +453,7 @@ SEP (data_at sh (tarray tuint (Zlength il))
 
 </div>
 
-<arrow v-click="2" x1="430" y1="220" x2="230" y2="220" color="#564" width="2" arrowSize="5" />
+<arrow v-click="2" x1="430" y1="220" x2="90" y2="140" color="#564" width="2" arrowSize="5" />
 
 <div v-click="2" class="sep2">
 
