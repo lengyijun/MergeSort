@@ -604,7 +604,14 @@ l1[i] <= l2[j]
 merge (firstn (i+1) l1) (firstn j l2) = firstn (i + 1 + j) (merge l1 l2)
 ```
 
+---
+
+## loop invariant
+
 ```
+merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge l1 l2)
+l1[i] <= l2[j]
+------------------------------------------------------------------------------------------------------------
 merge (firstn (i+1) l1) (firstn j l2)       =    firstn (i + 1 + j) (merge l1 l2)
                  ||                                                      ||
 merge (firstn i l1) (firstn j l2) + l1[i]                            merge (firstn i l1) (firstn j l2) ++
@@ -612,19 +619,25 @@ merge (firstn i l1) (firstn j l2) + l1[i]                            merge (firs
            Lemma2 + Lemma1                                                       Lemma1
 ```
 
+<div v-click="1">
+
 ```
 // Lemma1
 merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge l1 l2)
--------------------------------------------------------------------------
+----------------------------------------------------------------------------------
 merge l1 l2 = merge (firstn i l1) (firstn j l2) ++ merge (skipn i l1) (skipn j l2)
 ```
+
+</div>
+<div v-click="2">
 
 ```
 // Lemma2
 merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge l1 l2)
--------------------------------------------------------------------------
-merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge (firstn p l1) (firstn q l2))
+-------------------------------------------------------------------------------------------
+merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge (firstn (i+1) l1) (firstn j l2))
 ```
+</div>
 
 ---
 
