@@ -315,8 +315,10 @@ i = p \/ j = len
 
 
 
+
+
+
   memcpy(arr, t, sizeof(unsigned)*len);
-  
 
 
 
@@ -362,12 +364,24 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t)
 
 </div>
 
-<arrow v-click="4" x1="430" y1="450" x2="230" y2="450" color="#564" width="2" arrowSize="5" />
+<arrow v-click="4" x1="430" y1="440" x2="230" y2="440" color="#564" width="2" arrowSize="5" />
 
 <div v-click="4" class="sep4">
 
 ```
+// before memcpy
+SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t)
+```
+
+</div>
+
+<arrow v-click="4" x1="430" y1="485" x2="230" y2="485" color="#564" width="2" arrowSize="5" />
+
+<div v-click="4" class="sep5">
+
+```
 // after memcpy
+SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t)
 SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 ```
 
@@ -399,7 +413,14 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 }
 .sep4{
   position: absolute;
-  bottom: 65px;
+  bottom: 89px;
+  right: 90px;
+  border: double;
+  width : 470px;
+}
+.sep5{
+  position: absolute;
+  bottom: 4px;
   right: 90px;
   border: double;
   width : 470px;
