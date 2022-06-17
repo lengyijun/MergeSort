@@ -84,6 +84,10 @@ void my_mergesort(unsigned *arr, int len) {
 
 ---
 
+<img src="overview.drawio.svg" >
+
+---
+
 ```
 Definition my_mergesort_spec : ident * funspec :=
  DECLARE _my_mergesort
@@ -519,84 +523,6 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 
 ---
 
-<div class="half">
-
-```c
-void c-mergesort(unsigned *arr, int len) {
-  if (len == 1) { return; }
-
-  int p = len/2;
-  unsigned *arr1 = arr;
-  unsigned *arr2 = arr+p;
-
-  my_mergesort(arr1, p);
-  my_mergesort(arr2, len-p);
-
-  unsigned *t = malloc(sizeof(unsigned)*len);
-  if(!t){exit(1);}
-
-  int i=0; int j=p; int k=0;
-
-  for(; i< p && j < len ; k++){
-    if(arr[i]<=arr[j]){
-      t[k]=arr[i];
-      i++;
-    }else{
-      t[k]=arr[j];
-      j++;
-    }
-  }
-```
-
-</div>
-
-<div class="coq">
-
-```
-Program Fixpoint coq-mergesort (x : list Z) {measure (length x)}: list Z :=
-  match x with
-  | nil => nil
-  | x :: nil => x :: nil
-  | x :: y :: nil => if x <=? y
-    then (x :: y :: nil)
-    else (y :: x :: nil)
-  | x :: y :: z :: rest =>
-    let a := (x :: y :: z :: rest) in
-    let p := (Nat.div2 (length a)) in
-    merge (mergesort (firstn p a)) (mergesort (skipn p a))
-  end.
-```
-
-</div>
-
-<div class="explan">
-如果 arr 地址的数组是 il，<br>
-那么 c-mergesort 返回时，arr里的数组是 coq-mergesort il <br>
-所以 c-mergesort 的返回结果满足 Permutation 和 Sorted
-</div>
-
-<style>
-.half{
-  width: 35%;
-  position: absolute;
-  left: 10px;
-}
-.coq{
-  width: 560px;
-  position: absolute;
-  top: 40px;
-  right: 10px
-}
-.explan{
-  width: 540px;
-  position: absolute;
-  bottom: 40px;
-  right: 10px
-}
-</style>
-
----
-
 ## loop invariant
 
 ```
@@ -654,4 +580,5 @@ merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge (firstn (i+1) l1) (fir
 # Conclusion
 
 1. 所有关于merge的lemma，都用总长度做induction
+
 
