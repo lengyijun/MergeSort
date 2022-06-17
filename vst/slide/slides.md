@@ -347,7 +347,7 @@ SEP (data_at sh (tarray tuint (Zlength il))
 
 </div>
 
-<arrow v-click="3" x1="430" y1="340" x2="230" y2="340" color="#564" width="2" arrowSize="5" />
+<arrow v-click="3" x1="430" y1="340" x2="90" y2="210" color="#564" width="2" arrowSize="5" />
 
 <div v-click="3" class="sep3">
 
