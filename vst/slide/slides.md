@@ -326,10 +326,13 @@ i = p \/ j = len
 
 </div>
 
-<arrow v-click="1" x1="420" y1="120" x2="230" y2="120" color="#564" width="2" arrowSize="5" />
+<div v-click="1" class="dotted-triangle"> </div>
+
+<arrow v-click="1" x1="420" y1="120" x2="280" y2="120" color="#564" width="2" arrowSize="5" />
 
 <div v-click="1" class="sep1" >  
-Nothing happens
+Nothing happens<br>
+because i = p
 </div>
 
 <arrow v-click="2" x1="430" y1="220" x2="230" y2="190" color="#564" width="2" arrowSize="5" />
@@ -376,9 +379,8 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 }
 .sep1{
   position: absolute;
-  top: 110px;
+  top: 103px;
   right:90px;
-  border: double;
   width : 470px;
 }
 .sep2{
@@ -401,6 +403,15 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
   right: 90px;
   border: double;
   width : 470px;
+}
+.dotted-triangle{
+  background: transparent;
+  border: dotted;
+  position: absolute;
+  top: 80px;
+  left: 70px;
+  width:200px;
+  height:70px;
 }
 </style>
 
@@ -438,6 +449,7 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 ```
 </div>
 
+
 <arrow v-click="1" x1="420" y1="115" x2="200" y2="115" color="#564" width="2" arrowSize="5" />
 
 <div v-click="1" class="sep1">
@@ -465,10 +477,13 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) t)
 
 </div>
 
-<arrow v-click="3" x1="420" y1="355" x2="230" y2="355" color="#564" width="2" arrowSize="5" />
+<arrow v-click="3" x1="420" y1="355" x2="270" y2="355" color="#564" width="2" arrowSize="5" />
+
+<div v-click="3" class="dotted-triangle"> </div>
 
 <div v-click="3" class="sep3" >  
-Nothing happens
+Nothing happens<br>
+because j = len
 </div>
 
 
@@ -503,9 +518,8 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
 }
 .sep3{
   position: absolute;
-  bottom: 185px;
-  right: 90px;
-  border: double;
+  bottom: 180px;
+  right: 87px;
   width : 470px;
 }
 .sep4{
@@ -514,6 +528,15 @@ SEP (data_at sh (tarray tuint (Zlength il)) (merge l1 l2) arr)
   right: 90px;
   border: double;
   width : 470px;
+}
+.dotted-triangle{
+  background: transparent;
+  border: dotted;
+  position: absolute;
+  bottom: 170px;
+  left: 70px;
+  width:200px;
+  height:70px;
 }
 </style>
 
