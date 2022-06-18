@@ -637,6 +637,8 @@ merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge (firstn (i+1) l1) (fir
 
 比如使用指针比较越界？
 
+倒逼要写适合证明的c程序？
+
 ---
 
 # Conclusion
