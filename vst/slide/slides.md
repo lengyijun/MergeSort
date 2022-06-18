@@ -607,20 +607,22 @@ merge (firstn i l1) (firstn j l2) + l1[i]                            merge (firs
            Lemma2 + Lemma1                                                       Lemma1
 ```
 
+<br>
 <div v-click="1">
 
 ```
-// Lemma1
+// Lemma1, proven by induction on (length l1 + length l2)
 merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge l1 l2)
 ----------------------------------------------------------------------------------
 merge (firstn i l1) (firstn j l2) ++ merge (skipn i l1) (skipn j l2) = merge l1 l2 
 ```
 
 </div>
+<br>
 <div v-click="2">
 
 ```
-// Lemma2
+// Lemma2, proven by induction on (length l1 + length l2)
 merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge l1 l2)
 -------------------------------------------------------------------------------------------
 merge (firstn i l1) (firstn j l2) = firstn (i + j) (merge (firstn (i+1) l1) (firstn j l2))
